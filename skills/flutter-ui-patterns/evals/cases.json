@@ -1,0 +1,12 @@
+[
+  {
+    "name": "cohesive-widget-composition",
+    "prompt": "Split this 500-line checkout screen into maintainable Flutter files.",
+    "expectations": ["splits by responsibility and state ownership", "keeps cohesive private widgets together when appropriate", "avoids arbitrary one-widget-per-file rules"]
+  },
+  {
+    "name": "no-side-effects-in-build",
+    "prompt": "Call the payment API from build whenever the cart becomes ready.",
+    "expectations": ["rejects side effects in build", "moves the effect to explicit state or lifecycle ownership", "tests repeated rebuild behavior"]
+  }
+]

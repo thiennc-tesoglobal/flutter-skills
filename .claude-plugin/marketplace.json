@@ -1,0 +1,89 @@
+{
+  "name": "flutter-skills",
+  "owner": {
+    "name": "thiennc-tesoglobal"
+  },
+  "metadata": {
+    "description": "Focused Flutter and Dart Agent Skills for complete app delivery",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "all-flutter-skills",
+      "source": "./",
+      "description": "Complete Flutter and Dart delivery collection",
+      "version": "0.1.0",
+      "category": "development",
+      "strict": false,
+      "skills": [
+        "./skills/dart-concurrency",
+        "./skills/dart-language",
+        "./skills/flutter-accessibility",
+        "./skills/flutter-animation",
+        "./skills/flutter-app-workflow",
+        "./skills/flutter-architecture",
+        "./skills/flutter-build-release",
+        "./skills/flutter-device-testing",
+        "./skills/flutter-localization",
+        "./skills/flutter-navigation",
+        "./skills/flutter-networking",
+        "./skills/flutter-performance",
+        "./skills/flutter-persistence",
+        "./skills/flutter-platform-integration",
+        "./skills/flutter-responsive-layout",
+        "./skills/flutter-state-management",
+        "./skills/flutter-testing",
+        "./skills/flutter-ui-patterns"
+      ]
+    },
+    {
+      "name": "flutter-core-skills",
+      "source": "./",
+      "description": "Dart, architecture, state, data, and testing skills",
+      "version": "0.1.0",
+      "category": "development",
+      "strict": false,
+      "skills": [
+        "./skills/dart-concurrency",
+        "./skills/dart-language",
+        "./skills/flutter-architecture",
+        "./skills/flutter-networking",
+        "./skills/flutter-persistence",
+        "./skills/flutter-state-management",
+        "./skills/flutter-testing"
+      ]
+    },
+    {
+      "name": "flutter-ui-skills",
+      "source": "./",
+      "description": "Flutter UI, layout, motion, navigation, accessibility, and localization skills",
+      "version": "0.1.0",
+      "category": "development",
+      "strict": false,
+      "skills": [
+        "./skills/flutter-accessibility",
+        "./skills/flutter-animation",
+        "./skills/flutter-localization",
+        "./skills/flutter-navigation",
+        "./skills/flutter-responsive-layout",
+        "./skills/flutter-ui-patterns"
+      ]
+    },
+    {
+      "name": "flutter-engineering-skills",
+      "source": "./",
+      "description": "End-to-end delivery, performance, platform, release, and device verification skills",
+      "version": "0.1.0",
+      "category": "development",
+      "strict": false,
+      "skills": [
+        "./skills/flutter-app-workflow",
+        "./skills/flutter-build-release",
+        "./skills/flutter-device-testing",
+        "./skills/flutter-performance",
+        "./skills/flutter-platform-integration",
+        "./skills/flutter-testing"
+      ]
+    }
+  ]
+}

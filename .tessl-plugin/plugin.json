@@ -1,0 +1,27 @@
+{
+  "name": "thiennc-tesoglobal/flutter-skills",
+  "version": "0.1.0",
+  "description": "Focused Agent Skills for complete Flutter and Dart app delivery.",
+  "private": false,
+  "repository": "https://github.com/thiennc-tesoglobal/flutter-skills",
+  "skills": [
+    "skills/dart-concurrency",
+    "skills/dart-language",
+    "skills/flutter-accessibility",
+    "skills/flutter-animation",
+    "skills/flutter-app-workflow",
+    "skills/flutter-architecture",
+    "skills/flutter-build-release",
+    "skills/flutter-device-testing",
+    "skills/flutter-localization",
+    "skills/flutter-navigation",
+    "skills/flutter-networking",
+    "skills/flutter-performance",
+    "skills/flutter-persistence",
+    "skills/flutter-platform-integration",
+    "skills/flutter-responsive-layout",
+    "skills/flutter-state-management",
+    "skills/flutter-testing",
+    "skills/flutter-ui-patterns"
+  ]
+}

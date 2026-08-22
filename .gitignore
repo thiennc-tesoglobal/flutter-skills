@@ -1,0 +1,8 @@
+.DS_Store
+.dart_tool/
+.packages
+build/
+coverage/
+*.iml
+.idea/
+.vscode/

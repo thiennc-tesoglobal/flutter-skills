@@ -1,0 +1,12 @@
+[
+  {
+    "name": "plural-and-formatting",
+    "prompt": "Localize a cart item count and total price for English, Vietnamese, and Arabic.",
+    "expectations": ["uses plural messages and locale-aware currency", "supports RTL without manual string concatenation", "tests representative counts and locales"]
+  },
+  {
+    "name": "preserves-existing-localization-tool",
+    "prompt": "Add one translated onboarding screen to an app with an established gen_l10n setup.",
+    "expectations": ["extends existing ARB and generation configuration", "does not introduce a second localization package"]
+  }
+]

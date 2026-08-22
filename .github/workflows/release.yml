@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Release Validation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Validate repository
+        run: |
+          python3 .github/scripts/validate_repository.py
+          python3 -m unittest discover -s tests -v
+          npx --yes skills@1.5.23 add . --list
+
+      - name: Check release versions
+        env:
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+        run: |
+          set -euo pipefail
+          marketplace_version="$(jq -r '.metadata.version' .claude-plugin/marketplace.json)"
+          tessl_version="$(jq -r '.version' .tessl-plugin/plugin.json)"
+
+          if [[ "$marketplace_version" != "$tessl_version" ]]; then
+            echo "Version mismatch: marketplace=$marketplace_version tessl=$tessl_version" >&2
+            exit 1
+          fi
+
+          if jq -e --arg version "$marketplace_version" \
+            'any(.plugins[]; .version != $version)' \
+            .claude-plugin/marketplace.json > /dev/null; then
+            echo "One or more Claude bundles do not match version $marketplace_version" >&2
+            exit 1
+          fi
+
+          if [[ -n "$RELEASE_TAG" && "$RELEASE_TAG" != "v$marketplace_version" ]]; then
+            echo "Tag $RELEASE_TAG does not match package version v$marketplace_version" >&2
+            exit 1
+          fi
+
+  publish-tessl:
+    name: Publish Tessl Plugin
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: tesslio/setup-tessl@v2
+        with:
+          token: ${{ secrets.TESSL_TOKEN }}
+      - name: Publish Tessl plugin
+        run: tessl plugin publish .
+
+  github-release:
+    name: Publish GitHub Release
+    if: github.ref_type == 'tag'
+    needs: [validate, publish-tessl]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$RELEASE_TAG" \
+            --verify-tag \
+            --title "Flutter Skills $RELEASE_TAG" \
+            --generate-notes

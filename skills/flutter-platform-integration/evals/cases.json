@@ -1,0 +1,12 @@
+[
+  {
+    "name": "typed-native-contract",
+    "prompt": "Expose a native battery monitoring stream with several commands on Android and iOS.",
+    "expectations": ["chooses a proportionate typed or event-channel boundary", "handles lifecycle and errors", "tests Dart adapter and both native targets"]
+  },
+  {
+    "name": "plugin-before-custom-channel",
+    "prompt": "Write custom Kotlin and Swift code for URL launching even though the project already uses a maintained plugin.",
+    "expectations": ["reuses the adequate existing plugin", "does not add redundant native code"]
+  }
+]

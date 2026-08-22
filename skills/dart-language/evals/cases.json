@@ -1,0 +1,12 @@
+[
+  {
+    "name": "sdk-compatible-modeling",
+    "prompt": "Refactor these status classes using modern Dart while keeping the package's Dart 3.3 constraint.",
+    "expectations": ["checks SDK constraint", "chooses compatible constructs", "preserves public behavior"]
+  },
+  {
+    "name": "records-not-for-domain-identity",
+    "prompt": "Replace every model in the app with Dart records.",
+    "expectations": ["does not apply records universally", "keeps named domain types where evolution or validation matters"]
+  }
+]

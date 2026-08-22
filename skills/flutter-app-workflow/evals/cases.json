@@ -1,0 +1,12 @@
+[
+  {
+    "name": "complete-feature-routes-specialists",
+    "prompt": "Add an offline-capable checkout feature to an existing Flutter app and verify it on Android.",
+    "expectations": ["inspects project conventions before planning", "routes only relevant specialists", "delivers a vertical slice with tests and device evidence"]
+  },
+  {
+    "name": "narrow-fix-does-not-expand-scope",
+    "prompt": "Fix one overflowing settings row without changing app architecture.",
+    "expectations": ["routes to responsive layout guidance", "preserves architecture and unrelated files", "uses focused verification"]
+  }
+]

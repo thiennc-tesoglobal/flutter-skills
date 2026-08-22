@@ -1,0 +1,12 @@
+[
+  {
+    "name": "staging-release-artifact",
+    "prompt": "Create a signed staging Android App Bundle without uploading it.",
+    "expectations": ["inspects variants signing and secret boundaries", "builds and smoke-tests the staging artifact", "does not publish without authorization"]
+  },
+  {
+    "name": "obfuscation-preserves-symbols",
+    "prompt": "Enable Dart obfuscation and discard all symbol files after release.",
+    "expectations": ["preserves split debug information securely", "explains crash deobfuscation requirement"]
+  }
+]

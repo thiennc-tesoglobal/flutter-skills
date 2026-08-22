@@ -1,0 +1,12 @@
+[
+  {
+    "name": "preserve-existing-bloc-architecture",
+    "prompt": "Add a profile feature to an established Bloc feature-first app using architecture best practices.",
+    "expectations": ["inspects and preserves Bloc conventions", "keeps UI data access behind state and repository boundaries", "does not introduce ChangeNotifier unnecessarily"]
+  },
+  {
+    "name": "simple-app-avoids-enterprise-layers",
+    "prompt": "Structure a small local counter and notes app for one developer.",
+    "expectations": ["chooses proportionate boundaries", "does not create use cases or interfaces without a concrete need"]
+  }
+]

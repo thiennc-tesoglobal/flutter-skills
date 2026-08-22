@@ -1,0 +1,57 @@
+# Flutter Skill Audit
+
+Audit skills as operational instructions for coding agents, not as general Flutter tutorials. Keep the audit read-only unless implementation is explicitly requested.
+
+## Modes
+
+- **Focused:** one skill, its references, evaluations, and neighboring routing boundaries.
+- **Collection:** inventory, discovery cost, overlap, sources, package metadata, and evaluation coverage.
+- **Release:** collection audit plus versions, clean installation, credentials, tag, and publishing gates.
+
+## Checks
+
+### Discovery
+
+- Folder and frontmatter names align.
+- Descriptions state capability and activation boundary.
+- Neighboring skills do not compete unnecessarily.
+- Combined discovery text remains proportionate to the catalog.
+
+### Instructions
+
+- Guidance preserves the target project's SDK constraints, architecture, packages, and platforms.
+- Absolute rules correspond to correctness, safety, or external authorization.
+- Conditional detail is in a directly linked reference.
+- Third-party packages are selected by project evidence rather than popularity.
+
+### Technical accuracy
+
+- Flutter and Dart claims match current official documentation.
+- Package claims match current publisher documentation and compatible constraints.
+- Debug, profile, and release evidence are distinguished correctly.
+- Device-only or native behavior is not presented as widget-test evidence.
+- Examples account for lifecycle, async ownership, error handling, accessibility, and disposal where relevant.
+
+### Evaluations
+
+- Prompts resemble real work.
+- Expectations test observable decisions or evidence, not exact wording.
+- Each skill has a successful case and a boundary/preservation case.
+- Demonstrated regressions receive focused cases.
+
+## Collection validation
+
+```sh
+python3 .github/scripts/validate_repository.py
+python3 -m unittest discover -s tests -v
+claude plugin validate .
+npx skills add . --list
+```
+
+Confirm exact membership across `skills/`, Claude bundles, and Tessl metadata. Review version alignment, README counts, changelog entries, CI status, and missing release credentials.
+
+## Release gate
+
+A release is ready only when validation passes, clean discovery returns the expected catalog, changed behavior has evaluation coverage, versions align, and release notes describe user-visible changes.
+
+Do not create a tag, GitHub Release, Tessl publication, or other registry release without user authorization.

@@ -1,0 +1,12 @@
+[
+  {
+    "name": "chooses-implicit-animation",
+    "prompt": "Animate a card's color and elevation when it becomes selected.",
+    "expectations": ["uses a proportionate implicit mechanism", "keeps state as source of truth", "supports reduced motion"]
+  },
+  {
+    "name": "interruptible-controller-lifecycle",
+    "prompt": "Build a draggable panel animation that can reverse midway.",
+    "expectations": ["uses explicit lifecycle-owned animation control", "handles interruption and reversal", "disposes controller and verifies ticker behavior"]
+  }
+]

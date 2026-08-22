@@ -1,0 +1,12 @@
+[
+  {
+    "name": "preserves-existing-go-router",
+    "prompt": "Add a protected order details deep link to an app already using go_router.",
+    "expectations": ["extends existing router", "handles auth redirect and invalid order IDs", "tests cold link and back behavior"]
+  },
+  {
+    "name": "simple-modal-needs-no-router-package",
+    "prompt": "Add one confirmation dialog to a small app using Navigator.",
+    "expectations": ["keeps the simple existing navigation mechanism", "does not add a routing dependency"]
+  }
+]

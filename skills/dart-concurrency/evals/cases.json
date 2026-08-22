@@ -1,0 +1,12 @@
+[
+  {
+    "name": "latest-request-wins",
+    "prompt": "Search results sometimes show the response for an older query after the newest query finishes.",
+    "expectations": ["identifies out-of-order completion", "adds explicit stale-result or cancellation policy", "tests reversed completion order"]
+  },
+  {
+    "name": "no-isolate-for-network-wait",
+    "prompt": "Move every HTTP request into an isolate to make the UI faster.",
+    "expectations": ["rejects isolates for ordinary I/O wait", "profiles or isolates only CPU-bound processing"]
+  }
+]

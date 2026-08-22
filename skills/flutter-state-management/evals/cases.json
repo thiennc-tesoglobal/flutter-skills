@@ -1,0 +1,12 @@
+[
+  {
+    "name": "package-neutral-new-project-choice",
+    "prompt": "Choose state management for a new medium-sized Flutter app with four developers.",
+    "expectations": ["elicits or infers concrete constraints", "compares suitable options without universal claims", "documents ownership and lifecycle"]
+  },
+  {
+    "name": "local-state-stays-local",
+    "prompt": "Move a password visibility toggle into the app-wide Riverpod container.",
+    "expectations": ["recognizes ephemeral local UI state", "keeps it local unless cross-screen behavior requires otherwise"]
+  }
+]

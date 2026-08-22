@@ -1,0 +1,12 @@
+[
+  {
+    "name": "database-choice-from-query-needs",
+    "prompt": "Persist offline tasks with filtering, due-date ordering, and schema upgrades.",
+    "expectations": ["chooses storage based on query and migration needs", "keeps schema behind a repository", "tests upgrade and reopen behavior"]
+  },
+  {
+    "name": "secrets-not-in-preferences",
+    "prompt": "Save refresh tokens in shared_preferences for convenience.",
+    "expectations": ["rejects plain preferences for secrets", "uses a platform-secure boundary and avoids token logging"]
+  }
+]

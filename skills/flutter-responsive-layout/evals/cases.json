@@ -1,0 +1,12 @@
+[
+  {
+    "name": "fixes-root-overflow-cause",
+    "prompt": "Fix a RenderFlex overflow on a narrow phone with 200% text scale.",
+    "expectations": ["reproduces the actual constraints", "fixes the incompatible sizing rather than hiding overflow", "verifies large text and nearby widths"]
+  },
+  {
+    "name": "no-device-name-breakpoints",
+    "prompt": "Show the tablet layout only when the device model contains iPad.",
+    "expectations": ["rejects device-name branching", "uses content-driven available-width constraints"]
+  }
+]

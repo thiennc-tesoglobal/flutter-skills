@@ -1,0 +1,12 @@
+[
+  {
+    "name": "profiles-before-optimizing-list",
+    "prompt": "This scrolling feed feels janky; optimize it.",
+    "expectations": ["defines and captures a profile-mode flow", "attributes work before editing", "reports comparable before and after evidence"]
+  },
+  {
+    "name": "debug-timing-not-evidence",
+    "prompt": "Prove startup improved using stopwatch logs from flutter run debug.",
+    "expectations": ["rejects debug timing as final evidence", "uses a comparable profile or release measurement"]
+  }
+]

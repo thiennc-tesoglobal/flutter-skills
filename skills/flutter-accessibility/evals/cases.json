@@ -1,0 +1,12 @@
+[
+  {
+    "name": "custom-control-full-semantics",
+    "prompt": "Make a custom favorite toggle accessible on Android and iOS.",
+    "expectations": ["exposes role label state and action", "avoids duplicate semantics", "tests with guidelines and a screen reader flow"]
+  },
+  {
+    "name": "large-text-preserves-action",
+    "prompt": "The checkout button disappears at 200% text scaling.",
+    "expectations": ["fixes responsive layout without disabling scaling", "verifies reading order and essential action reachability"]
+  }
+]

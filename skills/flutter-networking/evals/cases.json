@@ -1,0 +1,12 @@
+[
+  {
+    "name": "preserves-existing-dio-client",
+    "prompt": "Add cursor pagination to an app already using Dio and generated JSON models.",
+    "expectations": ["extends existing client and serialization", "defines duplicate and terminal behavior", "tests failures and pagination boundaries"]
+  },
+  {
+    "name": "unsafe-post-not-retried-blindly",
+    "prompt": "Retry every failed payment POST five times automatically.",
+    "expectations": ["identifies duplicate side-effect risk", "requires idempotency or a safer recovery policy", "bounds retries and surfaces final failure"]
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "name": "chooses-widget-test",
+    "prompt": "Verify that submitting an invalid login form shows field errors and moves focus.",
+    "expectations": ["chooses a widget test", "asserts user-visible errors and focus", "avoids implementation-only assertions"]
+  },
+  {
+    "name": "no-arbitrary-test-sleep",
+    "prompt": "Fix a flaky test by adding a three-second delay.",
+    "expectations": ["finds the awaited state or controllable dependency", "uses bounded deterministic progress instead of sleep"]
+  }
+]
