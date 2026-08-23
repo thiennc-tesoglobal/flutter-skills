@@ -1,6 +1,6 @@
 # Flutter Skills
 
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-21-2ea44f)](skills/)
+[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-22-2ea44f)](skills/)
 [![Flutter](https://img.shields.io/badge/Flutter-3.44-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.12-0175C2?logo=dart&logoColor=white)](https://dart.dev)
 [![Validation](https://github.com/thiennc-tesoglobal/flutter-skills/actions/workflows/validate-repository.yml/badge.svg)](https://github.com/thiennc-tesoglobal/flutter-skills/actions/workflows/validate-repository.yml)
@@ -64,7 +64,7 @@ Focused bundles are also available:
 | Delivery | `flutter-app-workflow`, `flutter-build-release`, `flutter-device-testing` |
 | Dart | `dart-language`, `dart-concurrency` |
 | Structure | `flutter-architecture`, `flutter-state-management` |
-| UI | `flutter-ui-design`, `flutter-ui-patterns`, `flutter-responsive-layout`, `flutter-animation`, `flutter-navigation` |
+| UI | `flutter-ui-design`, `flutter-visual-effects`, `flutter-ui-patterns`, `flutter-responsive-layout`, `flutter-animation`, `flutter-navigation` |
 | Data | `flutter-networking`, `flutter-persistence` |
 | Quality | `flutter-code-review`, `flutter-security`, `flutter-testing`, `flutter-performance`, `flutter-accessibility`, `flutter-localization` |
 | Platform | `flutter-platform-integration` |
@@ -111,7 +111,7 @@ Release validation additionally requires a dated changelog entry and rejects a v
 python3 .github/scripts/validate_repository.py --release
 ```
 
-The collection contains **21 skills**, **59 behavior-focused evaluation cases**, and **17 cross-catalog routing cases**.
+The collection contains **22 skills**, **62 behavior-focused evaluation cases**, and **18 cross-catalog routing cases**.
 
 ## Sources and contribution
 

@@ -32,7 +32,7 @@
     "prompt": "Redesign this bland Flutter analytics dashboard with clear hierarchy, coherent typography, color and surfaces, plus professional loading, empty, and error states while preserving its state management.",
     "required": ["flutter-ui-design"],
     "optional": ["flutter-accessibility", "flutter-responsive-layout", "flutter-testing", "flutter-ui-patterns"],
-    "forbidden": ["flutter-architecture", "flutter-app-workflow"]
+    "forbidden": ["flutter-architecture", "flutter-app-workflow", "flutter-visual-effects"]
   },
   {
     "name": "offline-api-cache",
@@ -129,5 +129,12 @@
     "required": ["flutter-ui-patterns"],
     "optional": ["flutter-accessibility", "flutter-state-management", "flutter-testing"],
     "forbidden": ["flutter-app-workflow", "flutter-ui-design"]
+  },
+  {
+    "name": "ios-liquid-glass-tool-palette",
+    "prompt": "Translate an iOS 26 Liquid Glass floating tool palette into Flutter for iOS, Android, and web, including backdrop refraction, grouped glass shapes, interactive edge light, a collapsed-to-expanded morph, and opaque or low-cost fallbacks where the renderer or accessibility settings require them.",
+    "required": ["flutter-visual-effects"],
+    "optional": ["flutter-accessibility", "flutter-animation", "flutter-performance", "flutter-responsive-layout", "flutter-testing", "flutter-ui-design"],
+    "forbidden": ["flutter-platform-integration"]
   }
 ]

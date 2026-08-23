@@ -1,11 +1,13 @@
 ---
 name: flutter-animation
-description: Implement or diagnose Flutter motion with implicit, explicit, route, Hero, staggered, and physics-based animations. Use when motion behavior is requested or broken; route general layout and performance profiling to their specialists.
+description: Implement or diagnose Flutter motion with implicit, explicit, route, Hero, staggered, and physics-based animations. Use when timing, transition, or motion behavior is requested or broken; route optical materials, shaders, general layout, and performance profiling to their specialists.
 ---
 
 # Flutter Animation
 
 Use motion to explain state change, hierarchy, or continuity. Keep it interruptible and accessible.
+
+Own timing, interpolation, sequencing, stable identity, and interruption. Route blur, glass, refraction, shader uniforms, and optical layer composition to `flutter-visual-effects`; when both apply, animation state drives the effect rather than duplicating controller ownership inside the renderer.
 
 ## Choose the mechanism
 

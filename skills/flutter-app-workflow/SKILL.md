@@ -21,6 +21,7 @@ First identify which specialist skills are discoverable in the current environme
 
 - Architecture or state boundaries: `flutter-architecture`, `flutter-state-management`
 - Visual direction or polish: `flutter-ui-design`
+- Advanced glass, blur, refraction, shaders, or custom optical rendering: `flutter-visual-effects`
 - Widget composition, layout mechanics, motion, or routing: the matching Flutter UI specialist
 - APIs or storage: `flutter-networking`, `flutter-persistence`
 - Language or async behavior: `dart-language`, `dart-concurrency`

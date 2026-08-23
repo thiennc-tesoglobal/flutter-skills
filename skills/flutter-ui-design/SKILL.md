@@ -11,7 +11,7 @@ Create coherent, platform-aware Flutter interfaces that feel authored for the pr
 
 Own art direction, visual ambition, hierarchy, composition, semantic tokens, typography, color, surfaces, shape, state presentation, and rendered visual review.
 
-Route implementation structure, reusable widget APIs, forms, and UI state ownership to `flutter-ui-patterns`. Route constraint mechanics to `flutter-responsive-layout`, motion implementation to `flutter-animation`, accessibility compliance to `flutter-accessibility`, and navigation behavior to `flutter-navigation`.
+Route implementation structure, reusable widget APIs, forms, and UI state ownership to `flutter-ui-patterns`. Route constraint mechanics to `flutter-responsive-layout`, motion implementation to `flutter-animation`, advanced blur, refraction, shader, or custom optical rendering to `flutter-visual-effects`, accessibility compliance to `flutter-accessibility`, and navigation behavior to `flutter-navigation`.
 
 ## Preflight
 

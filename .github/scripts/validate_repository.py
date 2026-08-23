@@ -18,9 +18,9 @@ LINK_PATTERN = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 MAX_DESCRIPTION = 500
 MAX_COMBINED_DESCRIPTION = 12_000
 EXPECTED_VERSION = "0.1.0"
-EXPECTED_SKILL_COUNT = 21
-EXPECTED_EVAL_COUNT = 59
-EXPECTED_ROUTING_EVAL_COUNT = 17
+EXPECTED_SKILL_COUNT = 22
+EXPECTED_EVAL_COUNT = 62
+EXPECTED_ROUTING_EVAL_COUNT = 18
 EXPECTED_BUNDLES = {
     "all-flutter-skills": {
         "dart-concurrency",
@@ -44,6 +44,7 @@ EXPECTED_BUNDLES = {
         "flutter-testing",
         "flutter-ui-design",
         "flutter-ui-patterns",
+        "flutter-visual-effects",
     },
     "flutter-core-skills": {
         "dart-concurrency",
@@ -62,6 +63,7 @@ EXPECTED_BUNDLES = {
         "flutter-responsive-layout",
         "flutter-ui-design",
         "flutter-ui-patterns",
+        "flutter-visual-effects",
     },
     "flutter-engineering-skills": {
         "flutter-app-workflow",
