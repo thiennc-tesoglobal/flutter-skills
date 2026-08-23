@@ -23,7 +23,7 @@ class RepositoryTests(unittest.TestCase):
         errors, _, counts = VALIDATOR.validate_repository()
         self.assertEqual(errors, [])
         self.assertEqual(counts["skills"], 22)
-        self.assertEqual(counts["evals"], 62)
+        self.assertEqual(counts["evals"], 64)
         self.assertEqual(counts["routing_evals"], 18)
 
     def test_release_changelog_requires_finalized_date(self):

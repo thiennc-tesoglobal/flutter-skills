@@ -111,7 +111,7 @@ Release validation additionally requires a dated changelog entry and rejects a v
 python3 .github/scripts/validate_repository.py --release
 ```
 
-The collection contains **22 skills**, **62 behavior-focused evaluation cases**, and **18 cross-catalog routing cases**.
+The collection contains **22 skills**, **64 behavior-focused evaluation cases**, and **18 cross-catalog routing cases**.
 
 ## Sources and contribution
 

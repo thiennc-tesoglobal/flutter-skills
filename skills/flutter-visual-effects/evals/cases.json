@@ -1,7 +1,7 @@
 [
   {
     "name": "builds-core-frosted-toolbar-without-package",
-    "prompt": "Implement a frosted floating action toolbar in an existing Flutter app using its current theme. The requested effect is blur, tint, and a fine edge highlight over changing content; no refraction, shader, or new package is requested. Describe the implementation and verification approach without claiming unavailable renders.",
+    "prompt": "Implement a frosted floating action toolbar in an existing Flutter app using its current theme. The requested effect is blur, tint, and a fine edge highlight over changing content; no refraction, shader, or new package is requested. Explain why the backdrop should use BackdropFilter rather than filtering only the toolbar child, and describe the verification approach without claiming unavailable renders.",
     "resources": [
       "references/ios-effect-translation.md"
     ],
@@ -37,6 +37,32 @@
       "does not treat an experimental effect renderer as a universal dependency or claim unsupported web and device behavior",
       "defines core or opaque fallbacks before integration and preserves layout and interaction semantics across fidelity tiers",
       "requires profile-mode scrolling and interaction evidence on representative hardware plus first-use shader or texture checks before default enablement"
+    ]
+  },
+  {
+    "name": "reuses-existing-effect-package",
+    "prompt": "An existing Flutter app already depends on a maintained visual-effects package and uses its GlassSurface and ReducedTransparencyFallback widgets in production on iOS and Android. Extend the current floating toolbar to use the same material family; first inspect the package entry, source usage, theme contract, targets, and fallback. Provide a concrete before/after fixture matrix and separate planned checks from observed evidence; do not migrate packages or claim unavailable renders.",
+    "resources": [
+      "references/shaders-packages-performance.md"
+    ],
+    "expectations": [
+      "inspects and reuses the existing package, widgets, theme contract, and fallback instead of hand-rolling a parallel renderer",
+      "checks the current implementation and project constraints before deciding whether any package change is necessary",
+      "keeps interaction semantics, accessibility fallback, and platform behavior consistent with the existing effect system",
+      "defines a before-and-after fixture comparison and reports only rendered or profiled evidence that actually exists"
+    ]
+  },
+  {
+    "name": "chooses-package-for-common-complex-effect",
+    "prompt": "A Flutter product needs a production-grade particle burst and grouped liquid surfaces. A maintained package claims support for the project's Android, iOS, and web targets, while a custom shader would take several weeks. Explain how to decide between the package and custom implementation before coding; no repository, package audit, or device profile is supplied.",
+    "resources": [
+      "references/shaders-packages-performance.md"
+    ],
+    "expectations": [
+      "treats a maintained package as a serious candidate for a complex common capability rather than assuming custom code is superior",
+      "requires current package, SDK, renderer, platform, license, maintenance, fallback, and performance checks before adoption",
+      "keeps custom shader as the alternative when the package fails fidelity, platform, or control requirements and compares total maintenance risk",
+      "defines a small prototype and profile-mode evidence matrix before making the package or custom path the default"
     ]
   }
 ]

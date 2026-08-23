@@ -2,16 +2,19 @@
 
 Read this reference when the requested effect samples or distorts pixels, requires a package decision, or can materially affect raster work.
 
-## Choose core, shader, or package
+## Choose existing, core, package, or custom
 
 | Requirement | Preferred starting point |
 |---|---|
+| The project already has an adequate effect widget, renderer, or package | Reuse and extend the existing solution; preserve its fallback and interaction contract |
 | Gradient, glow, border lighting, simple noise | Decoration, `CustomPainter`, masks, or existing project primitives |
 | Frosted material | Clipped `BackdropFilter` with tint and contrast layers |
 | Filter one owned image or subtree | `ImageFiltered` |
 | Refraction, chromatic split, ripple, dissolve, procedural distortion | Custom fragment shader |
-| Complex shape blending already solved by a maintained dependency | Evaluate the package against the project constraints |
+| Complex, common shape blending or particle effect already solved by a maintained dependency | Evaluate and prefer the package when it meets project constraints |
 | Exact native material is a product requirement | Platform integration plus an explicit non-native fallback |
+
+This is a decision matrix, not a universal custom-first rule. A package can be the most maintainable choice for a mature, complex, common effect; core Flutter can be the best choice for a small surface; a custom shader is justified by product-specific behavior or a verified gap.
 
 ## Fragment shader discipline
 

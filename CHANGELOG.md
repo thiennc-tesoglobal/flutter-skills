@@ -6,7 +6,8 @@
 - Add `flutter-app-workflow` for end-to-end project coordination.
 - Add `flutter-ui-design` for platform-aware visual direction, complete UI states, and repeatable visual verification.
 - Upgrade `flutter-ui-design` with ambition calibration, reference parity, default-widget residue review, deterministic populated fixtures, and a render-critique-render completion gate.
-- Add `flutter-visual-effects` for custom-first glass, blur, refraction, shaders, iOS effect translation, renderer-aware fallbacks, and profile-backed package decisions.
+- Add `flutter-visual-effects` for glass, blur, refraction, shaders, iOS effect translation, renderer-aware fallbacks, and profile-backed package decisions.
+- Refine `flutter-visual-effects` with evidence-first selection across existing solutions, Flutter core, maintained packages, custom shaders, and native rendering.
 - Add `flutter-security` for threat-driven application hardening and scoped security review.
 - Add `flutter-code-review` for evidence-backed Flutter and Dart diff review without implicit edits.
 - Add conditional caching, offline-sync, forms, Widget Previewer, FFI, and plugin-development references to existing specialists.

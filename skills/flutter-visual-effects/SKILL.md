@@ -19,15 +19,19 @@ Route whether the product should use the effect to `flutter-ui-design`. Route ti
 2. Inspect the supplied reference at equivalent content, background, state, and viewport. An isolated translucent rectangle is not enough evidence for a backdrop-dependent effect.
 3. State the optical behavior that matters: blur, tint, edge highlight, depth, refraction, shape blending, glow, noise, or responsive deformation.
 4. Establish required platform coverage, acceptable fidelity loss, accessibility fallbacks, and whether representative hardware can be profiled.
-5. Preserve the project's current packages unless core Flutter cannot meet an explicit fidelity requirement.
+5. Start from the project's current rendering solution and dependencies. Preserve an adequate existing effect implementation; do not replace it with core code or another package merely for stylistic preference.
 
-## Choose the least costly faithful layer
+## Choose by evidence, not ideology
 
-1. Use decoration, gradients, masks, shadows, and `CustomPainter` for effects that do not sample rendered content behind them.
-2. Use a clipped `BackdropFilter` for ordinary frosted material. Use `ImageFiltered` when filtering one known child rather than the existing backdrop.
-3. Use a fragment shader only when refraction, distortion, procedural texture, dissolve, or another per-pixel behavior is part of the acceptance criteria.
-4. Consider a package only after checking its current SDK constraints, renderer and platform support, maintenance, license, limitations, and fallback path. Do not add a package merely because its demo resembles the reference.
+1. Reuse an adequate solution or package already in the project, including its theme and fallback behavior.
+2. Use decoration, gradients, masks, shadows, `CustomPainter`, or a clipped `BackdropFilter` for simple effects that Flutter core expresses clearly. Use `ImageFiltered` when filtering one known child rather than the existing backdrop.
+3. Use a maintained package for a complex, common capability when it materially reduces implementation risk and meets the project's SDK, renderer, platform, license, maintenance, and performance constraints.
+4. Use a custom fragment shader or renderer when the effect is product-specific, the accepted package cannot meet fidelity or platform requirements, or measured control is worth the maintenance cost.
 5. Use native integration only when native rendering itself is a requirement; preserve a defined behavior for every other supported target.
+
+The decision record must name the existing solution checked, why core/package/custom/native is the smallest faithful choice, and what evidence would reverse that choice. Do not add a package merely because its demo resembles the reference, and do not hand-roll mature infrastructure that an adequate maintained dependency already provides.
+
+When an effect package or shared renderer already exists, explicitly inspect its `pubspec`/lockfile entry, source usage, theme contract, supported targets, and fallback before proposing code. Preserve a stable before fixture, compare the same content and viewport after the change, and label screenshots or profile measurements as planned versus observed. A package that is adequate on inspection should be extended in place, not replaced by a parallel renderer.
 
 For an ordinary core-material implementation, make the decision record explicit: `BackdropFilter` samples already painted content behind the surface, `ImageFiltered` filters one owned child, no effect package is being added, and decorative layers expose neither semantics nor press, hover, or focus affordances.
 
