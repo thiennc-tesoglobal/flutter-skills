@@ -1,6 +1,6 @@
 ---
 name: flutter-device-testing
-description: Operate and verify Flutter apps on a concrete emulator, simulator, browser, desktop, or physical device. Use when runtime target control, launch, logs, screenshots, permissions, deep links, or on-device integration tests are explicitly needed; not for generic verification covered by focused tests.
+description: Operate and verify Flutter apps on a concrete emulator, simulator, browser, desktop, or physical device. Use only when a concrete runtime target or device-only behavior is explicit, such as launch control, logs, screenshots, permissions, deep links, or on-device integration tests; do not select it merely because a UI change should be verified on a phone when focused widget or golden tests suffice.
 ---
 
 # Flutter Device Testing

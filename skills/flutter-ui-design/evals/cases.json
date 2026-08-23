@@ -1,53 +1,55 @@
 [
   {
-    "name": "polishes-bland-dashboard-without-effect-overload",
-    "prompt": "Propose a restrained visual direction and implementation and verification plan for a bland Flutter analytics dashboard on phone and desktop. There is no brand brief or runnable project supplied yet, so do not claim rendered results.",
+    "name": "transforms-bland-dashboard-with-a-clear-signature",
+    "prompt": "Propose a visibly distinctive but coherent visual direction and implementation and verification plan for a bland, default-looking Flutter analytics dashboard on phone and desktop. There is no brand brief or runnable project supplied yet, so do not claim rendered results.",
     "resources": [
+      "references/art-direction.md",
       "references/visual-foundations.md",
       "references/screen-composition.md",
       "references/states-and-feedback.md",
       "references/visual-verification.md"
     ],
     "expectations": [
-      "defines a restrained visual direction and clear information hierarchy before styling components",
+      "defines a specific design signature and clear information hierarchy before styling components",
       "centralizes semantic roles in ThemeData, ColorScheme, TextTheme, or equivalent tokens instead of scattering literals through widgets or adding a design package",
-      "does not default to gradients, glass, glow, oversized radii, shadows, or a card around every metric",
-      "defines realistic content, complete visual states, and a representative phone and desktop fixture matrix without claiming unavailable rendered evidence"
+      "audits default-looking Material composition and uses only a coherent subset of expressive treatments rather than effect overload or a card around every metric",
+      "defines realistic populated and edge-state fixtures plus a phone and desktop render-critique-render plan without claiming unavailable evidence"
     ]
   },
   {
     "name": "preserves-existing-brand-system",
-    "prompt": "Polish one checkout screen in an app that already has custom ThemeData, ColorScheme, TextTheme, and shared components.",
+    "prompt": "Describe a concrete implementation and visual-verification approach for polishing one checkout screen in a supplied Flutter repository that already has custom ThemeData, ColorScheme, TextTheme, shared checkout components, and stable before-state fixtures. Do not claim that you rendered files that are not present in this eval prompt.",
     "resources": [
       "references/visual-foundations.md",
       "references/visual-verification.md"
     ],
     "expectations": [
-      "inspects and preserves the established brand and component vocabulary",
-      "extends existing semantic tokens only where a stable product concept is missing",
-      "does not introduce a second theme system, font, icon pack, or UI dependency without evidence",
-      "compares stable before-and-after fixtures"
+      "makes inspection and preservation of the established brand and component vocabulary the first implementation constraint",
+      "reuses existing semantic tokens and extends them only where a stable product concept is missing",
+      "rules out a second theme system, font, icon pack, or UI dependency without evidence",
+      "defines an equivalent stable before-and-after fixture comparison without fabricating rendered results"
     ]
   },
   {
     "name": "adapts-ios-reference-across-platforms",
-    "prompt": "Copy this polished iOS screen exactly into our Flutter app for iPhone, Android, and web.",
+    "prompt": "Adapt a supplied polished iOS Todo dashboard into Flutter for iPhone, Android, and web. The reference has an atmospheric lavender-cyan background, translucent layered surfaces, a large gradient product title, a compact progress ring, icon filter pills, realistic populated tasks, spring feedback, and an integrated glass bottom action dock. Provide a concrete translation and verification approach without claiming that you rendered the unavailable Flutter project.",
     "resources": [
+      "references/art-direction.md",
       "references/platform-adaptation.md",
       "references/visual-verification.md"
     ],
     "expectations": [
-      "extracts transferable hierarchy, density, rhythm, state coverage, and brand tone from the reference",
+      "extracts the reference's design signature, visual ambition, hierarchy, density, rhythm, state coverage, and brand tone",
       "adapts controls, navigation, typography, gestures, and input feedback to each target platform",
-      "does not blindly clone iOS-only materials, fonts, icons, or interaction assumptions",
-      "verifies touch, pointer, keyboard, compact, and wide contexts as relevant"
+      "maps transferable material, depth, background, and motion intent to maintainable Flutter primitives without blindly cloning iOS-only fonts, icons, chrome, or gestures",
+      "compares equivalent populated and edge-state fixtures across touch, pointer, keyboard, compact, and wide contexts and performs a visual critique iteration"
     ]
   },
   {
     "name": "structure-only-refactor-is-not-redesign",
     "prompt": "Split this 500-line Flutter screen into maintainable widgets but keep it pixel-identical.",
     "expectations": [
-      "routes widget composition and state boundaries to flutter-ui-patterns",
+      "keeps widget extraction and state ownership changes structural and behavior-preserving",
       "preserves the current visual system and rendered output",
       "does not expand a structural refactor into an unauthorized redesign"
     ]
@@ -64,7 +66,7 @@
       "keeps composition stable across asynchronous states where practical",
       "makes recovery actionable and gives each surface one clear primary action",
       "uses realistic long content and distinguishes empty, failure, offline, and stale conditions",
-      "verifies light and dark themes, text scaling, contrast, and representative form factors"
+      "defines explicit verification for light and dark themes, text scaling, contrast, and representative form factors without fabricating unavailable rendered evidence"
     ]
   }
 ]

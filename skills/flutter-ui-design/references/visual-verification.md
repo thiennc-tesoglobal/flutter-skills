@@ -34,9 +34,21 @@ Do not approve visual output solely from source review. Render it at the intende
 - Touch targets, keyboard focus, hover, and platform conventions remain usable.
 - Images preserve useful crops and have loading/error fallbacks.
 - No decorative effect competes with content or introduces avoidable rendering cost.
+- The visual identity remains recognizable after replacing copy with gray blocks; it does not depend only on a logo or accent color.
+- Framework defaults do not dominate a brief that asks for a visible transformation.
+- Reference comparisons use equivalent viewport, theme, content density, and state.
 
 ## Compare and report
 
 Describe changes in observable terms: reduced competing accents, clearer title/action hierarchy, fewer redundant surfaces, consistent typography roles, stable loading geometry, or improved state coverage.
+
+For a visible redesign, use a render-critique-render loop:
+
+1. Capture the baseline and first implementation with the same fixture.
+2. Name the three largest remaining visual gaps.
+3. Fix material gaps rather than polishing incidental pixels.
+4. Capture the accepted state and retain enough evidence to reproduce the comparison.
+
+A successful build or passing widget test proves implementation health, not visual quality. Do not mark visual work complete until a rendered artifact has been inspected.
 
 If the result depends on subjective brand direction that the repository and brief do not establish, present a restrained default and record the open choice. Do not invent a redesign mandate or claim universal aesthetic superiority.

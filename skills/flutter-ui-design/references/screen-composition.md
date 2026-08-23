@@ -14,6 +14,8 @@ Identify, in order:
 
 Use position, grouping, typography, and whitespace to preserve this order. Avoid multiple headers, banners, floating controls, and accent cards competing above the fold.
 
+For mobile, inspect the first viewport as a composition of its own. A large hero, repeated zero metrics, oversized empty-state artwork, and a detached floating action can each be reasonable in isolation but leave the product feeling sparse when combined.
+
 ## Choose a composition that fits the content
 
 ### Lists and feeds
@@ -35,6 +37,8 @@ Group related fields, put help near the decision it supports, and show validatio
 ### Onboarding and empty experiences
 
 Explain value or absence quickly, then offer one relevant next step. Illustration is optional; it should reinforce meaning rather than fill space.
+
+Do not let the empty state become the only visually reviewed fixture. A task-oriented product must also demonstrate how typical content scans, how metadata competes, and how the primary action relates to the list.
 
 ### Wide layouts
 
