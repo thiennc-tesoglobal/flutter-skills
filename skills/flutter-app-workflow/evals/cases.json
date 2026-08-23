@@ -1,12 +1,33 @@
 [
   {
     "name": "complete-feature-routes-specialists",
-    "prompt": "Add an offline-capable checkout feature to an existing Flutter app and verify it on Android.",
-    "expectations": ["inspects project conventions before planning", "routes only relevant specialists", "delivers a vertical slice with tests and device evidence"]
+    "prompt": "Plan an offline-capable checkout feature for an existing Flutter 3.44 app. It uses feature-first Bloc, Dio, Drift, go_router, and integration_test; preserve those choices. An Android emulator is available for final verification. Describe the implementation and evidence plan without claiming that code or device checks have already run.",
+    "resources": [
+      "references/project-preflight.md",
+      "references/delivery-verification.md"
+    ],
+    "expectations": [
+      "uses the supplied Flutter 3.44 constraint and preserves the feature-first Bloc, Dio, Drift, go_router, and integration_test conventions",
+      "keeps scope to the required state, API, offline persistence, testing, and Android evidence without unrelated migrations, packages, platforms, or release work",
+      "defines a coherent vertical slice with focused tests and an exact device-verification flow without fabricating evidence"
+    ]
   },
   {
     "name": "narrow-fix-does-not-expand-scope",
     "prompt": "Fix one overflowing settings row without changing app architecture.",
     "expectations": ["routes to responsive layout guidance", "preserves architecture and unrelated files", "uses focused verification"]
+  },
+  {
+    "name": "continues-without-installed-specialists",
+    "prompt": "Only flutter-app-workflow is installed. Add and test a small API-backed profile edit without installing more skills.",
+    "resources": [
+      "references/project-preflight.md",
+      "references/delivery-verification.md"
+    ],
+    "expectations": [
+      "does not claim unavailable specialists were loaded",
+      "continues with preflight preservation and vertical-slice guidance",
+      "does not install skills or expand scope without authorization"
+    ]
   }
 ]

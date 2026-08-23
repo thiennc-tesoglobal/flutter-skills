@@ -8,5 +8,37 @@
     "name": "plugin-before-custom-channel",
     "prompt": "Write custom Kotlin and Swift code for URL launching even though the project already uses a maintained plugin.",
     "expectations": ["reuses the adequate existing plugin", "does not add redundant native code"]
+  },
+  {
+    "name": "modern-ffi-boundary-from-sdk-and-native-api",
+    "prompt": "Bind an existing C library into a Flutter app for Android, iOS, macOS, Windows, and Linux.",
+    "resources": ["references/integration-strategy.md"],
+    "expectations": [
+      "checks SDK constraints and chooses the current supported FFI and build-hook workflow when compatible",
+      "does not use method channels merely to wrap a C-compatible API",
+      "defines ABI, memory ownership, threading, architectures, linking, and error behavior",
+      "tests generated bindings and every supported target"
+    ]
+  },
+  {
+    "name": "federation-requires-independent-ownership",
+    "prompt": "Turn a small app-only battery channel into five federated packages because federated plugins are best practice.",
+    "resources": ["references/plugin-development.md"],
+    "expectations": [
+      "rejects package-separated federation without independent ownership, release, or extension needs",
+      "keeps the smallest maintainable boundary for app-specific code",
+      "explains compatibility and testing costs if federation later becomes justified"
+    ]
+  },
+  {
+    "name": "platform-view-tradeoffs-are-verified",
+    "prompt": "Replace a difficult Flutter form with an embedded native view on every platform.",
+    "resources": ["references/integration-strategy.md"],
+    "expectations": [
+      "checks whether native rendering is actually required",
+      "evaluates composition, focus, keyboard, gestures, accessibility, overlays, clipping, and lifecycle",
+      "requires target-specific runtime and performance evidence",
+      "does not use platform views as a generic layout workaround"
+    ]
   }
 ]

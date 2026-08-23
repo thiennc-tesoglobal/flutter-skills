@@ -1,0 +1,51 @@
+[
+  {
+    "name": "review-reports-findings-without-editing",
+    "prompt": "Review this Flutter diff for bugs without changing files. Repository rule: report findings only.\n\n```diff\n--- a/lib/profile_screen.dart\n+++ b/lib/profile_screen.dart\n@@\n+Future<void> loadProfile() async {\n+  final profile = await repository.fetchProfile();\n+  setState(() => _profile = profile);\n+}\n```\n\nThe method belongs to a State object and can still be running when the route is popped.",
+    "resources": [
+      "references/review-workflow.md",
+      "references/flutter-review-checklist.md"
+    ],
+    "expectations": [
+      "uses the supplied diff and repository rule as the review scope",
+      "reports the reachable setState-after-dispose lifecycle defect with a tight file location and proportionate fix",
+      "does not edit files, post comments, or invent issues when no actionable defect exists"
+    ]
+  },
+  {
+    "name": "review-follows-async-data-flow",
+    "prompt": "Review a search-screen diff that adds debouncing and asynchronous HTTP results.",
+    "resources": [
+      "references/review-workflow.md",
+      "references/flutter-review-checklist.md"
+    ],
+    "expectations": [
+      "traces query identity, cancellation, stale-result ordering, error propagation, and disposal",
+      "checks whether tests cover out-of-order completion and teardown",
+      "does not recommend a state-management migration without a demonstrated defect"
+    ]
+  },
+  {
+    "name": "review-does-not-comment-on-unchanged-style",
+    "prompt": "Review this two-line checkout bug fix. The surrounding legacy file has old naming and is 900 lines long.",
+    "resources": ["references/review-workflow.md"],
+    "expectations": [
+      "focuses on changed behavior and follows surrounding code only for evidence",
+      "does not report unrelated naming, file length, or speculative refactors",
+      "checks regression coverage proportionate to the checkout risk"
+    ]
+  },
+  {
+    "name": "review-calibrates-security-severity",
+    "prompt": "Review a diff that adds a client-visible maps API key and an unrestricted WebView payment bridge.",
+    "resources": [
+      "references/review-workflow.md",
+      "references/flutter-review-checklist.md"
+    ],
+    "expectations": [
+      "classifies the API key from provider restrictions instead of assuming it is a secret",
+      "identifies the reachable untrusted WebView bridge path and its privileged impact",
+      "orders findings by realistic impact and preconditions rather than security keywords"
+    ]
+  }
+]

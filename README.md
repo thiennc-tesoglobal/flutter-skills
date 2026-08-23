@@ -1,6 +1,6 @@
 # Flutter Skills
 
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-18-2ea44f)](skills/)
+[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-21-2ea44f)](skills/)
 [![Flutter](https://img.shields.io/badge/Flutter-3.44-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.12-0175C2?logo=dart&logoColor=white)](https://dart.dev)
 [![Validation](https://github.com/thiennc-tesoglobal/flutter-skills/actions/workflows/validate-repository.yml/badge.svg)](https://github.com/thiennc-tesoglobal/flutter-skills/actions/workflows/validate-repository.yml)
@@ -34,6 +34,8 @@ Install the delivery workflow:
 npx skills add thiennc-tesoglobal/flutter-skills --skill flutter-app-workflow
 ```
 
+The workflow remains usable by itself. It delegates to specialist skills only when they are installed and discoverable.
+
 Install the complete collection only when broad coverage is required:
 
 ```sh
@@ -62,9 +64,9 @@ Focused bundles are also available:
 | Delivery | `flutter-app-workflow`, `flutter-build-release`, `flutter-device-testing` |
 | Dart | `dart-language`, `dart-concurrency` |
 | Structure | `flutter-architecture`, `flutter-state-management` |
-| UI | `flutter-ui-patterns`, `flutter-responsive-layout`, `flutter-animation`, `flutter-navigation` |
+| UI | `flutter-ui-design`, `flutter-ui-patterns`, `flutter-responsive-layout`, `flutter-animation`, `flutter-navigation` |
 | Data | `flutter-networking`, `flutter-persistence` |
-| Quality | `flutter-testing`, `flutter-performance`, `flutter-accessibility`, `flutter-localization` |
+| Quality | `flutter-code-review`, `flutter-security`, `flutter-testing`, `flutter-performance`, `flutter-accessibility`, `flutter-localization` |
 | Platform | `flutter-platform-integration` |
 
 Example:
@@ -82,11 +84,34 @@ Pull requests validate skill metadata, links, evaluations, Claude/Tessl bundles,
 
 ```sh
 python3 .github/scripts/validate_repository.py
+python3 .github/scripts/run_behavior_evals.py
 python3 -m unittest discover -s tests -v
 npx skills add . --list
 ```
 
-The initial release contains **18 skills** and **36 behavior-focused evaluation cases**.
+Run an intentional forward-eval sample with an installed agent CLI:
+
+```sh
+python3 .github/scripts/run_behavior_evals.py --execute --suite behavior --skill flutter-app-workflow --max-cases 1
+```
+
+Forward evals compare baseline and skill-injected answers, then grade observable expectations. Execution is opt-in because it calls an external model and can incur cost; use `--all-cases` only for a deliberate collection run.
+
+Behavior cases may declare only the linked references needed for that scenario. This keeps forward evaluation aligned with production progressive disclosure instead of injecting every supporting document.
+
+Validate Agent Skills specification conformance with the pinned official linter:
+
+```sh
+bash .github/scripts/run_dart_skills_lint.sh
+```
+
+Release validation additionally requires a dated changelog entry and rejects a version that remains marked `Unreleased`:
+
+```sh
+python3 .github/scripts/validate_repository.py --release
+```
+
+The collection contains **21 skills**, **59 behavior-focused evaluation cases**, and **17 cross-catalog routing cases**.
 
 ## Sources and contribution
 

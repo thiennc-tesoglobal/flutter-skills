@@ -52,6 +52,6 @@ Confirm exact membership across `skills/`, Claude bundles, and Tessl metadata. R
 
 ## Release gate
 
-A release is ready only when validation passes, clean discovery returns the expected catalog, changed behavior has evaluation coverage, versions align, and release notes describe user-visible changes.
+A release is ready only when validation passes, clean discovery returns the expected catalog, changed behavior has evaluation coverage, versions align, and release notes describe user-visible changes. Run `python3 .github/scripts/validate_repository.py --release` to require a dated version heading and reject an `Unreleased` marker before publication.
 
 Do not create a tag, GitHub Release, Tessl publication, or other registry release without user authorization.

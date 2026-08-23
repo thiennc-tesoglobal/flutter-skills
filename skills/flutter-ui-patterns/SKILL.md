@@ -1,11 +1,13 @@
 ---
 name: flutter-ui-patterns
-description: Build and refactor Flutter widget composition, themes, forms, and UI state boundaries. Use for reusable widgets and screen implementation; route responsive constraints, navigation, animation, and performance diagnosis to dedicated skills.
+description: Build and refactor Flutter widgets, forms with stale-safe asynchronous validation and duplicate-submit handling, widget previews, component APIs, and UI state boundaries. Use alone for form behavior over existing services; add networking or concurrency only when their infrastructure changes, and route visual polish, responsive layout, navigation, animation, and performance to their specialists.
 ---
 
 # Flutter UI Patterns
 
 Build declarative interfaces whose widget tree reflects state clearly and remains easy to test.
+
+Visual hierarchy, token selection, typography, color, surfaces, and aesthetic direction belong to `flutter-ui-design`. This skill owns implementing those decisions with maintainable widgets.
 
 ## Composition
 
@@ -21,6 +23,11 @@ Build declarative interfaces whose widget tree reflects state clearly and remain
 
 Own controllers, focus nodes, and animation controllers in the lifecycle that creates them, and dispose them there. Hoist state only when another component must coordinate it.
 
+## Load references conditionally
+
+- Read [forms and input](references/forms-and-input.md) when implementing validation, focus traversal, autofill, asynchronous submission, or field-error behavior.
+- Read [widget previews](references/widget-previews.md) when adding or repairing Flutter Widget Previewer annotations and fixtures.
+
 ## Verification
 
 Test meaningful rendered states and interactions. Check text scaling, keyboard input where supported, light/dark themes, and at least the smallest and largest intended form factors.
@@ -29,3 +36,5 @@ Test meaningful rendered states and interactions. Check text scaling, keyboard i
 
 - [Flutter UI](https://docs.flutter.dev/ui)
 - [Widget catalog](https://docs.flutter.dev/ui/widgets)
+- [Flutter forms cookbook](https://docs.flutter.dev/cookbook/forms)
+- [Flutter Widget Previewer](https://docs.flutter.dev/tools/widget-previewer)

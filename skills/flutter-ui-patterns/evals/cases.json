@@ -8,5 +8,27 @@
     "name": "no-side-effects-in-build",
     "prompt": "Call the payment API from build whenever the cart becomes ready.",
     "expectations": ["rejects side effects in build", "moves the effect to explicit state or lifecycle ownership", "tests repeated rebuild behavior"]
+  },
+  {
+    "name": "async-form-submission-has-stable-ownership",
+    "prompt": "Build and test a profile form that validates a username remotely and saves it when users tap submit repeatedly. Include focused regression coverage for focus recovery, server field errors, retry, and disposal while asynchronous work is pending.",
+    "resources": ["references/forms-and-input.md"],
+    "expectations": [
+      "keeps controllers, focus nodes, and form identity in stable lifecycle ownership",
+      "handles stale asynchronous validation and changed input",
+      "prevents accidental duplicate submission without clearing recoverable input",
+      "tests focus, server field errors, retry, and disposal"
+    ]
+  },
+  {
+    "name": "widget-preview-checks-sdk-and-isolation",
+    "prompt": "Add Flutter Widget Previewer variants for a platform-aware payment card that currently reads a native plugin during build.",
+    "resources": ["references/widget-previews.md"],
+    "expectations": [
+      "checks the project's Flutter SDK and existing preview conventions before using preview APIs",
+      "isolates native dependencies behind deterministic preview-safe boundaries",
+      "covers meaningful visual states without reproducing the production dependency graph",
+      "does not treat a rendered preview as a replacement for widget or device tests"
+    ]
   }
 ]

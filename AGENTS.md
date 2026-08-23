@@ -42,12 +42,16 @@ Run before committing:
 
 ```sh
 python3 .github/scripts/validate_repository.py
+python3 .github/scripts/run_behavior_evals.py
 python3 -m unittest discover -s tests -v
+bash .github/scripts/run_dart_skills_lint.sh
 claude plugin validate .
 npx skills add . --list
 ```
 
 For a full audit or release review, follow [the maintainer audit workflow](.github/maintainer/flutter-skill-audit.md).
+
+Before publishing, replace the version's `Unreleased` marker with an ISO date and run `python3 .github/scripts/validate_repository.py --release`.
 
 ## Safety and scope
 

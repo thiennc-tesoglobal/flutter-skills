@@ -1,6 +1,6 @@
 ---
 name: flutter-app-workflow
-description: Plan, build, refactor, and verify a complete Flutter app or substantial multi-file feature. Use when work spans project structure, UI, state, data, testing, and device delivery; use a specialist directly for narrow fixes.
+description: Coordinate end-to-end delivery of a complete Flutter app or feature across UI, state, data, tests, and runtime verification. Use for broad vertical-slice ownership; not for data-only sync/cache, one screen or form, or contained work that merely touches multiple files or two domains.
 ---
 
 # Flutter App Workflow
@@ -11,19 +11,26 @@ Deliver a runnable, maintainable result with evidence. Preserve the user's produ
 
 Read [project preflight](references/project-preflight.md) before planning. Establish the SDK constraints, enabled platforms, architecture, state management, navigation, data packages, code generation, flavors, tests, and available devices.
 
+When the request already supplies project facts, treat them as preflight evidence and carry material constraints such as the SDK and established packages into the plan. Do not ask for the same facts again; inspect the repository later only for details that were not supplied.
+
 Do not add a package merely because it is familiar. Reuse an existing solution when it is adequate and compatible.
 
 ## Route specialists
 
-Load only the skills required by the task:
+First identify which specialist skills are discoverable in the current environment. Load only the available skills required by the task:
 
 - Architecture or state boundaries: `flutter-architecture`, `flutter-state-management`
-- Widgets, layout, motion, or routing: the matching Flutter UI specialist
+- Visual direction or polish: `flutter-ui-design`
+- Widget composition, layout mechanics, motion, or routing: the matching Flutter UI specialist
 - APIs or storage: `flutter-networking`, `flutter-persistence`
 - Language or async behavior: `dart-language`, `dart-concurrency`
+- Security or privacy hardening: `flutter-security`
+- Explicit review or audit findings: `flutter-code-review`
 - Quality and delivery: testing, accessibility, performance, platform, release, or device specialists
 
-For a narrow request, hand ownership to the specialist instead of running the full workflow.
+If a named specialist is unavailable, continue with this workflow's preflight, preservation, vertical-slice, and verification rules. Do not claim that a missing skill was loaded, silently install it, or block straightforward work merely because the optional specialist is absent. Report the limitation only when its missing domain guidance prevents reliable delivery.
+
+Use this workflow only when the request needs end-to-end coordination across UI, state or business logic, data, tests, and runtime delivery. A task is still focused when it touches multiple files or two specialist domains, such as API plus persistence or an asynchronously validated form. Hand focused ownership to the matching specialists instead of running this workflow.
 
 ## Deliver in vertical slices
 
@@ -44,4 +51,5 @@ Do not claim completion while required build, analysis, test, or runtime evidenc
 
 - [Flutter app architecture](https://docs.flutter.dev/app-architecture)
 - [Flutter testing](https://docs.flutter.dev/testing)
+- [Dart and Flutter MCP server](https://docs.flutter.dev/ai/mcp-server)
 - [Supported platforms](https://docs.flutter.dev/reference/supported-platforms)
