@@ -1,0 +1,20 @@
+[
+  {
+    "name": "recurring-reminders-across-time-zones",
+    "prompt": "Implement recurring local medication reminders that survive edits, restart, DST, and a time-zone change. The app already has a database and flutter_local_notifications.",
+    "expectations": ["preserves the existing database and notification package", "keeps durable reminder state separate from the OS schedule and reconciles idempotently", "defines wall-clock recurrence and DST or time-zone behavior", "requires device evidence for OS delivery rather than relying only on widget tests"],
+    "resources": ["references/local-notifications.md", "references/platform-delivery.md"]
+  },
+  {
+    "name": "push-lifecycle-and-safe-routing",
+    "prompt": "Finish our FCM flow for token rotation, foreground and background messages, terminated-state taps, and opening an order detail screen.",
+    "expectations": ["covers token refresh and account or environment association", "handles foreground background and terminated paths without duplicate presentation or processing", "validates a versioned payload into a typed navigation intent", "keeps sensitive data out of payloads and logs and tests malformed or duplicate messages"],
+    "resources": ["references/remote-push-notifications.md", "references/platform-delivery.md"]
+  },
+  {
+    "name": "preserve-existing-push-provider",
+    "prompt": "Our Flutter app already uses OneSignal. Add notification categories and reliable tap handling; use the best package.",
+    "expectations": ["inspects and preserves the established OneSignal integration unless a concrete gap requires change", "does not introduce Firebase or replace packages by default", "defines stable category action and payload identifiers", "verifies platform lifecycle and permission behavior"],
+    "resources": ["references/remote-push-notifications.md", "references/platform-delivery.md"]
+  }
+]

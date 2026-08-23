@@ -1,6 +1,6 @@
 ---
 name: flutter-platform-integration
-description: Implement or review Flutter platform channels, Pigeon APIs, FFI and build hooks, plugins, platform views, add-to-app boundaries, web interop, and native lifecycle integration. Use when Dart must communicate with Android, iOS, macOS, Windows, Linux, web, or native libraries.
+description: Implement or review Flutter platform channels, Pigeon APIs, FFI and build hooks, plugins, platform views, add-to-app boundaries, web interop, and native lifecycle integration. Use when Dart must communicate with native platforms; route ordinary notification delivery to flutter-notifications unless it needs a custom native bridge.
 ---
 
 # Flutter Platform Integration

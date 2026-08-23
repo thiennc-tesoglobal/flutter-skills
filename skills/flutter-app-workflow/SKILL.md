@@ -21,12 +21,15 @@ First identify which specialist skills are discoverable in the current environme
 
 - Architecture or state boundaries: `flutter-architecture`, `flutter-state-management`
 - Visual direction or polish: `flutter-ui-design`
+- Advanced glass, blur, refraction, shaders, or custom optical rendering: `flutter-visual-effects`
 - Widget composition, layout mechanics, motion, or routing: the matching Flutter UI specialist
 - APIs or storage: `flutter-networking`, `flutter-persistence`
+- Local or remote notification delivery: `flutter-notifications`
+- Production diagnostics, crash context, logs, or traces: `flutter-observability`
 - Language or async behavior: `dart-language`, `dart-concurrency`
 - Security or privacy hardening: `flutter-security`
 - Explicit review or audit findings: `flutter-code-review`
-- Quality and delivery: testing, accessibility, performance, platform, release, or device specialists
+- Quality and delivery: testing, accessibility, performance, platform, CI/CD, release, or device specialists
 
 If a named specialist is unavailable, continue with this workflow's preflight, preservation, vertical-slice, and verification rules. Do not claim that a missing skill was loaded, silently install it, or block straightforward work merely because the optional specialist is absent. Report the limitation only when its missing domain guidance prevents reliable delivery.
 

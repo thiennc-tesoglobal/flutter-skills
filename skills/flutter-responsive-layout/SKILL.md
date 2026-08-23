@@ -1,6 +1,6 @@
 ---
 name: flutter-responsive-layout
-description: Build or repair adaptive Flutter layouts across phones, tablets, foldables, desktop, and web. Use for constraints, breakpoints, overflow, orientation, and input-mode adaptation; not for general widget state architecture.
+description: Build or repair adaptive Flutter layouts across devices, constraints, breakpoints, overflow, orientation, and input modes. Use with flutter-accessibility when text scaling causes reflow, clipping, or disappearing controls; not for general widget state architecture.
 ---
 
 # Flutter Responsive Layout

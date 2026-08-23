@@ -12,11 +12,14 @@
     "skills/flutter-app-workflow",
     "skills/flutter-architecture",
     "skills/flutter-build-release",
+    "skills/flutter-ci-cd",
     "skills/flutter-code-review",
     "skills/flutter-device-testing",
     "skills/flutter-localization",
     "skills/flutter-navigation",
     "skills/flutter-networking",
+    "skills/flutter-notifications",
+    "skills/flutter-observability",
     "skills/flutter-performance",
     "skills/flutter-persistence",
     "skills/flutter-platform-integration",
@@ -25,6 +28,7 @@
     "skills/flutter-state-management",
     "skills/flutter-testing",
     "skills/flutter-ui-design",
-    "skills/flutter-ui-patterns"
+    "skills/flutter-ui-patterns",
+    "skills/flutter-visual-effects"
   ]
 }
