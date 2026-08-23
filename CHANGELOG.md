@@ -5,6 +5,7 @@
 - Add a 21-skill Flutter and Dart delivery collection.
 - Add `flutter-app-workflow` for end-to-end project coordination.
 - Add `flutter-ui-design` for platform-aware visual direction, complete UI states, and repeatable visual verification.
+- Upgrade `flutter-ui-design` with ambition calibration, reference parity, default-widget residue review, deterministic populated fixtures, and a render-critique-render completion gate.
 - Add `flutter-security` for threat-driven application hardening and scoped security review.
 - Add `flutter-code-review` for evidence-backed Flutter and Dart diff review without implicit edits.
 - Add conditional caching, offline-sync, forms, Widget Previewer, FFI, and plugin-development references to existing specialists.

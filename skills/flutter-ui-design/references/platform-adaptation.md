@@ -22,6 +22,10 @@ Extract:
 
 Then remap platform-specific choices. Do not copy San Francisco typography, iOS-only navigation chrome, translucent materials, gesture assumptions, or Apple iconography literally onto Android, web, or desktop unless the product explicitly requires a cross-platform imitation and accepts the tradeoffs.
 
+Match the reference's level of visual ambition, not just its information architecture. If translucency, atmospheric color, depth, motion, or an integrated action surface materially creates the product identity, reproduce that intent with maintainable Flutter primitives before deciding it is platform-only. A generic Material reconstruction is not successful adaptation when the supplied reference is recognizably expressive.
+
+Compare equivalent states. A populated native reference and an empty Flutter screen do not establish visual parity; use deterministic fixture data or capture both empty states separately.
+
 ## Touch, pointer, and keyboard
 
 Touch interfaces need forgiving targets and gesture alternatives. Pointer interfaces need hover, precise selection, scroll behavior, and appropriate cursors. Keyboard-capable platforms need visible focus order, shortcuts where valuable, and no mouse-only path.
