@@ -136,5 +136,26 @@
     "required": ["flutter-visual-effects"],
     "optional": ["flutter-accessibility", "flutter-animation", "flutter-performance", "flutter-responsive-layout", "flutter-testing", "flutter-ui-design"],
     "forbidden": ["flutter-platform-integration"]
+  },
+  {
+    "name": "notification-delivery-lifecycle",
+    "prompt": "Implement recurring local reminders plus remote push handling across permission, token refresh, foreground, background, terminated taps, duplicate payloads, and time-zone changes while preserving our existing packages.",
+    "required": ["flutter-notifications"],
+    "optional": ["dart-concurrency", "flutter-device-testing", "flutter-navigation", "flutter-networking", "flutter-persistence", "flutter-security", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-platform-integration"]
+  },
+  {
+    "name": "flutter-production-observability",
+    "prompt": "Instrument our existing Flutter production stack with privacy-safe structured logs, framework and isolate error capture, traces, release context, symbols, and end-to-end ingestion verification.",
+    "required": ["flutter-observability"],
+    "optional": ["flutter-build-release", "flutter-networking", "flutter-performance", "flutter-security", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-code-review"]
+  },
+  {
+    "name": "flutter-ci-quality-gates",
+    "prompt": "Harden our existing GitLab CI pipeline with deterministic Flutter format, analyze, generation, tests, cache, signed staging artifacts, protected secrets, and no publication yet.",
+    "required": ["flutter-ci-cd"],
+    "optional": ["flutter-build-release", "flutter-security", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-device-testing"]
   }
 ]

@@ -1,6 +1,6 @@
 ---
 name: flutter-performance
-description: Profile and improve Flutter runtime performance using profile-mode evidence, DevTools, frame analysis, rebuild inspection, memory, and app-size tools. Use for jank, slow startup, excessive work, leaks, or size regressions; not for speculative micro-optimization.
+description: Profile and improve Flutter runtime performance using profile-mode evidence, DevTools, frame analysis, rebuild inspection, memory, and app-size tools. Use for jank, slow startup, excessive work, leaks, or size regressions; route production logs, errors, and traces to flutter-observability.
 ---
 
 # Flutter Performance

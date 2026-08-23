@@ -1,6 +1,6 @@
 ---
 name: flutter-build-release
-description: Configure and verify Flutter flavors, environments, signing, versioning, release artifacts, obfuscation symbols, and store-ready builds. Use for Android, iOS, web, or desktop delivery; do not publish or change live credentials without explicit authorization.
+description: Configure and verify Flutter flavors, environments, signing, versioning, release artifacts, obfuscation symbols, and store-ready builds. Use for local artifact configuration; route CI provider workflows to flutter-ci-cd, and do not publish or change live credentials without explicit authorization.
 ---
 
 # Flutter Build and Release

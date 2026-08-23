@@ -1,6 +1,6 @@
 ---
 name: flutter-navigation
-description: Implement or review Flutter routing, deep links, nested navigation, restoration, redirects, and URL synchronization. Use for Navigator, Router, or an existing routing package; do not introduce a package when simple Navigator behavior is sufficient.
+description: Implement, review, or verify Flutter routing, deep-link destinations, back-stack behavior, nested navigation, restoration, redirects, and URL synchronization. Use for route correctness; pair with flutter-device-testing on a concrete runtime, and do not introduce a routing package by default.
 ---
 
 # Flutter Navigation

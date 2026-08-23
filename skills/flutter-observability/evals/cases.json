@@ -1,0 +1,20 @@
+[
+  {
+    "name": "extend-existing-crash-reporting",
+    "prompt": "Our Flutter app already uses Sentry. Capture framework, async, and isolate failures with release context, but avoid duplicate events.",
+    "expectations": ["preserves the existing Sentry stack and initialization", "maps Flutter framework root-isolate and child-isolate coverage without claiming one handler catches all errors", "retains useful console behavior where appropriate and prevents duplicate reporting", "verifies ingestion stack quality release and environment in a non-production backend"],
+    "resources": ["references/error-and-crash-capture.md", "references/vendor-and-verification.md"]
+  },
+  {
+    "name": "trace-checkout-without-pii",
+    "prompt": "Add production observability to an asynchronous checkout flow so we can diagnose latency and failures without collecting customer or payment data.",
+    "expectations": ["defines bounded operational logs errors breadcrumbs and meaningful traces", "propagates safe correlation across owned layers without coupling domain models to a vendor", "redacts by default and addresses consent sampling retention and offline buffering", "distinguishes operational telemetry from product analytics and performance optimization"],
+    "resources": ["references/logging-tracing-privacy.md"]
+  },
+  {
+    "name": "incident-missing-release-context",
+    "prompt": "Production crashes are visible in our dashboard but cannot be tied to an app version and their stacks are unreadable. Diagnose and fix the observability gap.",
+    "expectations": ["inspects the existing vendor build and release pipeline before proposing replacement", "aligns release build environment and symbol upload identity", "coordinates symbol retention with build release behavior", "does not claim success until a controlled event has a readable stack or clearly states the blocked backend evidence"],
+    "resources": ["references/vendor-and-verification.md", "references/error-and-crash-capture.md"]
+  }
+]

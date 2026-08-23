@@ -1,6 +1,6 @@
 ---
 name: flutter-accessibility
-description: Build or audit Flutter accessibility for semantics, screen readers, focus, keyboard access, text scaling, contrast, target size, and motion preferences. Use when accessibility behavior or compliance evidence is in scope.
+description: Build or audit Flutter accessibility for semantics, screen readers, focus, keyboard access, text scaling, contrast, target size, and motion preferences. Pair with flutter-responsive-layout when large text causes reflow, clipping, or overflow across constraints.
 ---
 
 # Flutter Accessibility

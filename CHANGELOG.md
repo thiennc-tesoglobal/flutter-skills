@@ -2,7 +2,7 @@
 
 ## 0.1.0 - Unreleased
 
-- Add a 21-skill Flutter and Dart delivery collection.
+- Add a 25-skill Flutter and Dart delivery collection.
 - Add `flutter-app-workflow` for end-to-end project coordination.
 - Add `flutter-ui-design` for platform-aware visual direction, complete UI states, and repeatable visual verification.
 - Upgrade `flutter-ui-design` with ambition calibration, reference parity, default-widget residue review, deterministic populated fixtures, and a render-critique-render completion gate.
@@ -10,6 +10,9 @@
 - Refine `flutter-visual-effects` with evidence-first selection across existing solutions, Flutter core, maintained packages, custom shaders, and native rendering.
 - Add `flutter-security` for threat-driven application hardening and scoped security review.
 - Add `flutter-code-review` for evidence-backed Flutter and Dart diff review without implicit edits.
+- Add `flutter-notifications` for package-neutral local scheduling and remote push lifecycles with platform delivery verification.
+- Add `flutter-observability` for privacy-aware logs, errors, traces, release correlation, symbols, and end-to-end telemetry verification.
+- Add `flutter-ci-cd` for provider-neutral quality gates, secure artifact pipelines, and explicit publication boundaries.
 - Add conditional caching, offline-sync, forms, Widget Previewer, FFI, and plugin-development references to existing specialists.
 - Add package-neutral routing for architecture and state management.
 - Add behavior evaluations, repository validation, tests, and clean discovery checks.

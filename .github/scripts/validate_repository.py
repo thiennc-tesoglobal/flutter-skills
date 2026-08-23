@@ -18,9 +18,9 @@ LINK_PATTERN = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 MAX_DESCRIPTION = 500
 MAX_COMBINED_DESCRIPTION = 12_000
 EXPECTED_VERSION = "0.1.0"
-EXPECTED_SKILL_COUNT = 22
-EXPECTED_EVAL_COUNT = 64
-EXPECTED_ROUTING_EVAL_COUNT = 18
+EXPECTED_SKILL_COUNT = 25
+EXPECTED_EVAL_COUNT = 73
+EXPECTED_ROUTING_EVAL_COUNT = 21
 EXPECTED_BUNDLES = {
     "all-flutter-skills": {
         "dart-concurrency",
@@ -30,11 +30,14 @@ EXPECTED_BUNDLES = {
         "flutter-app-workflow",
         "flutter-architecture",
         "flutter-build-release",
+        "flutter-ci-cd",
         "flutter-code-review",
         "flutter-device-testing",
         "flutter-localization",
         "flutter-navigation",
         "flutter-networking",
+        "flutter-notifications",
+        "flutter-observability",
         "flutter-performance",
         "flutter-persistence",
         "flutter-platform-integration",
@@ -68,8 +71,11 @@ EXPECTED_BUNDLES = {
     "flutter-engineering-skills": {
         "flutter-app-workflow",
         "flutter-build-release",
+        "flutter-ci-cd",
         "flutter-code-review",
         "flutter-device-testing",
+        "flutter-notifications",
+        "flutter-observability",
         "flutter-performance",
         "flutter-platform-integration",
         "flutter-security",
