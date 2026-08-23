@@ -3,6 +3,7 @@
 .packages
 build/
 coverage/
+.eval-results/
 *.iml
 .idea/
 .vscode/

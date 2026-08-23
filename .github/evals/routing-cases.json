@@ -1,0 +1,133 @@
+[
+  {
+    "name": "large-text-overflow",
+    "prompt": "At 200% text scale, the checkout button disappears on a narrow phone. Fix it and verify the flow remains accessible.",
+    "required": ["flutter-accessibility", "flutter-responsive-layout"],
+    "optional": ["flutter-testing"],
+    "forbidden": ["flutter-architecture", "flutter-app-workflow", "flutter-ui-design"]
+  },
+  {
+    "name": "flaky-widget-test",
+    "prompt": "A widget test hangs because an animation never settles. Remove the flakiness without launching an emulator.",
+    "required": ["flutter-testing"],
+    "optional": ["flutter-animation"],
+    "forbidden": ["flutter-device-testing"]
+  },
+  {
+    "name": "android-deep-link-runtime",
+    "prompt": "Confirm on an Android emulator that a protected product deep link opens the correct screen and preserves back behavior.",
+    "required": ["flutter-device-testing", "flutter-navigation"],
+    "optional": ["flutter-testing"],
+    "forbidden": []
+  },
+  {
+    "name": "ephemeral-toggle",
+    "prompt": "An app already uses Riverpod. Move a password visibility toggle to the right owner without changing the overall architecture.",
+    "required": ["flutter-state-management"],
+    "optional": ["flutter-ui-patterns"],
+    "forbidden": ["flutter-architecture", "flutter-app-workflow", "flutter-ui-design"]
+  },
+  {
+    "name": "visual-polish-dashboard",
+    "prompt": "Redesign this bland Flutter analytics dashboard with clear hierarchy, coherent typography, color and surfaces, plus professional loading, empty, and error states while preserving its state management.",
+    "required": ["flutter-ui-design"],
+    "optional": ["flutter-accessibility", "flutter-responsive-layout", "flutter-testing", "flutter-ui-patterns"],
+    "forbidden": ["flutter-architecture", "flutter-app-workflow"]
+  },
+  {
+    "name": "offline-api-cache",
+    "prompt": "Add offline task browsing backed by a paginated API and a local database, preserving the existing HTTP and database packages.",
+    "required": ["flutter-networking", "flutter-persistence"],
+    "optional": ["dart-concurrency", "flutter-state-management", "flutter-testing"],
+    "forbidden": []
+  },
+  {
+    "name": "signed-bundle-no-upload",
+    "prompt": "Produce and smoke-test a signed staging Android App Bundle, but do not upload or publish it.",
+    "required": ["flutter-build-release"],
+    "optional": ["flutter-device-testing"],
+    "forbidden": ["flutter-app-workflow"]
+  },
+  {
+    "name": "stale-search-result",
+    "prompt": "Search results sometimes show an older HTTP response after the newest query finishes. Fix the ordering bug.",
+    "required": ["dart-concurrency"],
+    "optional": ["flutter-networking", "flutter-testing"],
+    "forbidden": ["flutter-performance"]
+  },
+  {
+    "name": "cohesive-screen-refactor",
+    "prompt": "Split a 500-line checkout screen into maintainable widgets without changing state management or app architecture.",
+    "required": ["flutter-ui-patterns"],
+    "optional": ["flutter-testing"],
+    "forbidden": ["flutter-architecture", "flutter-app-workflow", "flutter-ui-design"]
+  },
+  {
+    "name": "complete-feature-delivery",
+    "prompt": "Build an offline-capable checkout feature across UI, state, API, persistence, tests, and Android device verification.",
+    "required": ["flutter-app-workflow"],
+    "optional": [
+      "dart-concurrency",
+      "flutter-accessibility",
+      "flutter-architecture",
+      "flutter-device-testing",
+      "flutter-networking",
+      "flutter-persistence",
+      "flutter-security",
+      "flutter-state-management",
+      "flutter-testing",
+      "flutter-ui-design",
+      "flutter-ui-patterns"
+    ],
+    "forbidden": []
+  },
+  {
+    "name": "localized-rtl-layout",
+    "prompt": "Localize a price summary for Arabic and fix its RTL overflow with large text.",
+    "required": ["flutter-localization", "flutter-responsive-layout"],
+    "optional": ["flutter-accessibility", "flutter-testing"],
+    "forbidden": ["flutter-architecture"]
+  },
+  {
+    "name": "hardcoded-production-secret",
+    "prompt": "Audit and fix a production service credential hardcoded in lib/api_config.dart; no native code is involved, and do not rotate or revoke anything yet.",
+    "required": ["flutter-security"],
+    "optional": ["flutter-build-release", "flutter-networking", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-platform-integration"]
+  },
+  {
+    "name": "review-working-tree-without-fixes",
+    "prompt": "Review the current Flutter working-tree diff for actionable bugs and risks, but do not edit files.",
+    "required": ["flutter-code-review"],
+    "optional": ["flutter-architecture", "flutter-performance", "flutter-security", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow"]
+  },
+  {
+    "name": "isolated-widget-previews",
+    "prompt": "Add deterministic Widget Previewer variants for our payment card in loading, error, light, dark, and large-text states.",
+    "required": ["flutter-ui-patterns"],
+    "optional": ["flutter-accessibility", "flutter-testing", "flutter-ui-design"],
+    "forbidden": ["flutter-app-workflow", "flutter-device-testing"]
+  },
+  {
+    "name": "cross-platform-c-library",
+    "prompt": "Expose an existing C image-processing library to Flutter on Android, iOS, macOS, Windows, and Linux using the current supported native binding workflow.",
+    "required": ["flutter-platform-integration"],
+    "optional": ["flutter-build-release", "flutter-performance", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-architecture"]
+  },
+  {
+    "name": "offline-mutation-conflicts",
+    "prompt": "Implement queued offline task edits and deletions with retries, conflict handling, and safe reconciliation after reconnect.",
+    "required": ["flutter-networking", "flutter-persistence"],
+    "optional": ["dart-concurrency", "flutter-security", "flutter-state-management", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow"]
+  },
+  {
+    "name": "validated-profile-form",
+    "prompt": "Build a profile form over our existing profile service with focus traversal, local and remote validation, duplicate-submit protection, and recoverable server errors. Do not change the HTTP client or redesign the screen.",
+    "required": ["flutter-ui-patterns"],
+    "optional": ["flutter-accessibility", "flutter-state-management", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-ui-design"]
+  }
+]

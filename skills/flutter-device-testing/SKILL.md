@@ -1,6 +1,6 @@
 ---
 name: flutter-device-testing
-description: Run and verify Flutter apps on emulators, simulators, browsers, desktop, or physical devices. Use for device discovery, launch, logs, screenshots, permissions, deep links, integration tests, and repeatable runtime evidence.
+description: Operate and verify Flutter apps on a concrete emulator, simulator, browser, desktop, or physical device. Use when runtime target control, launch, logs, screenshots, permissions, deep links, or on-device integration tests are explicitly needed; not for generic verification covered by focused tests.
 ---
 
 # Flutter Device Testing
@@ -20,7 +20,7 @@ Run `flutter devices` and inspect the project's supported platforms. Select targ
 5. Save focused screenshots or test output when visual/runtime evidence matters.
 6. Run integration tests on the chosen target when durable automation is required.
 
-Use `flutter run`, `flutter logs`, `flutter drive` or `flutter test integration_test`, and native tools such as `adb` or `simctl` only where they add necessary platform control.
+Use running-app inspection from the Dart and Flutter MCP server when it is available and useful. Otherwise use `flutter run`, `flutter logs`, `flutter drive` or `flutter test integration_test`, and native tools such as `adb` or `simctl` only where they add necessary platform control.
 
 ## Reliability
 
@@ -30,3 +30,4 @@ Do not assume a successful compilation proves correct runtime behavior. Avoid ha
 
 - [Flutter CLI](https://docs.flutter.dev/reference/flutter-cli)
 - [Integration testing](https://docs.flutter.dev/cookbook/testing/integration/introduction)
+- [Dart and Flutter MCP server](https://docs.flutter.dev/ai/mcp-server)

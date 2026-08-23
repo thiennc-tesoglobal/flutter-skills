@@ -20,6 +20,12 @@ jobs:
       - name: Validate skills, evaluations, links, and bundles
         run: python3 .github/scripts/validate_repository.py
 
+      - name: Validate forward-evaluation inputs
+        run: python3 .github/scripts/run_behavior_evals.py
+
+      - name: Lint Agent Skills specification conformance
+        run: bash .github/scripts/run_dart_skills_lint.sh
+
       - name: Run repository tests
         run: python3 -m unittest discover -s tests -v
 

@@ -27,9 +27,10 @@ Do not replace behavior assertions with implementation details such as private m
 
 ## Verification
 
-Run the narrow test during iteration, then the relevant suite. Report skipped platforms, flaky behavior, or environment dependencies instead of treating them as success.
+Use the Dart and Flutter MCP test capability when available or the repository's established test command otherwise. Run the narrow test during iteration, then the relevant suite. Report skipped platforms, flaky behavior, or environment dependencies instead of treating them as success.
 
 ## Sources
 
 - [Flutter testing](https://docs.flutter.dev/testing)
 - [Integration testing](https://docs.flutter.dev/cookbook/testing/integration/introduction)
+- [Dart and Flutter MCP server](https://docs.flutter.dev/ai/mcp-server)

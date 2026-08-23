@@ -1,6 +1,6 @@
 ---
 name: dart-concurrency
-description: Design and debug Dart asynchronous behavior with Future, Stream, isolates, cancellation, and lifecycle-safe ownership. Use for races, stale results, background CPU work, stream leaks, or async error handling; not for routine synchronous state updates.
+description: Design and debug Dart asynchronous infrastructure with Future, Stream, isolates, cancellation, and lifecycle-safe ownership. Use for races, stale results, background CPU work, stream leaks, or async error handling; not for routine form-local validation or submission unless its underlying ordering mechanism is the task.
 ---
 
 # Dart Concurrency

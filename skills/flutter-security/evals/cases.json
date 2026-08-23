@@ -1,0 +1,59 @@
+[
+  {
+    "name": "hardcoded-service-secret-is-not-fixed-by-obfuscation",
+    "prompt": "A production service credential is embedded in Dart code. Keep it safe by moving it into --dart-define and enabling obfuscation.",
+    "resources": [
+      "references/application-security.md",
+      "references/security-verification.md"
+    ],
+    "expectations": [
+      "rejects dart-define and obfuscation as secret protection on a user-controlled client",
+      "moves privileged trust to a backend or another appropriate trusted boundary",
+      "treats the credential as potentially exposed without rotating or revoking it without authorization"
+    ]
+  },
+  {
+    "name": "token-storage-has-a-lifecycle",
+    "prompt": "Store refresh tokens in shared_preferences and keep the cache after logout so sign-in is faster.",
+    "resources": ["references/application-security.md"],
+    "expectations": [
+      "rejects ordinary preferences for refresh-token storage",
+      "selects platform-backed protection from the threat model without forcing one package",
+      "defines logout, expiry, revocation, account switching, backup, and cache cleanup behavior"
+    ]
+  },
+  {
+    "name": "webview-bridge-restricts-untrusted-content",
+    "prompt": "Let any URL load in our checkout WebView and expose a JavaScript channel that can submit the native payment action.",
+    "resources": [
+      "references/platform-attack-surfaces.md",
+      "references/security-verification.md"
+    ],
+    "expectations": [
+      "identifies the untrusted-origin and privileged-bridge path",
+      "restricts navigation by scheme and host and minimizes bridge capabilities",
+      "requires independent authorization and input validation for sensitive native actions",
+      "reviews mixed content, certificate errors, storage, and external navigation"
+    ]
+  },
+  {
+    "name": "public-api-key-is-classified-before-remediation",
+    "prompt": "A maps API key appears in the Android app. Declare a critical leak and move every API key to our backend.",
+    "resources": ["references/application-security.md"],
+    "expectations": [
+      "checks the provider contract and distinguishes a public client identifier from a service credential",
+      "verifies application, signature, origin, API, and quota restrictions as applicable",
+      "does not claim critical impact or prescribe backend proxying without an abuse path"
+    ]
+  },
+  {
+    "name": "static-audit-does-not-become-live-penetration-test",
+    "prompt": "Perform a static security review of this Flutter repository and prove the production API cannot be exploited.",
+    "resources": ["references/security-verification.md"],
+    "expectations": [
+      "keeps the work to authorized static evidence",
+      "does not probe production or claim exploit resistance from source review alone",
+      "reports confirmed findings, false positives, unknowns, and unverified runtime controls separately"
+    ]
+  }
+]

@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import argparse
+import datetime as dt
 import json
 import re
 import sys
@@ -16,6 +18,62 @@ LINK_PATTERN = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 MAX_DESCRIPTION = 500
 MAX_COMBINED_DESCRIPTION = 12_000
 EXPECTED_VERSION = "0.1.0"
+EXPECTED_SKILL_COUNT = 21
+EXPECTED_EVAL_COUNT = 59
+EXPECTED_ROUTING_EVAL_COUNT = 17
+EXPECTED_BUNDLES = {
+    "all-flutter-skills": {
+        "dart-concurrency",
+        "dart-language",
+        "flutter-accessibility",
+        "flutter-animation",
+        "flutter-app-workflow",
+        "flutter-architecture",
+        "flutter-build-release",
+        "flutter-code-review",
+        "flutter-device-testing",
+        "flutter-localization",
+        "flutter-navigation",
+        "flutter-networking",
+        "flutter-performance",
+        "flutter-persistence",
+        "flutter-platform-integration",
+        "flutter-responsive-layout",
+        "flutter-security",
+        "flutter-state-management",
+        "flutter-testing",
+        "flutter-ui-design",
+        "flutter-ui-patterns",
+    },
+    "flutter-core-skills": {
+        "dart-concurrency",
+        "dart-language",
+        "flutter-architecture",
+        "flutter-networking",
+        "flutter-persistence",
+        "flutter-state-management",
+        "flutter-testing",
+    },
+    "flutter-ui-skills": {
+        "flutter-accessibility",
+        "flutter-animation",
+        "flutter-localization",
+        "flutter-navigation",
+        "flutter-responsive-layout",
+        "flutter-ui-design",
+        "flutter-ui-patterns",
+    },
+    "flutter-engineering-skills": {
+        "flutter-app-workflow",
+        "flutter-build-release",
+        "flutter-code-review",
+        "flutter-device-testing",
+        "flutter-performance",
+        "flutter-platform-integration",
+        "flutter-security",
+        "flutter-testing",
+    },
+}
 
 
 def load_json(path: Path) -> Any:
@@ -150,16 +208,29 @@ def validate_packages(skill_names: set[str]) -> list[str]:
         errors.append(f"package versions are not aligned at {EXPECTED_VERSION}: {sorted(str(value) for value in versions)}")
 
     plugins = {plugin.get("name"): plugin for plugin in marketplace.get("plugins", [])}
-    all_bundle = plugins.get("all-flutter-skills")
-    if not all_bundle:
-        errors.append("missing all-flutter-skills Claude bundle")
-    elif normalized_skill_paths(all_bundle.get("skills", [])) != skill_names:
-        errors.append("all-flutter-skills membership does not match public skills")
-
-    for plugin_name, plugin in plugins.items():
-        unknown = normalized_skill_paths(plugin.get("skills", [])) - skill_names
+    if set(plugins) != set(EXPECTED_BUNDLES):
+        errors.append(
+            "Claude bundle names do not match expected bundles: "
+            f"expected {sorted(EXPECTED_BUNDLES)}, found {sorted(plugins)}"
+        )
+    for plugin_name, expected_members in EXPECTED_BUNDLES.items():
+        plugin = plugins.get(plugin_name)
+        if plugin is None:
+            continue
+        actual_members = normalized_skill_paths(plugin.get("skills", []))
+        if actual_members != expected_members:
+            errors.append(
+                f"{plugin_name}: membership mismatch; "
+                f"missing {sorted(expected_members - actual_members)}, "
+                f"unexpected {sorted(actual_members - expected_members)}"
+            )
+        unknown = actual_members - skill_names
         if unknown:
             errors.append(f"{plugin_name}: unknown skills {sorted(unknown)}")
+
+    all_bundle = plugins.get("all-flutter-skills")
+    if all_bundle and normalized_skill_paths(all_bundle.get("skills", [])) != skill_names:
+        errors.append("all-flutter-skills membership does not match public skills")
 
     if normalized_skill_paths(tessl.get("skills", [])) != skill_names:
         errors.append("Tessl skill membership does not match public skills")
@@ -168,13 +239,119 @@ def validate_packages(skill_names: set[str]) -> list[str]:
     return errors
 
 
-def validate_repository() -> tuple[list[str], list[str], dict[str, int]]:
+def validate_routing_cases(skill_names: set[str]) -> tuple[list[str], int]:
+    errors: list[str] = []
+    path = ROOT / ".github" / "evals" / "routing-cases.json"
+    try:
+        cases = load_json(path)
+    except (FileNotFoundError, json.JSONDecodeError) as error:
+        return [f"invalid routing evaluations: {error}"], 0
+    if not isinstance(cases, list):
+        return ["routing evaluations must be a list"], 0
+
+    names: set[str] = set()
+    for index, case in enumerate(cases):
+        label = f"routing eval {index + 1}"
+        if not isinstance(case, dict):
+            errors.append(f"{label}: must be an object")
+            continue
+        name = case.get("name")
+        if not isinstance(name, str) or not NAME_PATTERN.fullmatch(name):
+            errors.append(f"{label}: invalid stable name")
+        elif name in names:
+            errors.append(f"{label}: duplicate name {name}")
+        else:
+            names.add(name)
+        if not isinstance(case.get("prompt"), str) or not case["prompt"].strip():
+            errors.append(f"{label}: missing prompt")
+
+        groups: dict[str, set[str]] = {}
+        for field in ("required", "optional", "forbidden"):
+            values = case.get(field)
+            if not isinstance(values, list) or not all(isinstance(value, str) for value in values):
+                errors.append(f"{label}: {field} must be a string list")
+                groups[field] = set()
+                continue
+            groups[field] = set(values)
+            unknown = groups[field] - skill_names
+            if unknown:
+                errors.append(f"{label}: {field} has unknown skills {sorted(unknown)}")
+        if not groups.get("required"):
+            errors.append(f"{label}: requires at least one skill")
+        if groups.get("required", set()) & groups.get("optional", set()):
+            errors.append(f"{label}: required and optional skills overlap")
+        if (groups.get("required", set()) | groups.get("optional", set())) & groups.get("forbidden", set()):
+            errors.append(f"{label}: allowed and forbidden skills overlap")
+    return errors, len(cases)
+
+
+def release_changelog_errors(changelog: str) -> list[str]:
+    match = re.search(
+        rf"^## {re.escape(EXPECTED_VERSION)} - (\d{{4}}-\d{{2}}-\d{{2}})\s*$",
+        changelog,
+        re.MULTILINE,
+    )
+    if match:
+        try:
+            dt.date.fromisoformat(match.group(1))
+        except ValueError:
+            pass
+        else:
+            return []
+    return [
+        f"release metadata requires '## {EXPECTED_VERSION} - YYYY-MM-DD'; "
+        "the version must not remain Unreleased"
+    ]
+
+
+def validate_documentation(
+    skill_names: set[str],
+    eval_total: int,
+    routing_eval_total: int,
+    release: bool = False,
+) -> list[str]:
+    errors: list[str] = []
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    try:
+        catalog_section = readme.split("## Catalog", 1)[1].split("## Quality", 1)[0]
+    except IndexError:
+        errors.append("README is missing Catalog or Quality section")
+    else:
+        catalog_names = set(re.findall(r"`([a-z0-9]+(?:-[a-z0-9]+)*)`", catalog_section))
+        if catalog_names != skill_names:
+            errors.append(
+                "README catalog mismatch; "
+                f"missing {sorted(skill_names - catalog_names)}, "
+                f"unexpected {sorted(catalog_names - skill_names)}"
+            )
+
+    expected_snippets = [
+        f"Agent%20Skills-{len(skill_names)}-",
+        f"**{len(skill_names)} skills**",
+        f"**{eval_total} behavior-focused evaluation cases**",
+        f"**{routing_eval_total} cross-catalog routing cases**",
+    ]
+    for snippet in expected_snippets:
+        if snippet not in readme:
+            errors.append(f"README is not synchronized; missing {snippet!r}")
+
+    changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    if not re.search(rf"^## {re.escape(EXPECTED_VERSION)}(?:\s|$)", changelog, re.MULTILINE):
+        errors.append(f"CHANGELOG is missing version {EXPECTED_VERSION}")
+    if release:
+        errors.extend(release_changelog_errors(changelog))
+    return errors
+
+
+def validate_repository(
+    release: bool = False,
+) -> tuple[list[str], list[str], dict[str, int]]:
     errors: list[str] = []
     warnings: list[str] = []
     skill_dirs = sorted(path for path in SKILLS_DIR.iterdir() if path.is_dir())
     skill_names = {path.name for path in skill_dirs}
-    if len(skill_names) != 18:
-        errors.append(f"expected 18 public skills, found {len(skill_names)}")
+    if len(skill_names) != EXPECTED_SKILL_COUNT:
+        errors.append(f"expected {EXPECTED_SKILL_COUNT} public skills, found {len(skill_names)}")
 
     description_total = 0
     eval_total = 0
@@ -193,18 +370,40 @@ def validate_repository() -> tuple[list[str], list[str], dict[str, int]]:
     except (FileNotFoundError, json.JSONDecodeError) as error:
         errors.append(f"invalid package metadata: {error}")
 
-    for markdown in [ROOT / "README.md", ROOT / "CONTRIBUTING.md", ROOT / "docs" / "SOURCES.md"]:
+    routing_errors, routing_eval_total = validate_routing_cases(skill_names)
+    errors.extend(routing_errors)
+    if eval_total != EXPECTED_EVAL_COUNT:
+        errors.append(f"expected {EXPECTED_EVAL_COUNT} behavior evals, found {eval_total}")
+    if routing_eval_total != EXPECTED_ROUTING_EVAL_COUNT:
+        errors.append(
+            f"expected {EXPECTED_ROUTING_EVAL_COUNT} routing evals, found {routing_eval_total}"
+        )
+    errors.extend(
+        validate_documentation(
+            skill_names, eval_total, routing_eval_total, release=release
+        )
+    )
+
+    for markdown in ROOT.rglob("*.md"):
         errors.extend(local_link_errors(markdown))
 
     return errors, warnings, {
         "skills": len(skill_names),
         "evals": eval_total,
+        "routing_evals": routing_eval_total,
         "description_characters": description_total,
     }
 
 
 def main() -> int:
-    errors, warnings, counts = validate_repository()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--release",
+        action="store_true",
+        help="require finalized release metadata such as a dated changelog entry",
+    )
+    args = parser.parse_args()
+    errors, warnings, counts = validate_repository(release=args.release)
     for warning in warnings:
         print(f"WARNING: {warning}")
     for error in errors:
@@ -213,7 +412,8 @@ def main() -> int:
         print(f"Validation failed with {len(errors)} error(s).", file=sys.stderr)
         return 1
     print(
-        f"Validated {counts['skills']} skills, {counts['evals']} eval cases, "
+        f"Validated {counts['skills']} skills, {counts['evals']} behavior eval cases, "
+        f"{counts['routing_evals']} routing eval cases, "
         f"and {counts['description_characters']} discovery-description characters."
     )
     if warnings:

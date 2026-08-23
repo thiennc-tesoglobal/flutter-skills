@@ -19,6 +19,13 @@ Choose storage from data shape, query needs, durability, sensitivity, synchroniz
 
 Define the source of truth, cache freshness, write ordering, conflict behavior, offline mutations, deletion semantics, and recovery from corrupt or incompatible data. Keep storage models behind repositories so schema details do not leak into widgets.
 
+## Load references conditionally
+
+- Read [caching policy](references/caching-policy.md) when choosing cache keys, freshness, invalidation, eviction, stale disclosure, or user isolation.
+- Read [offline synchronization](references/offline-sync.md) when local and remote data can diverge, mutations queue offline, background work runs, or conflicts and deletions must reconcile.
+
+Route HTTP validators and transport caching to `flutter-networking`, and image, widget, scroll, or memory-cache performance to `flutter-performance`.
+
 ## Migration and safety
 
 Version schemas and test upgrades from realistic prior versions. Never destroy user data as an automatic response to a migration failure unless the product explicitly permits it. Avoid storing access tokens, passwords, or sensitive personal data in logs or plain preferences.
@@ -30,3 +37,4 @@ Test first run, reopen, upgrade, failed write, concurrent access, corrupted data
 ## Sources
 
 - [Flutter persistence cookbook](https://docs.flutter.dev/cookbook/persistence)
+- [Flutter offline-first support](https://docs.flutter.dev/app-architecture/design-patterns/offline-first)

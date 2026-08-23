@@ -23,6 +23,7 @@
         "./skills/flutter-app-workflow",
         "./skills/flutter-architecture",
         "./skills/flutter-build-release",
+        "./skills/flutter-code-review",
         "./skills/flutter-device-testing",
         "./skills/flutter-localization",
         "./skills/flutter-navigation",
@@ -31,8 +32,10 @@
         "./skills/flutter-persistence",
         "./skills/flutter-platform-integration",
         "./skills/flutter-responsive-layout",
+        "./skills/flutter-security",
         "./skills/flutter-state-management",
         "./skills/flutter-testing",
+        "./skills/flutter-ui-design",
         "./skills/flutter-ui-patterns"
       ]
     },
@@ -66,22 +69,25 @@
         "./skills/flutter-localization",
         "./skills/flutter-navigation",
         "./skills/flutter-responsive-layout",
+        "./skills/flutter-ui-design",
         "./skills/flutter-ui-patterns"
       ]
     },
     {
       "name": "flutter-engineering-skills",
       "source": "./",
-      "description": "End-to-end delivery, performance, platform, release, and device verification skills",
+      "description": "End-to-end delivery, review, security, performance, platform, release, and device verification skills",
       "version": "0.1.0",
       "category": "development",
       "strict": false,
       "skills": [
         "./skills/flutter-app-workflow",
         "./skills/flutter-build-release",
+        "./skills/flutter-code-review",
         "./skills/flutter-device-testing",
         "./skills/flutter-performance",
         "./skills/flutter-platform-integration",
+        "./skills/flutter-security",
         "./skills/flutter-testing"
       ]
     }

@@ -21,7 +21,7 @@ Follow Effective Dart naming, documentation, usage, and design guidance. Match r
 
 ## Verification
 
-Run formatting, static analysis, and the narrowest relevant tests. When changing a public package API, check examples and downstream call sites.
+Use Dart MCP semantic lookup and analysis when the current environment exposes them; otherwise inspect source and use the project CLI. Run formatting, static analysis, and the narrowest relevant tests. When changing a public package API, check examples and downstream call sites.
 
 ## Boundaries
 
@@ -33,3 +33,4 @@ Run formatting, static analysis, and the narrowest relevant tests. When changing
 
 - [Dart language](https://dart.dev/language)
 - [Effective Dart](https://dart.dev/effective-dart)
+- [Dart and Flutter MCP server](https://docs.flutter.dev/ai/mcp-server)
