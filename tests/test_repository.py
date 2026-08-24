@@ -22,9 +22,9 @@ class RepositoryTests(unittest.TestCase):
     def test_repository_validator_passes(self):
         errors, _, counts = VALIDATOR.validate_repository()
         self.assertEqual(errors, [])
-        self.assertEqual(counts["skills"], 26)
-        self.assertEqual(counts["evals"], 87)
-        self.assertEqual(counts["routing_evals"], 28)
+        self.assertEqual(counts["skills"], 27)
+        self.assertEqual(counts["evals"], 92)
+        self.assertEqual(counts["routing_evals"], 31)
 
     def test_repository_markdown_excludes_generated_dependencies(self):
         paths = {

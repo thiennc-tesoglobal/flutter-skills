@@ -93,7 +93,7 @@
     "prompt": "Audit and fix a production service credential hardcoded in lib/api_config.dart; no native code is involved, and do not rotate or revoke anything yet.",
     "required": ["flutter-security"],
     "optional": ["flutter-build-release", "flutter-networking", "flutter-testing"],
-    "forbidden": ["flutter-app-workflow", "flutter-platform-integration"]
+    "forbidden": ["flutter-app-workflow", "flutter-background-execution", "flutter-platform-integration"]
   },
   {
     "name": "review-working-tree-without-fixes",
@@ -206,5 +206,26 @@
     "required": ["flutter-figma-workflow"],
     "optional": ["flutter-accessibility", "flutter-responsive-layout", "flutter-testing", "flutter-ui-patterns"],
     "forbidden": ["flutter-app-workflow", "flutter-architecture", "flutter-ui-design"]
+  },
+  {
+    "name": "terminated-periodic-catalog-sync",
+    "prompt": "Schedule a deferrable catalog sync that should survive ordinary Flutter process death and Android reboot, runs only with network access, and safely tolerates duplicate delivery. Preserve the scheduler package already in the app.",
+    "required": ["flutter-background-execution"],
+    "optional": ["flutter-device-testing", "flutter-networking", "flutter-persistence", "flutter-security", "flutter-testing"],
+    "forbidden": ["dart-concurrency", "flutter-app-workflow", "flutter-notifications", "flutter-platform-integration"]
+  },
+  {
+    "name": "in-process-image-compression-isolate",
+    "prompt": "Compress a large image without blocking frames while the export screen remains open. The work may be cancelled when the screen and app process close.",
+    "required": ["dart-concurrency"],
+    "optional": ["flutter-performance", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-background-execution", "flutter-platform-integration"]
+  },
+  {
+    "name": "custom-native-background-scheduler-bridge",
+    "prompt": "Our supported Flutter packages cannot expose a required native background scheduler API. Build a typed Dart-to-native bridge while preserving OS scheduling limits, expiration, retry, and device lifecycle verification.",
+    "required": ["flutter-background-execution", "flutter-platform-integration"],
+    "optional": ["flutter-device-testing", "flutter-security", "flutter-testing"],
+    "forbidden": ["dart-concurrency", "flutter-app-workflow", "flutter-notifications"]
   }
 ]

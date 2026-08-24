@@ -25,6 +25,7 @@ First identify which specialist skills are discoverable in the current environme
 - Widget composition, layout mechanics, motion, or routing: the matching Flutter UI specialist
 - APIs or storage: `flutter-networking`, `flutter-persistence`
 - Local or remote notification delivery: `flutter-notifications`
+- OS-scheduled, foreground-service, or headless background work: `flutter-background-execution`
 - Production diagnostics, crash context, logs, or traces: `flutter-observability`
 - Language or async behavior: `dart-language`, `dart-concurrency`
 - Security or privacy hardening: `flutter-security`
