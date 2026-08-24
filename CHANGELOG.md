@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 - Unreleased
+## 0.1.0 - 2026-08-24
 
 - Add a 25-skill Flutter and Dart delivery collection.
 - Add `flutter-app-workflow` for end-to-end project coordination.

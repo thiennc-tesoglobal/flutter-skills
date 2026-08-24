@@ -1,24 +1,12 @@
 # Flutter Skills
 
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-25-2ea44f)](skills/)
-[![Flutter](https://img.shields.io/badge/Flutter-3.44-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.12-0175C2?logo=dart&logoColor=white)](https://dart.dev)
 [![Validation](https://github.com/thiennc-tesoglobal/flutter-skills/actions/workflows/validate-repository.yml/badge.svg)](https://github.com/thiennc-tesoglobal/flutter-skills/actions/workflows/validate-repository.yml)
 [![License](https://img.shields.io/badge/License-BSD--3--Clause-blue)](LICENSE)
 
-A focused Agent Skills collection for delivering maintainable Flutter applications across mobile, web, and desktop.
+25 package-neutral Agent Skills for building, reviewing, testing, and releasing Flutter apps without forcing a state-management package or folder structure.
 
-The collection coordinates architecture, UI, state, data, testing, performance, accessibility, native integration, and release verification. It adapts to the project instead of forcing a state-management package or folder structure onto every app.
-
-> **Tiếng Việt:** Bộ skill giúp AI coding agent xây dựng ứng dụng Flutter theo quy trình thực tế: đọc dự án, chọn đúng chuyên môn, triển khai, chạy analyze/test và xác minh trên thiết bị.
-
-## How it works
-
-Start a complete app or substantial multi-file feature with [`flutter-app-workflow`](skills/flutter-app-workflow/). Use a specialist directly for narrow work.
-
-```text
-Product request → project preflight → relevant skills → vertical slices → verification
-```
+> Bộ skill giúp AI coding agent đọc dự án Flutter, chọn đúng chuyên môn, triển khai và xác minh kết quả theo conventions sẵn có.
 
 ## Install
 
@@ -28,97 +16,64 @@ Choose skills interactively:
 npx skills add thiennc-tesoglobal/flutter-skills
 ```
 
-Install the delivery workflow:
+Start with the end-to-end workflow for a complete app or feature:
 
 ```sh
-npx skills add thiennc-tesoglobal/flutter-skills --skill flutter-app-workflow
+npx skills add thiennc-tesoglobal/flutter-skills \
+  --agent codex \
+  --skill flutter-app-workflow
 ```
 
-The workflow remains usable by itself. It delegates to specialist skills only when they are installed and discoverable.
-
-Install the complete collection only when broad coverage is required:
+Install one specialist when the task is focused:
 
 ```sh
-npx skills add thiennc-tesoglobal/flutter-skills --all
+npx skills add thiennc-tesoglobal/flutter-skills \
+  --agent codex \
+  --skill flutter-ui-design
 ```
 
-### Claude Code
+Project installation is the default. Add `--global` to use the selected skills across projects.
+
+> In a regular terminal, the installer asks which skills and agents to use. Inside Codex, it may detect Codex and install non-interactively; pass `--skill` explicitly when you do not want all 25 skills.
+
+### Claude Code bundles
 
 ```sh
 /plugin marketplace add thiennc-tesoglobal/flutter-skills
-/plugin install all-flutter-skills@flutter-skills
-```
-
-Focused bundles are also available:
-
-```sh
 /plugin install flutter-core-skills@flutter-skills
-/plugin install flutter-ui-skills@flutter-skills
-/plugin install flutter-engineering-skills@flutter-skills
 ```
+
+Available bundles: `all-flutter-skills`, `flutter-core-skills`, `flutter-ui-skills`, and `flutter-engineering-skills`.
 
 ## Catalog
 
 | Area | Skills |
 |---|---|
-| Delivery | `flutter-app-workflow`, `flutter-build-release`, `flutter-ci-cd`, `flutter-device-testing` |
+| Workflow | `flutter-app-workflow`, `flutter-build-release`, `flutter-ci-cd`, `flutter-device-testing` |
 | Dart | `dart-language`, `dart-concurrency` |
-| Structure | `flutter-architecture`, `flutter-state-management` |
+| Architecture | `flutter-architecture`, `flutter-state-management` |
 | UI | `flutter-ui-design`, `flutter-visual-effects`, `flutter-ui-patterns`, `flutter-responsive-layout`, `flutter-animation`, `flutter-navigation` |
 | Data | `flutter-networking`, `flutter-persistence` |
 | Quality | `flutter-code-review`, `flutter-security`, `flutter-testing`, `flutter-performance`, `flutter-observability`, `flutter-accessibility`, `flutter-localization` |
 | Platform | `flutter-platform-integration`, `flutter-notifications` |
 
-Example:
+## Use
+
+Codex and compatible agents first see skill names and descriptions, then load only the relevant `SKILL.md` and references.
 
 ```text
 Use $flutter-app-workflow to build a polished offline-first todo app,
-preserve the project's existing conventions, add tests, and verify it on a device.
+preserve the existing architecture, add tests, and verify it on Android.
 ```
 
-Installing every skill does not mean every skill should be loaded for every request. Prefer one workflow skill plus only the specialists required by the task.
+For a focused task, name the specialist directly or let the agent route from the request. Installing every skill does not load every skill into the task context.
 
 ## Quality
 
-Pull requests validate skill metadata, links, evaluations, Claude/Tessl bundles, unit tests, and clean Agent Skills discovery.
+The catalog contains **25 skills**, **73 behavior-focused evaluation cases**, and **21 cross-catalog routing cases**. Validation checks metadata, references, bundles, tests, and clean installation discovery.
 
-```sh
-python3 .github/scripts/validate_repository.py
-python3 .github/scripts/run_behavior_evals.py
-python3 -m unittest discover -s tests -v
-npx skills add . --list
-```
-
-Run an intentional forward-eval sample with an installed agent CLI:
-
-```sh
-python3 .github/scripts/run_behavior_evals.py --execute --suite behavior --skill flutter-app-workflow --max-cases 1
-```
-
-Forward evals compare baseline and skill-injected answers, then grade observable expectations. Execution is opt-in because it calls an external model and can incur cost; use `--all-cases` only for a deliberate collection run.
-
-Behavior cases may declare only the linked references needed for that scenario. This keeps forward evaluation aligned with production progressive disclosure instead of injecting every supporting document.
-
-Validate Agent Skills specification conformance with the pinned official linter:
-
-```sh
-bash .github/scripts/run_dart_skills_lint.sh
-```
-
-Release validation additionally requires a dated changelog entry and rejects a version that remains marked `Unreleased`:
-
-```sh
-python3 .github/scripts/validate_repository.py --release
-```
-
-The collection contains **25 skills**, **73 behavior-focused evaluation cases**, and **21 cross-catalog routing cases**.
-
-## Sources and contribution
-
-The collection is informed by the official [Flutter Agent Plugins](https://github.com/flutter/agent-plugins), [Flutter documentation](https://docs.flutter.dev), and [Dart documentation](https://dart.dev). It adds end-to-end coordination, package-neutral routing, and repository quality gates rather than copying upstream skills verbatim.
-
-See [`docs/SOURCES.md`](docs/SOURCES.md) for source policy and [`CONTRIBUTING.md`](CONTRIBUTING.md) for contribution requirements.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for validation and contribution instructions, and [docs/SOURCES.md](docs/SOURCES.md) for the source policy.
 
 ## License
 
-Distributed under the [BSD 3-Clause License](LICENSE). Flutter and Dart are trademarks of Google LLC. This independent project is not affiliated with or endorsed by Google or the Flutter team.
+BSD 3-Clause. Flutter and Dart are trademarks of Google LLC. This independent project is not affiliated with or endorsed by Google or the Flutter team.
