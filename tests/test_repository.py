@@ -26,19 +26,28 @@ class RepositoryTests(unittest.TestCase):
         self.assertEqual(counts["evals"], 73)
         self.assertEqual(counts["routing_evals"], 21)
 
+    def test_repository_markdown_excludes_generated_dependencies(self):
+        paths = {
+            path.relative_to(ROOT).as_posix()
+            for path in VALIDATOR.repository_markdown_paths()
+        }
+        self.assertIn("README.md", paths)
+        self.assertFalse(any(path.startswith("node_modules/") for path in paths))
+
     def test_release_changelog_requires_finalized_date(self):
+        version = VALIDATOR.EXPECTED_VERSION
         self.assertEqual(
-            VALIDATOR.release_changelog_errors("## 0.1.0 - Unreleased\n"),
+            VALIDATOR.release_changelog_errors(f"## {version} - Unreleased\n"),
             [
-                "release metadata requires '## 0.1.0 - YYYY-MM-DD'; "
+                f"release metadata requires '## {version} - YYYY-MM-DD'; "
                 "the version must not remain Unreleased"
             ],
         )
         self.assertEqual(
-            VALIDATOR.release_changelog_errors("## 0.1.0 - 2026-08-23\n"), []
+            VALIDATOR.release_changelog_errors(f"## {version} - 2026-08-23\n"), []
         )
         self.assertTrue(
-            VALIDATOR.release_changelog_errors("## 0.1.0 - 2026-02-30\n")
+            VALIDATOR.release_changelog_errors(f"## {version} - 2026-02-30\n")
         )
 
     def test_eval_names_are_unique_across_catalog(self):

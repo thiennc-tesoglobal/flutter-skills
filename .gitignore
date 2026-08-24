@@ -4,6 +4,8 @@
 build/
 coverage/
 .eval-results/
+.npmrc
+node_modules/
 *.iml
 .idea/
 .vscode/

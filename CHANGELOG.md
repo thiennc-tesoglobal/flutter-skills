@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 - 2026-08-24
+
+- Add the `@thiennc/flutter-skills` npm CLI for version-pinned one-command installation.
+- Validate npm metadata, wrapper behavior, and package contents in CI.
+
 ## 0.1.0 - 2026-08-24
 
 - Add a 25-skill Flutter and Dart delivery collection.

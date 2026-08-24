@@ -17,7 +17,18 @@ NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 LINK_PATTERN = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 MAX_DESCRIPTION = 500
 MAX_COMBINED_DESCRIPTION = 12_000
-EXPECTED_VERSION = "0.1.0"
+IGNORED_LINK_DIRECTORIES = {
+    ".agents",
+    ".codex",
+    ".dart_tool",
+    ".eval-results",
+    ".git",
+    ".tessl",
+    "build",
+    "coverage",
+    "node_modules",
+}
+EXPECTED_VERSION = "0.1.1"
 EXPECTED_SKILL_COUNT = 25
 EXPECTED_EVAL_COUNT = 73
 EXPECTED_ROUTING_EVAL_COUNT = 21
@@ -124,6 +135,14 @@ def local_link_errors(path: Path) -> list[str]:
     return errors
 
 
+def repository_markdown_paths() -> list[Path]:
+    return [
+        path
+        for path in ROOT.rglob("*.md")
+        if not IGNORED_LINK_DIRECTORIES.intersection(path.relative_to(ROOT).parts)
+    ]
+
+
 def validate_skill(skill_dir: Path) -> tuple[list[str], list[str], int, int]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -209,8 +228,13 @@ def validate_packages(skill_names: set[str]) -> list[str]:
     marketplace = load_json(ROOT / ".claude-plugin" / "marketplace.json")
     tessl = load_json(ROOT / ".tessl-plugin" / "plugin.json")
     tessl_root = load_json(ROOT / "tessl.json")
+    npm_package = load_json(ROOT / "package.json")
 
-    versions = {marketplace.get("metadata", {}).get("version"), tessl.get("version")}
+    versions = {
+        marketplace.get("metadata", {}).get("version"),
+        tessl.get("version"),
+        npm_package.get("version"),
+    }
     versions.update(plugin.get("version") for plugin in marketplace.get("plugins", []))
     if versions != {EXPECTED_VERSION}:
         errors.append(f"package versions are not aligned at {EXPECTED_VERSION}: {sorted(str(value) for value in versions)}")
@@ -244,6 +268,17 @@ def validate_packages(skill_names: set[str]) -> list[str]:
         errors.append("Tessl skill membership does not match public skills")
     if tessl.get("name") != tessl_root.get("name"):
         errors.append("Tessl package names are not aligned")
+
+    if npm_package.get("name") != "@thiennc/flutter-skills":
+        errors.append("npm package name must be @thiennc/flutter-skills")
+    if npm_package.get("private") is True:
+        errors.append("npm package must be publishable")
+    if npm_package.get("bin") != {"flutter-skills": "bin/flutter-skills.mjs"}:
+        errors.append("npm package must expose the flutter-skills executable")
+    if npm_package.get("dependencies", {}).get("skills") != "1.5.23":
+        errors.append("npm package must pin skills@1.5.23")
+    if npm_package.get("publishConfig", {}).get("access") != "public":
+        errors.append("npm package must publish with public access")
     return errors
 
 
@@ -392,7 +427,7 @@ def validate_repository(
         )
     )
 
-    for markdown in ROOT.rglob("*.md"):
+    for markdown in repository_markdown_paths():
         errors.extend(local_link_errors(markdown))
 
     return errors, warnings, {

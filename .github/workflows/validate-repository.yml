@@ -17,6 +17,15 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v6
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.20.0
+          cache: npm
+
+      - name: Install npm dependencies
+        run: npm ci
+
       - name: Validate skills, evaluations, links, and bundles
         run: python3 .github/scripts/validate_repository.py
 
@@ -27,7 +36,12 @@ jobs:
         run: bash .github/scripts/run_dart_skills_lint.sh
 
       - name: Run repository tests
-        run: python3 -m unittest discover -s tests -v
+        run: |
+          python3 -m unittest discover -s tests -v
+          npm test
+
+      - name: Verify npm package contents
+        run: npm run pack:check
 
       - name: Smoke-test Agent Skills discovery
         run: npx --yes skills@1.5.23 add . --list

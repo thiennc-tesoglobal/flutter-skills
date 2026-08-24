@@ -1,0 +1,43 @@
+{
+  "name": "@thiennc/flutter-skills",
+  "version": "0.1.1",
+  "description": "Install the Flutter Skills collection with one command.",
+  "type": "module",
+  "bin": {
+    "flutter-skills": "bin/flutter-skills.mjs"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test tests/test_npm_cli.mjs",
+    "pack:check": "npm pack --dry-run"
+  },
+  "engines": {
+    "node": ">=22.20.0"
+  },
+  "dependencies": {
+    "skills": "1.5.23"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thiennc-tesoglobal/flutter-skills.git"
+  },
+  "homepage": "https://github.com/thiennc-tesoglobal/flutter-skills#readme",
+  "bugs": {
+    "url": "https://github.com/thiennc-tesoglobal/flutter-skills/issues"
+  },
+  "keywords": [
+    "agent-skills",
+    "codex",
+    "dart",
+    "flutter"
+  ],
+  "license": "BSD-3-Clause"
+}

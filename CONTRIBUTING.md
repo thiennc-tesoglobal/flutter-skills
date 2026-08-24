@@ -38,6 +38,9 @@ python3 .github/scripts/run_behavior_evals.py --execute --suite all --max-cases 
 python3 .github/scripts/validate_repository.py
 python3 .github/scripts/run_behavior_evals.py
 python3 -m unittest discover -s tests -v
+npm ci
+npm test
+npm run pack:check
 bash .github/scripts/run_dart_skills_lint.sh
 npx skills add . --list
 ```
