@@ -157,5 +157,19 @@
     "required": ["flutter-ci-cd"],
     "optional": ["flutter-build-release", "flutter-security", "flutter-testing"],
     "forbidden": ["flutter-app-workflow", "flutter-device-testing"]
+  },
+  {
+    "name": "graphql-live-feed",
+    "prompt": "Extend our existing GraphQL client with a cursor-paginated feed, normalized cache updates, partial-data handling, and a live subscription that resyncs after reconnect.",
+    "required": ["flutter-networking"],
+    "optional": ["dart-concurrency", "flutter-persistence", "flutter-state-management", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-architecture", "flutter-platform-integration"]
+  },
+  {
+    "name": "duplicate-websocket-listeners",
+    "prompt": "Navigating between two Flutter screens leaves duplicate WebSocket subscriptions alive, so stale callbacks update disposed state even though the transport itself connects correctly.",
+    "required": ["dart-concurrency"],
+    "optional": ["flutter-networking", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-architecture", "flutter-performance"]
   }
 ]

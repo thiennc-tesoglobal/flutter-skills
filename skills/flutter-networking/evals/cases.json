@@ -2,11 +2,72 @@
   {
     "name": "preserves-existing-dio-client",
     "prompt": "Add cursor pagination to an app already using Dio and generated JSON models.",
-    "expectations": ["extends existing client and serialization", "defines duplicate and terminal behavior", "tests failures and pagination boundaries"]
+    "expectations": [
+      "extends existing client and serialization",
+      "defines duplicate and terminal behavior",
+      "tests failures and pagination boundaries"
+    ]
   },
   {
     "name": "unsafe-post-not-retried-blindly",
     "prompt": "Retry every failed payment POST five times automatically.",
-    "expectations": ["identifies duplicate side-effect risk", "requires idempotency or a safer recovery policy", "bounds retries and surfaces final failure"]
+    "expectations": [
+      "identifies duplicate side-effect risk",
+      "requires idempotency or a safer recovery policy",
+      "bounds retries and surfaces final failure"
+    ]
+  },
+  {
+    "name": "graphql-partial-data-and-cache",
+    "prompt": "Our Flutter app already uses a generated GraphQL client and normalized cache. Add a cursor-paginated activity feed that can render usable partial data when one field fails, refresh cleanly, and avoid duplicate edges without replacing the client.",
+    "expectations": [
+      "preserves the existing client generation and normalized cache",
+      "distinguishes request failure from partial data with execution errors",
+      "defines stable entity identity cursor merge duplicate and refresh behavior",
+      "tests partial results cache identity and pagination boundaries"
+    ],
+    "resources": [
+      "references/graphql.md"
+    ]
+  },
+  {
+    "name": "graphql-subscription-recovery",
+    "prompt": "Fix a GraphQL chat subscription that duplicates messages after token refresh and misses messages during reconnect. Keep the current GraphQL and socket packages and make screen disposal safe.",
+    "expectations": [
+      "inspects and preserves the negotiated GraphQL subscription protocol",
+      "coordinates token refresh reconnect and resubscription through one owner",
+      "defines event identity duplicate gap and authoritative resync behavior",
+      "tests auth expiry reconnect missed events and deterministic disposal"
+    ],
+    "resources": [
+      "references/graphql.md",
+      "references/realtime-transports.md"
+    ]
+  },
+  {
+    "name": "socketio-is-not-plain-websocket",
+    "prompt": "Our backend exposes Socket.IO 4.x. Replace the existing compatible Flutter client with a smaller plain WebSocket package and keep rooms, acknowledgements, fallback transport, and reconnect behavior unchanged.",
+    "expectations": [
+      "rejects protocol-incompatible replacement rather than treating Socket.IO as plain WebSocket",
+      "inspects server client and Engine.IO protocol compatibility",
+      "preserves required acknowledgements rooms fallback and recovery semantics",
+      "requires protocol-level integration tests before any migration"
+    ],
+    "resources": [
+      "references/realtime-transports.md"
+    ]
+  },
+  {
+    "name": "websocket-resume-is-not-reconnect",
+    "prompt": "Build a live auction feed over the project's existing WebSocket client. It must recover from network loss without duplicate bids, unbounded buffering, reconnect storms, or pretending a reconnect guarantees missed events were delivered.",
+    "expectations": [
+      "defines single connection ownership lifecycle and bounded backoff with jitter",
+      "separates reconnect from resume using event identity gaps and snapshot recovery",
+      "bounds inbound and outbound work with an explicit high-rate policy",
+      "tests close auth lifecycle duplicate out-of-order gap and retry-exhaustion behavior"
+    ],
+    "resources": [
+      "references/realtime-transports.md"
+    ]
   }
 ]

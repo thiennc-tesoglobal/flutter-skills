@@ -4,6 +4,7 @@
 
 - Add the `@thiennc/flutter-skills` npm CLI for version-pinned one-command installation.
 - Validate npm metadata, wrapper behavior, and package contents in CI.
+- Expand `flutter-networking` with progressive GraphQL and realtime transport guidance plus focused routing and behavior evaluations.
 
 ## 0.1.0 - 2026-08-24
 

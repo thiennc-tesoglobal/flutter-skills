@@ -72,7 +72,7 @@ For a focused task, name the specialist directly or let the agent route from the
 
 ## Quality
 
-The catalog contains **25 skills**, **73 behavior-focused evaluation cases**, and **21 cross-catalog routing cases**. Validation checks metadata, references, bundles, tests, and clean installation discovery.
+The catalog contains **25 skills**, **77 behavior-focused evaluation cases**, and **23 cross-catalog routing cases**. Validation checks metadata, references, bundles, tests, and clean installation discovery.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for validation and contribution instructions, and [docs/SOURCES.md](docs/SOURCES.md) for the source policy.
 
