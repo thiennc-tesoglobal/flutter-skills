@@ -26,6 +26,8 @@ The Flutter team's MVVM guidance is a useful default for a new scalable applicat
 
 Prefer user-facing feature boundaries. Place genuinely shared infrastructure in a small core area. Avoid global folders that accumulate unrelated models, widgets, and helpers.
 
+Load [greenfield and evolution](references/greenfield-and-evolution.md) for new-project choices or incremental migrations. Load [feature boundaries and dependency rules](references/feature-boundaries-and-dependency-rules.md) when modules leak across features or ownership is unclear.
+
 ## Verification
 
 Demonstrate the dependency path for one feature, test presentation logic without rendering widgets where practical, and confirm no circular or UI-to-infrastructure shortcuts were introduced.

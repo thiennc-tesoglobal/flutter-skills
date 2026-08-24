@@ -8,5 +8,17 @@
     "name": "simple-app-avoids-enterprise-layers",
     "prompt": "Structure a small local counter and notes app for one developer.",
     "expectations": ["chooses proportionate boundaries", "does not create use cases or interfaces without a concrete need"]
+  },
+  {
+    "name": "migrates-one-feature-without-big-bang",
+    "prompt": "Our established Flutter app has widgets calling the database directly. Move the whole repository into Clean Architecture folders before adding the next feature.",
+    "resources": ["references/greenfield-and-evolution.md"],
+    "expectations": ["names the concrete dependency or testability problem", "introduces an incremental seam around one affected feature", "preserves behavior with characterization or boundary tests", "rejects a big-bang folder rewrite as the architecture outcome"]
+  },
+  {
+    "name": "enforces-feature-public-boundary",
+    "prompt": "The checkout feature imports private repository and widget files from catalog and profile. Fix the boundaries without replacing our existing Bloc setup.",
+    "resources": ["references/feature-boundaries-and-dependency-rules.md"],
+    "expectations": ["preserves the existing state-management convention", "defines small stable public capability boundaries between features", "keeps concrete data services out of UI imports", "avoids moving unrelated code into a generic core folder"]
   }
 ]

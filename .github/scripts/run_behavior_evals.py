@@ -23,6 +23,7 @@ from typing import Any, Iterable
 ROOT = Path(__file__).resolve().parents[2]
 SKILLS_DIR = ROOT / "skills"
 ROUTING_CASES_PATH = ROOT / ".github" / "evals" / "routing-cases.json"
+DEFAULT_PROFILE_PATH = ROOT / ".github" / "evals" / "public-benchmark.json"
 NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 LOCAL_REFERENCE_PATTERN = re.compile(r"\[[^\]]+\]\((references/[^)#]+\.md)(?:#[^)]+)?\)")
 
@@ -78,6 +79,64 @@ def behavior_cases(catalog: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
 
 def routing_cases() -> list[dict[str, Any]]:
     return load_json(ROUTING_CASES_PATH)
+
+
+def validate_benchmark_profile(
+    profile: dict[str, Any],
+    behavior: Iterable[dict[str, Any]],
+    routing: Iterable[dict[str, Any]],
+) -> list[str]:
+    errors: list[str] = []
+    if not isinstance(profile.get("name"), str) or not profile["name"].strip():
+        errors.append("benchmark profile requires a name")
+    behavior_ids = {(case["skill"], case["name"]) for case in behavior}
+    requested_behavior = profile.get("behavior")
+    if not isinstance(requested_behavior, list) or not requested_behavior:
+        errors.append("benchmark profile requires behavior cases")
+    else:
+        seen_behavior: set[tuple[str, str]] = set()
+        for index, item in enumerate(requested_behavior):
+            if not isinstance(item, dict):
+                errors.append(f"benchmark behavior item {index + 1} must be an object")
+                continue
+            identity = (item.get("skill"), item.get("case"))
+            if not all(isinstance(value, str) for value in identity):
+                errors.append(f"benchmark behavior item {index + 1} is invalid")
+            elif identity not in behavior_ids:
+                errors.append(f"benchmark profile has unknown behavior case {identity[0]}:{identity[1]}")
+            elif identity in seen_behavior:
+                errors.append(f"benchmark profile repeats behavior case {identity[0]}:{identity[1]}")
+            else:
+                seen_behavior.add(identity)
+
+    routing_names = {case["name"] for case in routing}
+    requested_routing = profile.get("routing")
+    if not isinstance(requested_routing, list) or not requested_routing:
+        errors.append("benchmark profile requires routing cases")
+    elif not all(isinstance(name, str) for name in requested_routing):
+        errors.append("benchmark routing cases must be strings")
+    else:
+        unknown = set(requested_routing) - routing_names
+        if unknown:
+            errors.append(f"benchmark profile has unknown routing cases {sorted(unknown)}")
+        if len(requested_routing) != len(set(requested_routing)):
+            errors.append("benchmark profile repeats a routing case")
+    return errors
+
+
+def cases_for_profile(
+    profile: dict[str, Any],
+    behavior: list[dict[str, Any]],
+    routing: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    behavior_by_id = {(case["skill"], case["name"]): case for case in behavior}
+    routing_by_name = {case["name"]: case for case in routing}
+    selected_behavior = [
+        behavior_by_id[(item["skill"], item["case"])]
+        for item in profile["behavior"]
+    ]
+    selected_routing = [routing_by_name[name] for name in profile["routing"]]
+    return selected_behavior, selected_routing
 
 
 def validate_behavior_cases(
@@ -432,7 +491,8 @@ def run_behavior_suite(
         results.append(result)
         print(
             f"behavior {case['skill']}:{case['name']} "
-            f"score={skill_score} delta={result['delta']} passed={result['passed']}"
+            f"score={skill_score} delta={result['delta']} passed={result['passed']}",
+            flush=True,
         )
     return results
 
@@ -460,9 +520,38 @@ def run_routing_suite(
         results.append(result)
         print(
             f"routing {case['name']} selected={score['selected']} "
-            f"passed={score['passed']}"
+            f"passed={score['passed']}",
+            flush=True,
         )
     return results
+
+
+def result_summary(results: dict[str, Any]) -> dict[str, Any]:
+    behavior = results["behavior"]
+    routing = results["routing"]
+    baseline_scores = [
+        item["baseline"]["judgment"]["score"]
+        for item in behavior
+        if "baseline" in item
+    ]
+    skill_scores = [item["with_skill"]["judgment"]["score"] for item in behavior]
+
+    def average(values: list[int]) -> float | None:
+        return round(sum(values) / len(values), 2) if values else None
+
+    return {
+        "behavior_cases": len(behavior),
+        "behavior_passed": sum(bool(item["passed"]) for item in behavior),
+        "baseline_average": average(baseline_scores),
+        "with_skill_average": average(skill_scores),
+        "average_delta": (
+            round(average(skill_scores) - average(baseline_scores), 2)
+            if skill_scores and baseline_scores
+            else None
+        ),
+        "routing_cases": len(routing),
+        "routing_passed": sum(bool(item["passed"]) for item in routing),
+    }
 
 
 def parse_args() -> argparse.Namespace:
@@ -484,6 +573,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--skip-baseline", action="store_true")
     parser.add_argument("--threshold", type=int, default=80)
     parser.add_argument("--output", type=Path)
+    parser.add_argument(
+        "--profile",
+        type=Path,
+        help="run the exact behavior and routing cases in a benchmark profile",
+    )
     return parser.parse_args()
 
 
@@ -499,6 +593,13 @@ def main() -> int:
     all_routing = routing_cases()
     errors = validate_behavior_cases(all_behavior, catalog)
     errors.extend(validate_routing_cases(all_routing, set(catalog)))
+    default_profile = load_json(DEFAULT_PROFILE_PATH)
+    errors.extend(
+        f"public benchmark: {error}"
+        for error in validate_benchmark_profile(
+            default_profile, all_behavior, all_routing
+        )
+    )
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
@@ -512,6 +613,22 @@ def main() -> int:
         print("Validation-only mode; pass --execute to invoke an external agent.")
         return 0
 
+    profile: dict[str, Any] | None = None
+    profile_behavior: list[dict[str, Any]] = []
+    profile_routing: list[dict[str, Any]] = []
+    if args.profile:
+        if args.skill or args.case or args.all_cases:
+            raise EvalError("--profile cannot be combined with case filters")
+        profile = load_json(args.profile)
+        profile_errors = validate_benchmark_profile(
+            profile, all_behavior, all_routing
+        )
+        if profile_errors:
+            raise EvalError("; ".join(profile_errors))
+        profile_behavior, profile_routing = cases_for_profile(
+            profile, all_behavior, all_routing
+        )
+
     solver = AgentRunner(args.agent, args.model)
     judge = AgentRunner(args.judge_agent or args.agent, args.judge_model)
     results: dict[str, Any] = {
@@ -520,23 +637,32 @@ def main() -> int:
         "model": args.model,
         "judge_agent": args.judge_agent or args.agent,
         "judge_model": args.judge_model,
+        "catalog_version": load_json(ROOT / "package.json")["version"],
+        "profile": profile,
         "behavior": [],
         "routing": [],
     }
     if args.suite in ("all", "behavior"):
-        selected_behavior = select_cases(all_behavior, args)
+        selected_behavior = (
+            profile_behavior if profile is not None else select_cases(all_behavior, args)
+        )
         if not selected_behavior:
             raise EvalError("no behavior cases matched the requested filters")
         results["behavior"] = run_behavior_suite(
             selected_behavior, catalog, solver, judge, args
         )
     if args.suite in ("all", "routing"):
-        routing_args = argparse.Namespace(**vars(args))
-        routing_args.skill = None
-        selected_routing = select_cases(all_routing, routing_args)
+        if profile is not None:
+            selected_routing = profile_routing
+        else:
+            routing_args = argparse.Namespace(**vars(args))
+            routing_args.skill = None
+            selected_routing = select_cases(all_routing, routing_args)
         if not selected_routing:
             raise EvalError("no routing cases matched the requested filters")
         results["routing"] = run_routing_suite(selected_routing, catalog, solver)
+
+    results["summary"] = result_summary(results)
 
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

@@ -30,6 +30,8 @@ Flutter and Dart evolve quickly. Technical guidance in this collection should pr
 - [Dart language](https://dart.dev/language)
 - [Dart concurrency](https://dart.dev/language/concurrency)
 - [Dart package documentation](https://pub.dev)
+- [Figma developer documentation](https://developers.figma.com/)
+- [Figma Code Connect](https://developers.figma.com/docs/code-connect/)
 
 Package-specific claims should use the package publisher's documentation and confirm compatibility with the project's SDK constraints. Community articles may provide examples but must not override current primary documentation.
 

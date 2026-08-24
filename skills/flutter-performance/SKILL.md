@@ -22,6 +22,8 @@ Record the target device, Flutter version, build mode, flow, dataset, and metric
 
 Prefer removing or moving work over caching everything. Bound caches and preserve correctness.
 
+Load [profile and frame analysis](references/profile-and-frame-analysis.md) for frame, CPU, image, rebuild, or web-rendering investigations. Load [memory, startup, and size](references/memory-startup-and-size.md) for retention, first-useful-frame, or artifact-size work.
+
 ## Verification
 
 Repeat the same scenario after the change and report before/after evidence with variance. Run correctness tests because performance changes often alter lifecycle or caching behavior.

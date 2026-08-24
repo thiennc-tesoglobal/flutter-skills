@@ -1,0 +1,464 @@
+{
+  "created_at": "2026-08-24T08:23:07.948546+00:00",
+  "agent": "codex",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_model": null,
+  "catalog_version": "0.2.0",
+  "profile": {
+    "name": "flutter-skills-v0.2-representative",
+    "description": "A fixed public sample covering visual design, Figma translation, architecture, performance, testing, and the routing gaps closed in v0.2.0.",
+    "behavior": [
+      {
+        "skill": "flutter-ui-design",
+        "case": "transforms-bland-dashboard-with-a-clear-signature"
+      },
+      {
+        "skill": "flutter-figma-workflow",
+        "case": "maps-figma-frame-to-existing-design-system"
+      },
+      {
+        "skill": "flutter-architecture",
+        "case": "migrates-one-feature-without-big-bang"
+      },
+      {
+        "skill": "flutter-performance",
+        "case": "attributes-ui-versus-raster-jank"
+      },
+      {
+        "skill": "flutter-testing",
+        "case": "native-permission-dialog-boundary"
+      }
+    ],
+    "routing": [
+      "dart-three-domain-result-model",
+      "interruptible-reduced-motion-transition",
+      "incremental-feature-architecture-migration",
+      "profile-mode-product-grid-jank",
+      "figma-checkout-node-to-flutter"
+    ]
+  },
+  "behavior": [
+    {
+      "skill": "flutter-ui-design",
+      "case": "transforms-bland-dashboard-with-a-clear-signature",
+      "baseline": {
+        "response": "I\u2019d take the dashboard in a \u201csignal room\u201d direction: a calm, editorial interface inspired by technical instruments\u2014deep ink surfaces, luminous data colors, precise typography, and subtle grid geometry. It would feel distinctive without turning a serious analytics product into a sci-fi control panel.\n\nBecause there\u2019s no brand brief or runnable project yet, this is a proposed direction and plan\u2014not a claim about rendered output.\n\n## Visual direction\n\n**Foundation**\n\n- Near-black navy canvas (`#08111D`) rather than generic light gray.\n- Slightly lighter blue-black panels (`#101C2B`) with thin cool borders.\n- Warm off-white primary text (`#F3F0E8`) to soften the technical palette.\n- Electric cyan (`#4DE4FF`) as the main signal color.\n- Acid lime (`#C8F560`) for positive states and coral (`#FF6B6B`) for alerts.\n- One restrained violet accent for secondary series.\n- Color always paired with labels, icons, patterns, or markers for accessibility.\n\n**Signature motif**\n\nA faint coordinate-grid treatment appears only in hero and chart regions. Selected charts use a soft glow beneath the primary line, while cards remain flat and crisp. This creates a recognizable visual language without adding decoration everywhere.\n\n**Typography**\n\nUse a modern grotesk for interface copy and a tabular or monospaced treatment for key metrics:\n\n- Compact uppercase eyebrow labels with increased tracking.\n- Large, tightly spaced KPI values using tabular figures.\n- Sentence-case titles and plain-language annotations.\n- Metric deltas presented as compact \u201csignal tags,\u201d not generic colored pills.\n\n**Shape and depth**\n\n- Moderate 16\u201320 px panel radii.\n- Square or clipped corners on small signal tags to contrast with panels.\n- Borders and tonal separation instead of heavy shadows.\n- A subtle highlight line along the top edge of important panels.\n- Consistent 8 px spacing grid.\n\n**Data visualization**\n\n- Directly label important series when space permits.\n- Emphasize one primary series; mute comparison series.\n- Use dotted projections and patterned fills to distinguish forecasts.\n- Replace generic legends with interactive series controls.\n- Add short annotations for spikes, thresholds, and meaningful changes.\n- Keep grid lines quiet and reduce unnecessary axes and ticks.\n\n## Responsive composition\n\n### Desktop\n\nUse a 12-column layout with a persistent 240\u2013272 px navigation rail:\n\n1. Slim top command bar with date range, comparison period, search, and export.\n2. A wide \u201cpulse\u201d panel spanning roughly eight columns, containing the primary trend and a concise written interpretation.\n3. A four-column vertical stack for current status, target progress, and anomalies.\n4. A row of three or four compact KPI modules.\n5. Lower sections for breakdowns, acquisition mix, geography, or tables.\n\nThe main chart should dominate the first viewport. Avoid presenting every metric as an equally weighted card.\n\n### Phone\n\nConvert the interface into a focused narrative:\n\n1. Compact app bar and horizontally scrollable period controls.\n2. Primary KPI with delta and a small contextual sentence.\n3. Full-width trend chart.\n4. Two-column KPI grid where width permits; one column on narrow devices.\n5. Horizontally scrollable breakdown visualization or a mobile-specific ranked list.\n6. Detail table presented as expandable rows rather than a squeezed desktop table.\n7. Bottom navigation for the product\u2019s primary areas.\n\nOn mobile, secondary chart controls can move into a bottom sheet. Important tooltips should also support tap and keyboard focus, not hover alone.\n\n## Flutter implementation plan\n\nStart by turning the direction into reusable design primitives rather than styling individual screens ad hoc.\n\n1. **Establish tokens**\n\n   Define semantic colors, typography, spacing, radii, border treatments, motion durations, chart colors, and responsive breakpoints through `ThemeData`, `ColorScheme`, `TextTheme`, and theme extensions.\n\n2. **Build the responsive shell**\n\n   Use `LayoutBuilder` and width-based layout decisions:\n\n   - Compact: bottom navigation and single-column content.\n   - Medium: optional compact rail and mixed one/two-column content.\n   - Expanded: persistent navigation rail and 12-column dashboard.\n\n   Avoid branching the entire page into unrelated phone and desktop implementations. Share data and component APIs while changing composition where necessary.\n\n3. **Create a small dashboard component system**\n\n   Likely components include:\n\n   - `DashboardScaffold`\n   - `MetricPanel`\n   - `SignalDelta`\n   - `ChartPanel`\n   - `PeriodSelector`\n   - `InsightCallout`\n   - `SeriesToggle`\n   - `RankedBreakdown`\n   - Responsive data-table/list presentation\n   - Loading, empty, stale, and error states\n\n4. **Implement charts behind an adapter**\n\n   Keep chart-library-specific models out of the screen layer. A small adapter makes it easier to change libraries and maintain consistent axes, tooltip behavior, colors, accessibility descriptions, and empty states.\n\n5. **Add restrained motion**\n\n   Use short transitions for period changes, series visibility, number updates, and layout changes. Respect reduced-motion preferences and avoid animating every panel on initial load.\n\n6. **Preserve production concerns**\n\n   Separate formatting and aggregation from widgets, use tabular number formatting, constrain expensive chart repainting, and introduce `RepaintBoundary` only after profiling identifies a benefit.\n\n## Verification plan\n\nVerification should begin once the project, supported platforms, and data shapes are available.\n\n**Visual checks**\n\n- Golden tests at representative widths such as 360, 430, 768, 1024, and 1440 px.\n- Text-scale checks at 100%, 130%, and 200%.\n- Screenshots for normal, loading, empty, error, stale-data, and extreme-value states.\n- Long labels, large numbers, negative values, and multiple locales.\n- Comparison against approved design references rather than subjective \u201clooks good\u201d review.\n\n**Responsive checks**\n\n- Confirm there is no unintended horizontal scrolling.\n- Verify chart labels and controls do not collide at intermediate widths.\n- Test split-screen resizing and desktop window resizing.\n- Ensure the mobile table alternative retains all critical information.\n\n**Accessibility checks**\n\n- Contrast testing for text, borders, chart series, and focus indicators.\n- Semantic labels for KPI values, trends, chart summaries, and controls.\n- Logical screen-reader and keyboard focus order.\n- Minimum 44\u201348 logical-pixel targets.\n- No meaning conveyed solely by color or hover.\n\n**Behavior and performance**\n\n- Widget tests for breakpoint selection, formatting, filters, and series toggles.\n- Integration tests for changing periods and drilling into a metric.\n- Profile scrolling and chart updates on a representative lower-end phone and desktop browser.\n- Watch rebuild counts, frame timing, memory use, and tooltip responsiveness.\n\nBefore implementation, I would ask for the dashboard\u2019s users, most important decisions, required metrics, supported platforms, preferred chart package, accessibility target, and any existing theme or component constraints. Those answers may adjust the palette and information hierarchy, but the \u201csignal room\u201d concept provides a strong, coherent starting point.",
+        "judgment": {
+          "score": 75,
+          "expectations": [
+            {
+              "criterion": "1. defines a specific design signature and clear information hierarchy before styling components",
+              "met": true,
+              "evidence": "Defines a concrete \u201csignal room\u201d signature with instrument-inspired typography, restrained grid geometry, luminous data accents, and flat panels. It also establishes desktop and phone content hierarchy, including a dominant primary chart and narrative mobile sequence, before describing reusable components."
+            },
+            {
+              "criterion": "2. centralizes semantic roles in ThemeData, ColorScheme, TextTheme, or equivalent tokens instead of scattering literals through widgets or adding a design package",
+              "met": true,
+              "evidence": "Explicitly proposes semantic colors, typography, spacing, radii, borders, motion, chart colors, and breakpoints through ThemeData, ColorScheme, TextTheme, and theme extensions. It does not propose adding a design package."
+            },
+            {
+              "criterion": "3. audits default-looking Material composition and uses only a coherent subset of expressive treatments rather than effect overload or a card around every metric",
+              "met": true,
+              "evidence": "Rejects equally weighted metric cards, heavy shadows, ubiquitous decoration, and animation on every panel. It confines the grid motif and chart glow to hero/chart regions while using borders, tonal separation, direct labels, and a dominant primary series elsewhere."
+            },
+            {
+              "criterion": "4. defines realistic populated and edge-state fixtures plus a phone and desktop render-critique-render plan without claiming unavailable evidence",
+              "met": false,
+              "evidence": "Correctly states that no rendered output is available and lists useful edge cases such as loading, empty, error, stale data, extreme values, long labels, and negative values. However, it does not define concrete populated-data fixtures, and its verification section lists screenshots and golden tests without an explicit phone-and-desktop render, critique, revise, and re-render loop."
+            }
+          ],
+          "summary": "The response provides a distinctive, coherent direction, strong responsive hierarchy, centralized Flutter theming, and restrained expressive treatments. It falls short on the required fixture-driven iterative verification process: realistic populated scenarios are not specified, and a phone/desktop render-critique-render cycle is not made explicit."
+        }
+      },
+      "with_skill": {
+        "response": "The dashboard should become a calm \u201canalyst\u2019s workbench\u201d: editorial typography, ink-and-paper neutrals, a single electric-cyan accent, and dense but breathable data presentation. This is a visible transformation, not a light Material cleanup.\n\nBecause no project, assets, or runnable build is supplied, this is a provisional direction and plan\u2014not a verified implementation.\n\n## Visual direction: Signal Desk\n\n- Background: warm, low-contrast canvas rather than default scaffold gray. Use subtle tonal sectioning; avoid decorative gradients behind data.\n- Surfaces: mostly flat groups with hairline dividers. Reserve bordered or elevated panels for interactive charts, alerts, and selected content\u2014not every metric.\n- Typography: tabular numerals for metrics, firm condensed-feeling headings if the existing font supports them, and quieter supporting copy. Until fonts are inspected, use the platform/project typeface rather than adding one.\n- Accent: electric cyan marks selections, active series, focus, and the primary action. Amber and red appear only for meaningful warning and failure states.\n- Shape: compact controls with modest radii; larger chart panels may be slightly softer. Avoid uniform pill-shaped everything.\n- Charts: charcoal or deep-navy plotting areas in both themes, restrained grid lines, direct series labels where practical, and one saturated focal series. Never communicate status through color alone.\n- Content voice: concise and operational\u2014\u201cRevenue is 8.4% above forecast,\u201d not generic labels such as \u201cOverview.\u201d\n- Motion: quiet continuity for range changes and selection. No ambient animation. Reduced-motion users receive immediate state changes.\n\nThe visual signature should remain recognizable in grayscale through hierarchy, spacing, chart composition, and numeric typography\u2014not depend solely on cyan.\n\n## Screen composition\n\nThe primary task is to understand current performance, locate an exception, and inspect its cause.\n\nThe reading order should be:\n\n1. Workspace identity, reporting period, data freshness\n2. One dominant outcome with comparison context\n3. Trend and forecast\n4. Exceptions requiring attention\n5. Supporting breakdowns and activity\n6. Export, filtering, and secondary management actions\n\nOn phone:\n\n- Compact top bar with dashboard title and freshness status\n- Horizontally scrollable, clearly labeled period control\n- One lead metric\u2014not a carousel of equal cards\n- Full-width trend chart\n- \u201cNeeds attention\u201d list\n- Supporting metrics as flat two-column groups where width permits\n- A labeled \u201cFilter\u201d action; export remains secondary\n- Drill-down replaces the dashboard rather than squeezing into a pane\n\nOn desktop:\n\n- Persistent, narrow navigation rail\n- Header containing period, freshness, filters, and one primary action\n- Main 12-column workspace:\n  - Lead outcome and forecast: 4 columns\n  - Primary trend: 8 columns\n  - Exceptions: 4 columns\n  - Breakdown/table: 8 columns\n- Optional detail inspector opens beside the dashboard for drill-down\n- Content gets a deliberate maximum width; phone cards are not merely stretched\n\nExact breakpoints and constraint mechanics should be established with the responsive-layout work once supported platforms and existing conventions are known.\n\n## Semantic foundation\n\nFirst inspect and extend the project\u2019s existing `ThemeData`, `ColorScheme`, `TextTheme`, component themes, and shared widgets. Do not introduce a second design system.\n\nIf no meaningful token layer exists, add only stable concepts such as:\n\n- Canvas, primary surface, plotting surface, divider\n- Primary and muted foregrounds\n- Accent, positive, warning, negative, stale\n- Metric, section title, body, metadata, axis-label text roles\n- Compact, regular, and section spacing\n- Control, panel, and overlay shape roles\n\nImplement repeated control styling through component themes. A `ThemeExtension` is justified only for analytics-specific concepts not represented by `ColorScheme`, such as chart-grid and comparison-series colors.\n\nUse Flutter primitives for the composition and chart framing. Retain an existing chart dependency if present; do not select a new UI, icon, font, or chart package until the repository and chart requirements are inspected.\n\n## Representative content and states\n\nCreate deterministic fixtures outside production persistence:\n\n- Typical: \u201cNet revenue \u2014 $428,590 \u2014 8.4% above forecast\u201d\n- Long: \u201cEnterprise subscriptions in Southeast Asia\u201d with a long comparison label that wraps\n- Dense: 12-series breakdown or a sufficiently long table to expose legend and truncation problems\n- Negative: declining conversion with explanatory context\n\nRelevant state matrix:\n\n| State | Presentation | Primary action |\n|---|---|---|\n| Loading | Stable metric, chart, and table geometry; one coordinated loading treatment | None |\n| First-use empty | Explain that no source is connected | Connect data source |\n| Filtered empty | Preserve filters and explain the zero result | Clear filters |\n| Partial failure | Keep successful metrics; place failure within the affected panel | Reload panel |\n| Full failure | Concise explanation without raw exceptions | Reload dashboard |\n| Offline with cache | Keep data visible and mark its timestamp as stale | Reconnect |\n| Retrying | Preserve content, show local progress, prevent duplicate retry | None |\n| Disabled export | Keep visible only when temporarily unavailable; explain why | Resolve prerequisite |\n| Selected/focused | Structural selection plus color; strong keyboard focus ring | Contextual drill-down |\n\nHover must enhance rather than reveal essential values. Chart points need keyboard or alternative tabular access. Error, warning, and positive signals require icons or text in addition to hue.\n\n## Implementation sequence\n\n1. Once supplied, inspect `pubspec.yaml`, platforms, assets, fonts, existing themes, dashboard widgets, chart library, sibling screens, and current responsive conventions.\n2. Run the existing dashboard at representative phone and desktop sizes and capture deterministic baseline fixtures.\n3. Confirm whether the repository supports this direction or whether established product styling requires preservation.\n4. Add or extend semantic theme roles and component themes.\n5. Build the populated dashboard shell and lead metric hierarchy.\n6. Apply deliberate chart framing, legends, axes, selection, and data freshness treatment.\n7. Implement empty, loading, partial-error, full-error, offline/stale, disabled, focus, hover, pressed, and selected states.\n8. Add wide-screen composition and desktop input treatments through the project\u2019s responsive architecture.\n9. Separate deterministic preview/golden fixtures from production data.\n10. Perform a render\u2013critique\u2013render pass, fixing the three largest gaps in identity, hierarchy, density, or state quality before accepting the result.\n\nWidget APIs, UI-state ownership, navigation behavior, responsive constraints, and motion controllers should be handled through their dedicated implementation disciplines while preserving this visual direction.\n\n## Verification plan\n\nCapture the same fixtures before and after. The minimum useful matrix is:\n\n| Fixture | Phone | Desktop |\n|---|---:|---:|\n| Populated, light, normal text | \u2713 | \u2713 |\n| Populated, dark, normal text | \u2713 | \u2713 |\n| Long content, enlarged text | \u2713 | \u2713 |\n| Offline/stale cached state | \u2713 | \u2713 |\n| Partial chart failure | \u2713 | \u2713 |\n| Keyboard focus and hover | \u2014 | \u2713 |\n\nAlso verify:\n\n- Actual contrast for every custom foreground/background and chart-series combination\n- 200% text scaling without clipped metrics or hidden actions\n- Long labels, large values, negative values, and locale-sensitive number formatting\n- Touch targets on phone; pointer and visible keyboard focus on desktop\n- Reading order and action priority in grayscale\n- Stable loading geometry without avoidable layout shifts\n- Light/dark plotting surfaces, selections, disabled states, and error states\n- Compact and wide layouts using equivalent data density\n- Chart information through labels or tables, not color alone\n\nBehavioral widget tests should cover filtering, range changes, drill-down, retry, and export availability separately from golden or screenshot evidence.\n\nNo visual result can be approved from this proposal alone. Completion requires a runnable project, baseline and revised captures at equivalent viewports, inspection of the first implementation, correction of its three largest visual gaps, and a final accepted capture.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "1. defines a specific design signature and clear information hierarchy before styling components",
+              "met": true,
+              "evidence": "Defines the distinctive \u201cSignal Desk\u201d / \u201canalyst\u2019s workbench\u201d signature with editorial typography, ink-and-paper neutrals, electric-cyan accent, flat grouped surfaces, restrained chart styling, and quiet motion. It explicitly establishes task-oriented reading order and separate phone and desktop compositions before the implementation sequence."
+            },
+            {
+              "criterion": "2. centralizes semantic roles in ThemeData, ColorScheme, TextTheme, or equivalent tokens instead of scattering literals through widgets or adding a design package",
+              "met": true,
+              "evidence": "Explicitly requires inspecting and extending ThemeData, ColorScheme, TextTheme, component themes, and shared widgets; defines semantic color, typography, spacing, and shape roles; limits ThemeExtension to analytics-specific concepts; and rejects adding another design system or selecting new UI, font, icon, or chart packages before inspection."
+            },
+            {
+              "criterion": "3. audits default-looking Material composition and uses only a coherent subset of expressive treatments rather than effect overload or a card around every metric",
+              "met": true,
+              "evidence": "Calls for inspecting existing themes, widgets, sibling screens, and responsive conventions, then replacing the generic Material appearance with a restrained set of treatments. It explicitly favors flat groups and hairline dividers, reserves panels for interactive or selected content, uses one lead metric, avoids uniform pills and decorative gradients, and states that not every metric should be carded."
+            },
+            {
+              "criterion": "4. defines realistic populated and edge-state fixtures plus a phone and desktop render-critique-render plan without claiming unavailable evidence",
+              "met": true,
+              "evidence": "Provides deterministic typical, long, dense, and negative fixtures plus loading, multiple empty and failure states, offline/stale, retrying, disabled, selected, and focused states. It specifies equivalent phone and desktop baseline/revised captures, a render\u2013critique\u2013render pass, accessibility and interaction checks, and explicitly says the direction is provisional and no visual result can be approved without a runnable project and captures."
+            }
+          ],
+          "summary": "The response fully satisfies all four criteria. It presents a coherent and recognizable visual direction, establishes hierarchy before implementation details, centralizes styling through Flutter\u2019s semantic theme system, deliberately avoids indiscriminate Material cards and visual effects, and supplies a credible cross-platform fixture and iterative verification plan while clearly acknowledging that no rendered evidence is currently available."
+        }
+      },
+      "delta": 25,
+      "passed": true
+    },
+    {
+      "skill": "flutter-figma-workflow",
+      "case": "maps-figma-frame-to-existing-design-system",
+      "baseline": {
+        "response": "Please send the Figma URL with the exact node selected (or a screenshot/export of the frame). I\u2019ll also need the relevant checkout screen entry point and names of the existing ThemeExtensions/shared payment widgets. Without the node\u2019s design details, I can\u2019t accurately implement the phone and tablet layouts.",
+        "judgment": {
+          "score": 0,
+          "expectations": [
+            {
+              "criterion": "resolves the exact Figma frame variants states and constraints",
+              "met": false,
+              "evidence": "The response requests the Figma node but does not inspect or resolve any variants, states, or constraints."
+            },
+            {
+              "criterion": "maps tokens and components to the existing Flutter design system before adding primitives",
+              "met": false,
+              "evidence": "It asks for ThemeExtension and widget names but performs no design-system inventory or token/component mapping."
+            },
+            {
+              "criterion": "implements constraint-driven responsive structure instead of layer-per-widget coordinates",
+              "met": false,
+              "evidence": "No Flutter implementation or responsive layout structure is provided."
+            },
+            {
+              "criterion": "renders and compares deterministic phone and tablet fixtures",
+              "met": false,
+              "evidence": "No phone or tablet fixtures are rendered, tested, or compared."
+            }
+          ],
+          "summary": "The candidate only asks for missing inputs and does not perform or explicitly verify any required implementation work."
+        }
+      },
+      "with_skill": {
+        "response": "Please share the Figma node URL (including its `node-id`) and grant access, or attach exports/specs for the phone and tablet frames.\n\nI\u2019ll map the frame\u2019s tokens and components onto the app\u2019s existing `ThemeExtensions` and shared payment widgets, implement constraint-driven responsive layouts for both widths, and verify populated plus any designed loading/error/disabled states.",
+        "judgment": {
+          "score": 0,
+          "expectations": [
+            {
+              "criterion": "resolves the exact Figma frame variants states and constraints",
+              "met": false,
+              "evidence": "Requests the missing Figma node and mentions possible states, but does not inspect or explicitly resolve any exact variants, states, or constraints."
+            },
+            {
+              "criterion": "maps tokens and components to the existing Flutter design system before adding primitives",
+              "met": false,
+              "evidence": "Promises to map ThemeExtensions and shared widgets, but provides no repository inspection, mapping decisions, or implementation evidence."
+            },
+            {
+              "criterion": "implements constraint-driven responsive structure instead of layer-per-widget coordinates",
+              "met": false,
+              "evidence": "States an intention to use constraint-driven layouts, but no responsive structure or code is implemented."
+            },
+            {
+              "criterion": "renders and compares deterministic phone and tablet fixtures",
+              "met": false,
+              "evidence": "Does not render, compare, or report results for any deterministic phone or tablet fixtures."
+            }
+          ],
+          "summary": "The response correctly identifies missing design access, but it only requests inputs and describes future work. None of the required implementation or verification outcomes are demonstrated."
+        }
+      },
+      "delta": 0,
+      "passed": false
+    },
+    {
+      "skill": "flutter-architecture",
+      "case": "migrates-one-feature-without-big-bang",
+      "baseline": {
+        "response": "I\u2019d migrate it incrementally, keeping the app buildable throughout\u2014not perform a risky one-shot folder shuffle.\n\nRecommended feature-first structure:\n\n```text\nlib/\n\u251c\u2500\u2500 app/\n\u2502   \u251c\u2500\u2500 app.dart\n\u2502   \u251c\u2500\u2500 router/\n\u2502   \u2514\u2500\u2500 di/\n\u251c\u2500\u2500 core/\n\u2502   \u251c\u2500\u2500 database/\n\u2502   \u251c\u2500\u2500 error/\n\u2502   \u251c\u2500\u2500 network/\n\u2502   \u2514\u2500\u2500 utilities/\n\u2514\u2500\u2500 features/\n    \u2514\u2500\u2500 <feature>/\n        \u251c\u2500\u2500 domain/\n        \u2502   \u251c\u2500\u2500 entities/\n        \u2502   \u251c\u2500\u2500 repositories/\n        \u2502   \u2514\u2500\u2500 use_cases/\n        \u251c\u2500\u2500 data/\n        \u2502   \u251c\u2500\u2500 data_sources/\n        \u2502   \u251c\u2500\u2500 models/\n        \u2502   \u2514\u2500\u2500 repositories/\n        \u2514\u2500\u2500 presentation/\n            \u251c\u2500\u2500 pages/\n            \u251c\u2500\u2500 widgets/\n            \u2514\u2500\u2500 state/\n```\n\nFor each existing feature, I would:\n\n1. Identify every database call made by widgets or presentation state.\n2. Define domain entities and repository interfaces.\n3. Move database operations into data sources.\n4. Implement repository interfaces in the data layer.\n5. Add use cases where they represent meaningful application actions.\n6. Inject those dependencies into the presentation layer.\n7. Replace direct database calls without changing behavior.\n8. Update tests and verify the app after each feature migration.\n\nThe dependency direction would be:\n\n```text\npresentation \u2192 domain \u2190 data\n```\n\nWidgets would depend only on presentation state; domain code would not import Flutter, database packages, or generated persistence models.\n\nBefore applying this repository-wide, I\u2019d need the repository contents and the intended state-management/dependency-injection approach. If none is established, I\u2019d preserve the current state-management solution and introduce constructor-based injection first, avoiding an unrelated framework migration during the architecture work.",
+        "judgment": {
+          "score": 75,
+          "expectations": [
+            {
+              "criterion": "names the concrete dependency or testability problem",
+              "met": true,
+              "evidence": "It identifies widgets/presentation as directly dependent on database calls, database packages, and generated persistence models, then specifies that these dependencies should be removed from presentation and domain code."
+            },
+            {
+              "criterion": "introduces an incremental seam around one affected feature",
+              "met": true,
+              "evidence": "It proposes migrating one feature at a time by introducing domain repository interfaces, data-source implementations, and constructor-based dependency injection before replacing direct database calls."
+            },
+            {
+              "criterion": "preserves behavior with characterization or boundary tests",
+              "met": false,
+              "evidence": "It says to avoid changing behavior and to update tests, but does not explicitly require characterization tests for existing behavior or boundary/contract tests around the new repository seam."
+            },
+            {
+              "criterion": "rejects a big-bang folder rewrite as the architecture outcome",
+              "met": true,
+              "evidence": "It explicitly rejects a \"risky one-shot folder shuffle\" and recommends an incremental migration that keeps the app buildable after each feature."
+            }
+          ],
+          "summary": "The response correctly rejects a repository-wide folder rewrite and proposes a useful feature-by-feature repository seam with dependency injection. Its main omission is an explicit testing strategy that characterizes current behavior or verifies the new architectural boundary."
+        }
+      },
+      "with_skill": {
+        "response": "I wouldn\u2019t begin with a repository-wide folder migration. Moving files into \u201cClean Architecture\u201d folders won\u2019t fix the real issue\u2014widgets owning database access\u2014and creates a large, risky diff before the next feature.\n\nInstead, migrate one vertical slice incrementally:\n\n```text\nfeatures/\n  <feature>/\n    presentation/\n      <feature>_view.dart\n      <feature>_view_model.dart\n    data/\n      <feature>_repository.dart\n      <feature>_repository_impl.dart\n      <feature>_database_service.dart\n```\n\nUse this dependency path:\n\n```text\nWidget \u2192 ViewModel/Controller \u2192 Repository \u2192 Database service\n```\n\n- Widgets render state and forward user actions.\n- Presentation logic owns loading, success, and error states.\n- The repository is the source of truth for feature data.\n- The database service contains database-specific queries and APIs.\n- Add a domain/use-case layer only if business logic is complex, reused, or otherwise clutters presentation logic.\n- Keep the app\u2019s established state-management and dependency-injection conventions.\n\nBefore changing behavior, add characterization tests around the database-backed flow. Then migrate one existing widget path, test its presentation logic without rendering widgets, and build the next feature on the same boundary. Repeat feature by feature, leaving old and new paths interoperable until callers have moved.\n\nThis addresses the concrete defect without a big-bang rewrite, while preventing UI-to-database shortcuts and avoiding circular dependencies.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "names the concrete dependency or testability problem",
+              "met": true,
+              "evidence": "Explicitly identifies widgets owning database access as the real issue and proposes testing presentation logic independently of rendered widgets."
+            },
+            {
+              "criterion": "introduces an incremental seam around one affected feature",
+              "met": true,
+              "evidence": "Proposes migrating one vertical slice with an explicit Widget \u2192 ViewModel/Controller \u2192 Repository \u2192 Database service boundary, then repeating feature by feature."
+            },
+            {
+              "criterion": "preserves behavior with characterization or boundary tests",
+              "met": true,
+              "evidence": "Explicitly requires characterization tests around the existing database-backed flow before changes and testing presentation logic across the new boundary."
+            },
+            {
+              "criterion": "rejects a big-bang folder rewrite as the architecture outcome",
+              "met": true,
+              "evidence": "Directly rejects a repository-wide folder migration and big-bang rewrite, explaining that moving files alone does not fix the dependency problem and creates a risky diff."
+            }
+          ],
+          "summary": "The response satisfies all four criteria explicitly: it diagnoses direct widget-to-database coupling, creates a feature-level incremental seam, protects existing behavior with characterization tests, and rejects repository-wide folder restructuring as the architectural solution."
+        }
+      },
+      "delta": 25,
+      "passed": true
+    },
+    {
+      "skill": "flutter-performance",
+      "case": "attributes-ui-versus-raster-jank",
+      "baseline": {
+        "response": "Those changes need to be applied selectively\u2014especially isolates, which only help CPU-heavy data processing and cannot build widgets or decode UI directly.\n\nPlease share the product-grid widget and its image/data-loading code. I\u2019ll then:\n\n- Mark truly static widgets and constructors `const`.\n- Wrap expensive, independently changing product tiles in `RepaintBoundary`\u2014not every trivial child.\n- Move measurable CPU-heavy parsing or transformations to `Isolate.run`/`compute`.\n- Check common scrolling bottlenecks such as oversized images, unstable keys, intrinsic layout, nested scroll views, and unnecessary rebuilds.\n\nWithout the code and a performance trace, adding all three mechanically could increase memory use and make scrolling worse rather than smoother.",
+        "judgment": {
+          "score": 0,
+          "expectations": [
+            {
+              "criterion": "captures a reproducible profile-mode trace before prescribing fixes",
+              "met": false,
+              "evidence": "The response asks for a performance trace but does not explicitly commit to capturing a reproducible trace in profile mode before selecting fixes."
+            },
+            {
+              "criterion": "distinguishes UI-thread work from raster-thread work",
+              "met": false,
+              "evidence": "It distinguishes CPU-heavy processing from widget construction, but never explicitly analyzes or separates UI-thread cost from raster-thread cost."
+            },
+            {
+              "criterion": "chooses an intervention only after attributing the measured cost",
+              "met": false,
+              "evidence": "The response proposes const widgets, RepaintBoundary, and isolates conditionally, but does not describe measuring and attributing a specific cost to the UI or raster thread before choosing an intervention."
+            },
+            {
+              "criterion": "repeats the same flow and reports comparable results",
+              "met": false,
+              "evidence": "There is no commitment to rerun the identical scrolling flow or report before-and-after frame timing, jank, or trace results."
+            }
+          ],
+          "summary": "The response appropriately warns against applying the requested techniques mechanically, but it does not explicitly perform or commit to the required profile-measure-attribute-intervene-retest workflow."
+        }
+      },
+      "with_skill": {
+        "response": "Those changes shouldn\u2019t be added blindly; each addresses a different bottleneck and can add overhead. First capture a reproducible profile-mode trace on representative hardware while fast-scrolling the same product dataset.\n\nUse DevTools to inspect the missed frames:\n\n- High UI-thread time: examine CPU samples for builds, layout, parsing, sorting, or synchronous work. Narrow state subscriptions and stabilize widget identity if rebuild diagnostics show an excessive scope. Add `const` only where construction is actually repeated.\n- High raster-thread time: inspect oversized image decoding/upload, large repaints, clipping, shaders, and `saveLayer`. Add `RepaintBoundary` only around independently repainting regions confirmed by repaint diagnostics; excessive boundaries consume memory and compositing resources.\n- Confirmed CPU-heavy Dart work: move the measured, transferable computation\u2014such as substantial parsing or transformation\u2014to `Isolate.run`/`compute`. An isolate won\u2019t help build, layout, painting, image upload, or small tasks, and serialization can make those paths slower.\n\nWarm up each run, repeat the identical scroll flow, and compare UI/raster frame-time distributions and missed-frame counts before and after each smallest targeted change. Also run correctness tests, especially around asynchronous results and widget lifecycle.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "captures a reproducible profile-mode trace before prescribing fixes",
+              "met": true,
+              "evidence": "Explicitly requires capturing a reproducible profile-mode trace on representative hardware using the same product dataset before making changes."
+            },
+            {
+              "criterion": "distinguishes UI-thread work from raster-thread work",
+              "met": true,
+              "evidence": "Separately identifies UI-thread costs such as build, layout, parsing, and sorting, and raster-thread costs such as image upload, repaints, clipping, shaders, and saveLayer."
+            },
+            {
+              "criterion": "chooses an intervention only after attributing the measured cost",
+              "met": true,
+              "evidence": "Conditions const widgets, RepaintBoundary, and isolate usage on diagnostics confirming repeated construction, independent repainting, or CPU-heavy transferable Dart work, respectively."
+            },
+            {
+              "criterion": "repeats the same flow and reports comparable results",
+              "met": true,
+              "evidence": "Requires warming up runs, repeating the identical scroll flow, and comparing UI/raster frame-time distributions and missed-frame counts before and after each targeted change."
+            }
+          ],
+          "summary": "The response fully satisfies all criteria by requiring measurement first, attributing jank to the correct execution path, selecting only evidence-supported interventions, and validating them through comparable repeated runs."
+        }
+      },
+      "delta": 100,
+      "passed": true
+    },
+    {
+      "skill": "flutter-testing",
+      "case": "native-permission-dialog-boundary",
+      "baseline": {
+        "response": "A Flutter widget test cannot interact with the real iOS notification permission dialog or Notification Center. Widget tests run in Flutter\u2019s test environment; the permission dialog is owned by SpringBoard, and scheduled notifications are handled by iOS outside the app.\n\nUse two test layers instead:\n\n- Widget test: mock the notification plugin\u2019s platform channel and verify the app requests permission and schedules the notification.\n- iOS UI test (`XCUITest`): launch the app, tap the in-app button, grant the real system alert with `addUIInterruptionMonitor`, then verify the notification through an app-visible signal or SpringBoard UI.\n\nAlso note that iOS remembers the permission decision. The UI test must reset notification authorization between runs, typically by uninstalling/reinstalling the app or resetting simulator privacy. Therefore, there is no valid single Flutter widget test that can perform the requested real-system flow.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "explains that a widget test cannot operate the real native permission UI",
+              "met": true,
+              "evidence": "Explicitly states that a Flutter widget test cannot interact with the iOS permission dialog or Notification Center because they are owned and handled outside the app."
+            },
+            {
+              "criterion": "tests Flutter-owned policy and states through a seam at a cheaper layer",
+              "met": true,
+              "evidence": "Proposes a widget test using a mocked notification plugin platform channel to verify the app-owned permission request and scheduling behavior."
+            },
+            {
+              "criterion": "uses supported device or integration verification for the native boundary",
+              "met": true,
+              "evidence": "Proposes an iOS XCUITest using addUIInterruptionMonitor to grant the real system alert and verify behavior through an app-visible signal or SpringBoard UI."
+            },
+            {
+              "criterion": "does not claim the platform notification appeared without runtime evidence",
+              "met": true,
+              "evidence": "Does not claim that a notification appeared; it requires runtime verification through app-visible evidence or SpringBoard UI."
+            }
+          ],
+          "summary": "The response correctly rejects the impossible single-widget-test premise and explicitly separates Flutter-layer testing from real iOS boundary verification, including permission-state reset requirements."
+        }
+      },
+      "with_skill": {
+        "response": "A Flutter widget test cannot tap the real iOS notification-permission dialog or verify a real scheduled notification. Widget tests run in Flutter\u2019s test environment; the permission dialog and notification delivery belong to iOS, outside the Flutter widget tree.\n\nUse a deterministic widget test around an injected notification seam:\n\n```dart\ntestWidgets('grants permission and schedules a notification',\n    (tester) async {\n  final notifications = FakeNotifications(permissionGranted: true);\n\n  await tester.pumpWidget(\n    MaterialApp(home: ReminderPage(notifications: notifications)),\n  );\n\n  await tester.tap(find.text('Enable notifications'));\n  await tester.pump();\n\n  expect(find.text('Notifications enabled'), findsOneWidget);\n  expect(notifications.scheduled, hasLength(1));\n  expect(notifications.scheduled.single.title, 'Reminder');\n});\n```\n\nThen cover the real iOS boundary separately with an integration/device test. Flutter integration tests still cannot tap arbitrary native permission dialogs as Flutter widgets; permission must be granted through simulator/device automation, such as `simctl privacy`, before launching the test. Actual notification appearance should be verified through XCUITest or a manual device workflow, since it is rendered by iOS rather than Flutter.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "explains that a widget test cannot operate the real native permission UI",
+              "met": true,
+              "evidence": "Explicitly states that a Flutter widget test cannot tap the real iOS notification-permission dialog because it is outside the Flutter widget tree."
+            },
+            {
+              "criterion": "tests Flutter-owned policy and states through a seam at a cheaper layer",
+              "met": true,
+              "evidence": "Provides a deterministic widget test using an injected FakeNotifications seam and verifies Flutter-owned enabled state and scheduling intent."
+            },
+            {
+              "criterion": "uses supported device or integration verification for the native boundary",
+              "met": true,
+              "evidence": "Separates native verification into an integration/device test, proposes simulator/device permission setup, and identifies XCUITest or a manual device workflow for verifying iOS-rendered notifications."
+            },
+            {
+              "criterion": "does not claim the platform notification appeared without runtime evidence",
+              "met": true,
+              "evidence": "Clearly distinguishes the fake scheduling assertion from actual notification appearance and requires runtime verification through XCUITest or a manual device workflow."
+            }
+          ],
+          "summary": "The response correctly rejects the impossible widget-test requirement, replaces it with a seam-based Flutter widget test, and reserves native permission and notification verification for supported runtime tooling."
+        }
+      },
+      "delta": 0,
+      "passed": true
+    }
+  ],
+  "routing": [
+    {
+      "case": "dart-three-domain-result-model",
+      "response": {
+        "skills": [
+          "dart-language"
+        ],
+        "reason": "The task is a contained Dart 3 type-model refactor using sealed classes and exhaustive pattern matching, with no architecture or concurrency changes."
+      },
+      "passed": true,
+      "selected": [
+        "dart-language"
+      ],
+      "missing": [],
+      "forbidden_selected": [],
+      "unexpected": []
+    },
+    {
+      "case": "interruptible-reduced-motion-transition",
+      "response": {
+        "skills": [
+          "flutter-animation",
+          "flutter-accessibility"
+        ],
+        "reason": "The task centers on reversible staggered motion plus reduced-motion behavior."
+      },
+      "passed": true,
+      "selected": [
+        "flutter-accessibility",
+        "flutter-animation"
+      ],
+      "missing": [],
+      "forbidden_selected": [],
+      "unexpected": []
+    },
+    {
+      "case": "incremental-feature-architecture-migration",
+      "response": {
+        "skills": [
+          "flutter-architecture",
+          "flutter-persistence",
+          "flutter-state-management"
+        ],
+        "reason": "This focused feature refactor needs boundary design, SQLite ownership, and preservation of existing Bloc state conventions without broad workflow coordination."
+      },
+      "passed": true,
+      "selected": [
+        "flutter-architecture",
+        "flutter-persistence",
+        "flutter-state-management"
+      ],
+      "missing": [],
+      "forbidden_selected": [],
+      "unexpected": []
+    },
+    {
+      "case": "profile-mode-product-grid-jank",
+      "response": {
+        "skills": [
+          "flutter-performance",
+          "flutter-device-testing"
+        ],
+        "reason": "Profile-mode evidence on the specified Android device is needed to attribute the scrolling jank, validate the minimal fix, and compare before/after results."
+      },
+      "passed": true,
+      "selected": [
+        "flutter-device-testing",
+        "flutter-performance"
+      ],
+      "missing": [],
+      "forbidden_selected": [],
+      "unexpected": []
+    },
+    {
+      "case": "figma-checkout-node-to-flutter",
+      "response": {
+        "skills": [
+          "flutter-figma-workflow",
+          "flutter-responsive-layout"
+        ],
+        "reason": "Implement the explicit Figma node with existing components and verify visual parity at both phone and tablet constraints."
+      },
+      "passed": true,
+      "selected": [
+        "flutter-figma-workflow",
+        "flutter-responsive-layout"
+      ],
+      "missing": [],
+      "forbidden_selected": [],
+      "unexpected": []
+    }
+  ],
+  "summary": {
+    "behavior_cases": 5,
+    "behavior_passed": 4,
+    "baseline_average": 50.0,
+    "with_skill_average": 80.0,
+    "average_delta": 30.0,
+    "routing_cases": 5,
+    "routing_passed": 5
+  }
+}
