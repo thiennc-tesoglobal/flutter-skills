@@ -26,6 +26,7 @@ First identify which specialist skills are discoverable in the current environme
 - APIs or storage: `flutter-networking`, `flutter-persistence`
 - Local or remote notification delivery: `flutter-notifications`
 - OS-scheduled, foreground-service, or headless background work: `flutter-background-execution`
+- Flutter/Dart SDK, dependency graph, lockfile, or native toolchain upgrades: `flutter-dependency-upgrades`
 - Production diagnostics, crash context, logs, or traces: `flutter-observability`
 - Language or async behavior: `dart-language`, `dart-concurrency`
 - Security or privacy hardening: `flutter-security`

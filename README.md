@@ -1,10 +1,10 @@
 # Flutter Skills
 
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-27-2ea44f)](skills/)
+[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-28-2ea44f)](skills/)
 [![Validation](https://github.com/thiennc-tesoglobal/flutter-skills/actions/workflows/validate-repository.yml/badge.svg)](https://github.com/thiennc-tesoglobal/flutter-skills/actions/workflows/validate-repository.yml)
 [![License](https://img.shields.io/badge/License-BSD--3--Clause-blue)](LICENSE)
 
-27 package-neutral Agent Skills for building, reviewing, testing, and releasing Flutter apps without forcing a state-management package or folder structure.
+28 package-neutral Agent Skills for building, reviewing, testing, and releasing Flutter apps without forcing a state-management package or folder structure.
 
 > Bộ skill giúp AI coding agent đọc dự án Flutter, chọn đúng chuyên môn, triển khai và xác minh kết quả theo conventions sẵn có.
 
@@ -36,7 +36,7 @@ Project installation is the default. Add `--global` to use the selected skills a
 
 The direct GitHub installer remains available: `npx skills add thiennc-tesoglobal/flutter-skills`.
 
-> In a regular terminal, the installer asks which skills and agents to use. Inside Codex, it may detect Codex and install non-interactively; pass `--skill` explicitly when you do not want all 27 skills.
+> In a regular terminal, the installer asks which skills and agents to use. Inside Codex, it may detect Codex and install non-interactively; pass `--skill` explicitly when you do not want all 28 skills.
 
 ### Claude Code bundles
 
@@ -51,7 +51,7 @@ Available bundles: `all-flutter-skills`, `flutter-core-skills`, `flutter-ui-skil
 
 | Area | Skills |
 |---|---|
-| Workflow | `flutter-app-workflow`, `flutter-build-release`, `flutter-ci-cd`, `flutter-device-testing` |
+| Workflow | `flutter-app-workflow`, `flutter-dependency-upgrades`, `flutter-build-release`, `flutter-ci-cd`, `flutter-device-testing` |
 | Dart | `dart-language`, `dart-concurrency` |
 | Architecture | `flutter-architecture`, `flutter-state-management` |
 | UI | `flutter-ui-design`, `flutter-figma-workflow`, `flutter-visual-effects`, `flutter-ui-patterns`, `flutter-responsive-layout`, `flutter-animation`, `flutter-navigation` |
@@ -72,7 +72,7 @@ For a focused task, name the specialist directly or let the agent route from the
 
 ## Quality
 
-The catalog contains **27 skills**, **92 behavior-focused evaluation cases**, and **31 cross-catalog routing cases**. Validation checks metadata, references, bundles, tests, and clean installation discovery.
+The catalog contains **28 skills**, **97 behavior-focused evaluation cases**, and **33 cross-catalog routing cases**. Validation checks metadata, references, bundles, tests, and clean installation discovery.
 
 Representative baseline-versus-skill benchmark results and the reproducible profile are published in [benchmarks](benchmarks/README.md). They are a transparent sample, not a claim that one model or a small case set proves every workflow.
 

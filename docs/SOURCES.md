@@ -33,6 +33,8 @@ Flutter and Dart evolve quickly. Technical guidance in this collection should pr
 - [Dart language](https://dart.dev/language)
 - [Dart concurrency](https://dart.dev/language/concurrency)
 - [Dart package documentation](https://pub.dev)
+- [Dart Pub package dependencies](https://dart.dev/tools/pub/dependencies)
+- [Flutter breaking changes and migration guides](https://docs.flutter.dev/release/breaking-changes)
 - [Figma developer documentation](https://developers.figma.com/)
 - [Figma Code Connect](https://developers.figma.com/docs/code-connect/)
 
