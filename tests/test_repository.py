@@ -23,8 +23,8 @@ class RepositoryTests(unittest.TestCase):
         errors, _, counts = VALIDATOR.validate_repository()
         self.assertEqual(errors, [])
         self.assertEqual(counts["skills"], 25)
-        self.assertEqual(counts["evals"], 73)
-        self.assertEqual(counts["routing_evals"], 21)
+        self.assertEqual(counts["evals"], 77)
+        self.assertEqual(counts["routing_evals"], 23)
 
     def test_repository_markdown_excludes_generated_dependencies(self):
         paths = {
@@ -96,6 +96,52 @@ class RepositoryTests(unittest.TestCase):
         form_instructions = BEHAVIOR_EVAL.instructions_for_case(async_form, catalog)
         self.assertIn("references/forms-and-input.md", form_instructions)
         self.assertNotIn("references/widget-previews.md\">", form_instructions)
+
+    def test_networking_evals_disclose_only_selected_transport_references(self):
+        catalog = BEHAVIOR_EVAL.skill_catalog()
+        cases = BEHAVIOR_EVAL.behavior_cases(catalog)
+
+        graphql_case = next(
+            case
+            for case in cases
+            if case["skill"] == "flutter-networking"
+            and case["name"] == "graphql-partial-data-and-cache"
+        )
+        graphql_instructions = BEHAVIOR_EVAL.instructions_for_case(
+            graphql_case, catalog
+        )
+        self.assertIn("references/graphql.md\">", graphql_instructions)
+        self.assertNotIn(
+            "references/realtime-transports.md\">", graphql_instructions
+        )
+
+        subscription_case = next(
+            case
+            for case in cases
+            if case["skill"] == "flutter-networking"
+            and case["name"] == "graphql-subscription-recovery"
+        )
+        subscription_instructions = BEHAVIOR_EVAL.instructions_for_case(
+            subscription_case, catalog
+        )
+        self.assertIn("references/graphql.md\">", subscription_instructions)
+        self.assertIn(
+            "references/realtime-transports.md\">", subscription_instructions
+        )
+
+        websocket_case = next(
+            case
+            for case in cases
+            if case["skill"] == "flutter-networking"
+            and case["name"] == "websocket-resume-is-not-reconnect"
+        )
+        websocket_instructions = BEHAVIOR_EVAL.instructions_for_case(
+            websocket_case, catalog
+        )
+        self.assertIn(
+            "references/realtime-transports.md\">", websocket_instructions
+        )
+        self.assertNotIn("references/graphql.md\">", websocket_instructions)
 
     def test_behavior_eval_rejects_unknown_reference(self):
         catalog = BEHAVIOR_EVAL.skill_catalog()
