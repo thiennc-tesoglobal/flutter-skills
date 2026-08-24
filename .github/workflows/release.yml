@@ -15,11 +15,20 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.20.0
+          cache: npm
+
+      - run: npm ci
+
       - name: Validate repository
         run: |
           python3 .github/scripts/validate_repository.py --release
           python3 .github/scripts/run_behavior_evals.py
           python3 -m unittest discover -s tests -v
+          npm test
+          npm run pack:check
           bash .github/scripts/run_dart_skills_lint.sh
           npx --yes skills@1.5.23 add . --list
 
@@ -30,9 +39,10 @@ jobs:
           set -euo pipefail
           marketplace_version="$(jq -r '.metadata.version' .claude-plugin/marketplace.json)"
           tessl_version="$(jq -r '.version' .tessl-plugin/plugin.json)"
+          npm_version="$(jq -r '.version' package.json)"
 
-          if [[ "$marketplace_version" != "$tessl_version" ]]; then
-            echo "Version mismatch: marketplace=$marketplace_version tessl=$tessl_version" >&2
+          if [[ "$marketplace_version" != "$tessl_version" || "$marketplace_version" != "$npm_version" ]]; then
+            echo "Version mismatch: marketplace=$marketplace_version tessl=$tessl_version npm=$npm_version" >&2
             exit 1
           fi
 

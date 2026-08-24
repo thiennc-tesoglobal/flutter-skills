@@ -13,13 +13,13 @@
 Choose skills interactively:
 
 ```sh
-npx skills add thiennc-tesoglobal/flutter-skills
+npx @thiennc/flutter-skills
 ```
 
 Start with the end-to-end workflow for a complete app or feature:
 
 ```sh
-npx skills add thiennc-tesoglobal/flutter-skills \
+npx @thiennc/flutter-skills \
   --agent codex \
   --skill flutter-app-workflow
 ```
@@ -27,12 +27,14 @@ npx skills add thiennc-tesoglobal/flutter-skills \
 Install one specialist when the task is focused:
 
 ```sh
-npx skills add thiennc-tesoglobal/flutter-skills \
+npx @thiennc/flutter-skills \
   --agent codex \
   --skill flutter-ui-design
 ```
 
 Project installation is the default. Add `--global` to use the selected skills across projects.
+
+The direct GitHub installer remains available: `npx skills add thiennc-tesoglobal/flutter-skills`.
 
 > In a regular terminal, the installer asks which skills and agents to use. Inside Codex, it may detect Codex and install non-interactively; pass `--skill` explicitly when you do not want all 25 skills.
 
