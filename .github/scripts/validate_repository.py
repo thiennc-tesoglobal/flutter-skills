@@ -29,9 +29,9 @@ IGNORED_LINK_DIRECTORIES = {
     "node_modules",
 }
 EXPECTED_VERSION = "0.2.0"
-EXPECTED_SKILL_COUNT = 26
-EXPECTED_EVAL_COUNT = 87
-EXPECTED_ROUTING_EVAL_COUNT = 28
+EXPECTED_SKILL_COUNT = 27
+EXPECTED_EVAL_COUNT = 92
+EXPECTED_ROUTING_EVAL_COUNT = 31
 EXPECTED_BUNDLES = {
     "all-flutter-skills": {
         "dart-concurrency",
@@ -40,6 +40,7 @@ EXPECTED_BUNDLES = {
         "flutter-animation",
         "flutter-app-workflow",
         "flutter-architecture",
+        "flutter-background-execution",
         "flutter-build-release",
         "flutter-ci-cd",
         "flutter-code-review",
@@ -83,6 +84,7 @@ EXPECTED_BUNDLES = {
     },
     "flutter-engineering-skills": {
         "flutter-app-workflow",
+        "flutter-background-execution",
         "flutter-build-release",
         "flutter-ci-cd",
         "flutter-code-review",
