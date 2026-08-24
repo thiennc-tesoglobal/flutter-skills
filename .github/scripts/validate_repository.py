@@ -29,9 +29,9 @@ IGNORED_LINK_DIRECTORIES = {
     "node_modules",
 }
 EXPECTED_VERSION = "0.2.0"
-EXPECTED_SKILL_COUNT = 27
-EXPECTED_EVAL_COUNT = 92
-EXPECTED_ROUTING_EVAL_COUNT = 31
+EXPECTED_SKILL_COUNT = 28
+EXPECTED_EVAL_COUNT = 97
+EXPECTED_ROUTING_EVAL_COUNT = 33
 EXPECTED_BUNDLES = {
     "all-flutter-skills": {
         "dart-concurrency",
@@ -44,6 +44,7 @@ EXPECTED_BUNDLES = {
         "flutter-build-release",
         "flutter-ci-cd",
         "flutter-code-review",
+        "flutter-dependency-upgrades",
         "flutter-device-testing",
         "flutter-figma-workflow",
         "flutter-localization",
@@ -66,6 +67,7 @@ EXPECTED_BUNDLES = {
         "dart-concurrency",
         "dart-language",
         "flutter-architecture",
+        "flutter-dependency-upgrades",
         "flutter-networking",
         "flutter-persistence",
         "flutter-state-management",
@@ -88,6 +90,7 @@ EXPECTED_BUNDLES = {
         "flutter-build-release",
         "flutter-ci-cd",
         "flutter-code-review",
+        "flutter-dependency-upgrades",
         "flutter-device-testing",
         "flutter-notifications",
         "flutter-observability",

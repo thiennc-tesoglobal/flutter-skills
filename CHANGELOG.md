@@ -4,6 +4,7 @@
 
 - Add `flutter-figma-workflow` for evidence-based Figma-to-Flutter mapping and screenshot parity.
 - Add `flutter-background-execution` for OS-scheduled jobs, foreground services, headless callbacks, and interruption-safe delivery.
+- Add `flutter-dependency-upgrades` for staged SDK, package, lockfile, resolution, and native toolchain migrations.
 - Deepen performance, testing, and architecture guidance through case-selected references.
 - Add representative raw benchmark results and a reproducible benchmark profile.
 - Close routing gaps for Dart language, animation, architecture, performance, and Figma work.

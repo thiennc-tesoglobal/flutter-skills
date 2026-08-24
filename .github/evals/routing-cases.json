@@ -46,7 +46,7 @@
     "prompt": "Produce and smoke-test a signed staging Android App Bundle, but do not upload or publish it.",
     "required": ["flutter-build-release"],
     "optional": ["flutter-device-testing"],
-    "forbidden": ["flutter-app-workflow"]
+    "forbidden": ["flutter-app-workflow", "flutter-dependency-upgrades"]
   },
   {
     "name": "stale-search-result",
@@ -177,7 +177,7 @@
     "prompt": "Our Dart SDK constraint supports Dart 3. Refactor a parser result API from loosely typed maps into an exhaustive sealed success/failure model with pattern matching, without changing app architecture or adding asynchronous work.",
     "required": ["dart-language"],
     "optional": ["flutter-testing"],
-    "forbidden": ["dart-concurrency", "flutter-app-workflow", "flutter-architecture", "flutter-state-management"]
+    "forbidden": ["dart-concurrency", "flutter-app-workflow", "flutter-architecture", "flutter-dependency-upgrades", "flutter-state-management"]
   },
   {
     "name": "interruptible-reduced-motion-transition",
@@ -227,5 +227,19 @@
     "required": ["flutter-background-execution", "flutter-platform-integration"],
     "optional": ["flutter-device-testing", "flutter-security", "flutter-testing"],
     "forbidden": ["dart-concurrency", "flutter-app-workflow", "flutter-notifications"]
+  },
+  {
+    "name": "resolve-transitive-pub-conflict",
+    "prompt": "Resolve a Pub solver conflict where two direct Flutter dependencies require incompatible versions of the same transitive package. Preserve the committed application lockfile policy and do not use a permanent dependency override.",
+    "required": ["flutter-dependency-upgrades"],
+    "optional": ["flutter-security", "flutter-testing"],
+    "forbidden": ["dart-language", "flutter-app-workflow", "flutter-build-release", "flutter-ci-cd"]
+  },
+  {
+    "name": "upgrade-flutter-sdk-and-ci-pin",
+    "prompt": "Upgrade this Flutter app to the requested stable SDK, migrate its compatible package and Android/iOS toolchain requirements, and update the existing GitHub Actions Flutter pin without publishing artifacts.",
+    "required": ["flutter-ci-cd", "flutter-dependency-upgrades"],
+    "optional": ["flutter-platform-integration", "flutter-testing"],
+    "forbidden": ["dart-language", "flutter-app-workflow", "flutter-build-release"]
   }
 ]
