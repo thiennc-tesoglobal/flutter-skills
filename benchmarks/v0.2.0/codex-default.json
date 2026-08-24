@@ -1,0 +1,464 @@
+{
+  "created_at": "2026-08-24T08:33:40.907946+00:00",
+  "agent": "codex",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_model": null,
+  "catalog_version": "0.2.0",
+  "profile": {
+    "name": "flutter-skills-v0.2-representative",
+    "description": "A fixed public sample covering visual design, Figma translation, architecture, performance, testing, and the routing gaps closed in v0.2.0.",
+    "behavior": [
+      {
+        "skill": "flutter-ui-design",
+        "case": "transforms-bland-dashboard-with-a-clear-signature"
+      },
+      {
+        "skill": "flutter-figma-workflow",
+        "case": "maps-figma-frame-to-existing-design-system"
+      },
+      {
+        "skill": "flutter-architecture",
+        "case": "migrates-one-feature-without-big-bang"
+      },
+      {
+        "skill": "flutter-performance",
+        "case": "attributes-ui-versus-raster-jank"
+      },
+      {
+        "skill": "flutter-testing",
+        "case": "native-permission-dialog-boundary"
+      }
+    ],
+    "routing": [
+      "dart-three-domain-result-model",
+      "interruptible-reduced-motion-transition",
+      "incremental-feature-architecture-migration",
+      "profile-mode-product-grid-jank",
+      "figma-checkout-node-to-flutter"
+    ]
+  },
+  "behavior": [
+    {
+      "skill": "flutter-ui-design",
+      "case": "transforms-bland-dashboard-with-a-clear-signature",
+      "baseline": {
+        "response": "I\u2019d take the dashboard in an **\u201cEditorial Observatory\u201d** direction: a calm, high-contrast interface combining the clarity of a financial terminal with the typography and pacing of a modern data magazine. It should feel deliberately composed\u2014not like Material defaults with charts dropped into cards.\n\n## Visual direction\n\nUse a deep ink background with warm, paper-like surfaces and one electric accent:\n\n- Canvas: `#0B1020`\n- Raised surface: `#131A2B`\n- Highlight surface: `#1A2338`\n- Primary text: `#F5F1E8`\n- Secondary text: `#9FA9BC`\n- Accent: chartreuse `#C7F45B`\n- Supporting data colors: cyan `#54D6E8`, coral `#FF7A72`, violet `#A991FF`\n- Success/warning/error must also differ by icon, label, or pattern\u2014not color alone.\n\nThe distinctive motif is a subtle **measurement grid**: fine rules, compact uppercase labels, oversized metric numerals, and clipped accent corners. Use it sparingly in hero panels and section dividers rather than decorating every card.\n\nTypography:\n\n- Display and numeric values: a characterful variable sans, preferably with tabular figures.\n- Labels and body copy: a highly legible neutral sans.\n- Metric hierarchy: 12 px label, 32\u201348 px value, 13\u201314 px comparison.\n- Avoid all-uppercase body copy; reserve uppercase for short instrumentation labels.\n\nUse an 8-point spacing system, 14\u201318 px panel radii, thin translucent borders, and restrained shadows. Motion should be quick and functional: 160\u2013220 ms transitions, chart reveals, number changes, and filter feedback. Respect reduced-motion settings.\n\n## Responsive composition\n\nPhone:\n\n- Compact top bar with dashboard title, date range, and overflow actions.\n- A horizontally scrollable metric strip showing one full metric and part of the next.\n- One featured chart occupying the first viewport.\n- Secondary charts and breakdowns stacked vertically.\n- Filters open in a bottom sheet.\n- Dense tables become ranked lists with a drill-down screen.\n- Keep primary actions and chart controls above the fold; minimum touch target 48\u00d748 dp.\n\nDesktop:\n\n- Persistent 240\u2013272 px navigation rail.\n- Header with title, comparison period, filters, export, and profile controls.\n- A 12-column grid:\n  - Hero metric and primary trend: 8 columns.\n  - Goal/progress or anomaly panel: 4 columns.\n  - Supporting charts: paired 6-column panels.\n  - Detailed table: full width.\n- Filter controls may remain inline or appear in a right-side inspector.\n- Constrain the content width around 1440\u20131600 px so ultrawide displays do not stretch charts into unreadable shapes.\n\nResponsive changes should be structural, not merely scaled. Suggested breakpoints:\n\n- `< 600`: phone stack\n- `600\u20131023`: compact/tablet grid\n- `\u2265 1024`: desktop shell\n\n## Chart language\n\nCharts should share one consistent visual grammar:\n\n- Thin grid lines and muted axes.\n- Accent color reserved for the selected or primary series.\n- Other series desaturated until focused.\n- Direct labels where practical; avoid distant legends.\n- Tooltips show value, date, comparison, and change.\n- Use line/area charts for trends, horizontal bars for rankings, and compact bullet charts for goals.\n- Avoid decorative pie charts and excessive gradients.\n- Provide a textual summary and accessible data table for every important visualization.\n\nEmpty, loading, stale, and error states should be designed as first-class dashboard states. Skeletons should preserve the final layout instead of showing generic centered spinners.\n\n## Flutter implementation plan\n\n1. Establish design tokens in `ThemeData` and `ThemeExtension`s for data colors, panel treatments, chart grid lines, spacing, radii, and motion durations.\n\n2. Create reusable primitives:\n\n   - `DashboardShell`\n   - `DashboardPanel`\n   - `MetricTile`\n   - `SectionHeader`\n   - `FilterChipGroup`\n   - `ChartFrame`\n   - `TrendIndicator`\n   - `ResponsiveDataTable`\n\n3. Centralize responsive behavior in a small layout policy derived from `LayoutBuilder`. Widgets should receive a layout class such as phone, compact, or desktop instead of scattering raw width checks throughout the tree.\n\n4. Model each panel with explicit states: loading, data, empty, stale, and failure. Keep analytics data and formatting outside presentation widgets.\n\n5. Wrap the chosen chart library behind local chart components. This prevents library-specific styling and interaction code from leaking across the dashboard.\n\n6. Add keyboard focus, hover, selected, and pressed states from the outset. Use `Semantics`, meaningful traversal order, tooltip alternatives, and tabular number formatting.\n\n7. Load custom fonts as bundled assets, with sensible fallbacks. Avoid relying on runtime font downloads.\n\n## Verification plan\n\nBecause no project or brand assets are supplied, this is a proposed direction\u2014not a claim about rendered output. Once the project is available, I would verify it through:\n\n- Golden tests at representative sizes such as 390\u00d7844, 768\u00d71024, 1280\u00d7800, and 1440\u00d7900.\n- Widget tests covering breakpoint transitions, filter application, loading/error/empty states, and table-to-list adaptation.\n- Manual checks at intermediate widths to catch overflow and awkward wrapping, not just exact breakpoint snapshots.\n- Accessibility checks for 200% text scaling, keyboard-only navigation, screen-reader descriptions, contrast, reduced motion, and color-blind-safe chart differentiation.\n- Performance profiling with realistic datasets, particularly chart interaction, scrolling, tooltip updates, and resizing.\n- Visual review using populated, sparse, long-label, negative-value, and extreme-value datasets.\n- Desktop checks for hover precision and focus visibility; phone checks for reachability, touch targets, safe areas, and landscape layout.\n\nThe first implementation checkpoint should be a static, data-realistic dashboard shell at phone and desktop sizes. That will validate typography, density, hierarchy, and chart grammar before investing in animation or backend integration.",
+        "judgment": {
+          "score": 78,
+          "expectations": [
+            {
+              "criterion": "defines a specific design signature and clear information hierarchy before styling components",
+              "met": true,
+              "evidence": "Defines an \u201cEditorial Observatory\u201d signature, distinctive measurement-grid motif, typography hierarchy, metric sizing, and responsive content priority before presenting reusable Flutter components."
+            },
+            {
+              "criterion": "centralizes semantic roles in ThemeData, ColorScheme, TextTheme, or equivalent tokens instead of scattering literals through widgets or adding a design package",
+              "met": true,
+              "evidence": "Explicitly proposes ThemeData and ThemeExtensions for data colors, panel treatments, chart lines, spacing, radii, and motion, plus centralized layout policy. It does not propose adding a design package."
+            },
+            {
+              "criterion": "audits default-looking Material composition and uses only a coherent subset of expressive treatments rather than effect overload or a card around every metric",
+              "met": true,
+              "evidence": "Explicitly rejects the appearance of \u201cMaterial defaults with charts dropped into cards,\u201d limits the measurement-grid and clipped-corner motif to hero panels and dividers, and specifies restrained shadows, gradients, and accent usage."
+            },
+            {
+              "criterion": "defines realistic populated and edge-state fixtures plus a phone and desktop render-critique-render plan without claiming unavailable evidence",
+              "met": false,
+              "evidence": "Correctly disclaims rendered evidence and proposes populated, sparse, long-label, negative-value, extreme-value, loading, error, empty, and stale cases at phone and desktop sizes. However, it does not explicitly define a render \u2192 critique \u2192 revise \u2192 re-render cycle for both phone and desktop."
+            }
+          ],
+          "summary": "The response strongly establishes a distinctive, coherent direction, centralized Flutter theming, and disciplined treatment of Material defaults. Its verification coverage is substantial and appropriately avoids claiming rendered results, but the required iterative phone-and-desktop render-critique-render loop is not made explicit."
+        }
+      },
+      "with_skill": {
+        "response": "## Direction: \u201cSignal Desk\u201d\n\nA calm, technical analytics workspace inspired by an editorial research desk\u2014not a collection of generic Material cards. The interface should feel precise, data-dense, and trustworthy on desktop while remaining decisive and scannable on a phone.\n\nThis is a visible transformation, but a provisional one: without a brand brief or existing project, the direction should be implemented as a contained theme layer that can later absorb established colors, fonts, and components.\n\n### Design signature\n\n- **Background:** cool, near-white canvas in light mode and deep graphite in dark mode, with a subtle tonal field behind the summary region.\n- **Surfaces:** primarily flat sections separated by spacing and hairline rules. Use bordered panels only for independently interactive analysis modules.\n- **Typography:** compact, editorial hierarchy; tabular figures for metrics where the existing font supports them. Avoid introducing a font dependency until the project is inspected.\n- **Accent:** one saturated \u201csignal\u201d color\u2014provisionally electric teal\u2014reserved for selected ranges, primary actions, and chart focus. Amber and red communicate warning and failure, always with text or icons.\n- **Shape:** restrained radii: small for controls, medium for analytical panels, pill shapes only for filters and statuses.\n- **Charts:** quiet grids, direct labels where practical, and a single highlighted series. Avoid rainbow palettes, gradients beneath every line, and decorative charts without meaningful comparisons.\n- **Motion:** short continuity transitions when filters or ranges change; no ornamental dashboard animation.\n- **Voice:** concise and confident: \u201cRevenue increased 12.4%\u201d rather than \u201cGreat news!\u201d\n\n## Screen composition\n\nThe dominant reading path is:\n\n1. Current scope and reporting period\n2. One decision-oriented summary\n3. Trend and comparison\n4. Exceptions or drivers\n5. Detailed records\n6. Export and secondary controls\n\nA representative populated dashboard could contain:\n\n- Header: \u201cPerformance overview,\u201d workspace, date range, and data freshness\n- Summary sentence: \u201cRevenue rose 12.4%, led by returning customers\u201d\n- Four compact metrics, with revenue dominant and the others subordinate\n- Primary time-series chart with comparison toggle\n- \u201cWhat changed\u201d ranked drivers\n- Channel breakdown\n- Recent anomalies or notable events\n- Detailed table on desktop and prioritized record list on phone\n\nNot every section becomes a card. The metric strip can sit directly on the canvas with vertical dividers; the chart and anomaly module earn panels because they contain their own interactions.\n\n### Phone\n\nThe first viewport should expose the reporting scope, summary, dominant metric, and the beginning of the trend\u2014without an oversized hero.\n\n- Filters collapse into a labeled \u201cFilters\u201d control showing the active count.\n- Metrics use a horizontally paged strip only if all values remain discoverable; otherwise use a two-column grid.\n- The chart emphasizes the primary series and offers a separate accessible detail view.\n- Tables become prioritized rows showing the most decision-relevant fields, with drill-in for the rest.\n- The main action is contextual, such as \u201cView report\u201d; export remains secondary.\n\n### Desktop\n\nWidth should improve comparison rather than stretch phone content.\n\n- Persistent compact filter rail or toolbar\n- Main analysis column plus a narrower insights column\n- Metrics in one aligned row\n- Trend and drivers visible together where space permits\n- Full table with sortable headers, keyboard focus, and density appropriate for pointer input\n- A bounded content width on very large displays to preserve readable relationships\n\nExact breakpoints and constraint mechanics should be decided with the responsive-layout implementation, not embedded as arbitrary screen-width checks throughout widgets.\n\n## Provisional semantic foundation\n\nAfter inspecting the eventual project, extend its existing theme rather than creating a competing system. If none exists, introduce only a small semantic layer:\n\n- Canvas: `background`\n- Analytical surfaces: `surface` and `surfaceContainer`\n- Dividers and chart grids: `outlineVariant`\n- Primary signal: `primary`\n- Comparisons: a muted secondary role\n- Positive, caution, critical, and stale-data roles: a small `ThemeExtension` only if the existing system lacks them\n- Text roles: display summary, section title, metric value, body, metadata, and control label\n- Spacing rhythm: compact within data groups, clearly larger between analytical sections\n- Shape roles: control, panel, and overlay\u2014rather than one radius applied everywhere\n- Component themes for buttons, segmented controls, inputs, tooltips, tables, and focus indicators\n\nEvery custom foreground/background pair must be checked in both themes. Positive and negative changes should include direction icons and signed values, not depend on green and red alone.\n\n## State plan\n\nUse deterministic fixtures, never production seed data.\n\n| State | Presentation | Primary action |\n|---|---|---|\n| Loading | Preserve metric, chart, and table geometry; one coordinated loading treatment | None |\n| Populated | Typical values plus one long channel or campaign name | View report |\n| First use | Explain what connecting data enables | Connect data source |\n| Filtered empty | Retain active filters and explain why nothing matches | Clear filters |\n| Partial failure | Keep available metrics; local error replaces only the failed module | Retry module |\n| Full failure | Concise failure explanation in the content region | Reload dashboard |\n| Offline with cache | Keep cached analytics visible and show last-updated status | Try reconnecting |\n| Stale | Timestamp banner near reporting scope | Refresh data |\n| Disabled export | Keep visible only when users need to understand its availability; expose the reason | Complete required selection |\n| Updating filters | Preserve current results, mark them as updating, prevent duplicate submissions | None |\n\nAlso define hover, pressed, selected, keyboard-focus, tooltip, and chart-data-focus treatments on desktop. Long fixtures should exercise metric overflow, chart labels, filter names, table cells, and translated copy.\n\n## Implementation plan\n\n1. **Repository preflight**\n   Inspect `pubspec.yaml`, platforms, assets, fonts, existing themes, design-system components, sibling screens, analytics models, and current dashboard screenshots. Record what must be preserved before changing styles.\n\n2. **Establish a repeatable baseline**\n   Add deterministic fixtures for populated, long-content, loading, filtered-empty, partial-error, and offline states. Capture the current dashboard at equivalent phone and desktop viewports.\n\n3. **Build the theme foundation**\n   Extend `ColorScheme`, `TextTheme`, component themes, and\u2014only where necessary\u2014analytics-specific semantic roles. Use Flutter core primitives and existing dependencies.\n\n4. **Recompose the first frame**\n   Implement the summary, metric strip, primary trend, driver list, and freshness treatment first. This slice should establish the identity before polishing every module.\n\n5. **Adapt by form factor**\n   Preserve information priority across phone and desktop while changing composition and control density. Delegate breakpoint and reusable-widget mechanics to the appropriate layout and UI-pattern work.\n\n6. **Complete operational states**\n   Implement local versus full failure, cached/offline presentation, empty variants, disabled reasons, and pointer/keyboard interaction states.\n\n7. **Remove default-widget residue**\n   Audit untouched app bars, generic cards, default chips, stock data tables, floating actions, and unthemed tooltips. Retain their behavior where useful while aligning appearance with the dashboard\u2019s tokens.\n\n8. **Render, critique, iterate**\n   Compare baseline and first implementation using identical data and viewports. Identify the three largest gaps in hierarchy, identity, density, state quality, or platform adaptation; fix those and render again.\n\n## Minimum verification matrix\n\nBecause no runnable project is supplied, this is the smallest matrix to capture later\u2014not evidence of completed verification:\n\n| Form factor | Theme | Text scale | Fixture |\n|---|---|---:|---|\n| Compact phone | Light | 1.0 | Populated with long content |\n| Compact phone | Dark | Enlarged | Filtered empty |\n| Wide desktop | Light | 1.0 | Populated with long content and keyboard focus |\n| Wide desktop | Dark | Enlarged | Offline cached or partial failure |\n\nFor each capture, verify:\n\n- The summary, dominant metric, and primary action are recognizable at a glance.\n- Reading order still works in grayscale.\n- Long and enlarged text neither clips nor hides actions.\n- Custom text, chart, status, focus, and disabled combinations pass actual contrast checks.\n- Loading geometry is stable.\n- Phone controls remain touch-appropriate.\n- Desktop hover, focus, sorting, and tooltips work with pointer and keyboard.\n- Charts remain understandable without color alone.\n- Light and dark themes express the same hierarchy.\n- The design remains recognizable without relying solely on the teal accent.\n\nBehavioral widget tests should separately cover filtering, retries, sorting, state transitions, and adaptive content selection. Golden or screenshot tests establish appearance; emulator or desktop captures are needed where system fonts, safe areas, focus, pointer behavior, or GPU rendering affect the result.\n\nNo rendered outcome can be claimed until the project, representative data, and target viewports are available. The first implementation should remain provisional until its baseline comparison and render\u2013critique\u2013render pass are complete.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "defines a specific design signature and clear information hierarchy before styling components",
+              "met": true,
+              "evidence": "The response defines the distinctive \u201cSignal Desk\u201d direction through surfaces, typography, accent, shape, charts, motion, and voice, then explicitly establishes a six-step reading path before discussing component implementation."
+            },
+            {
+              "criterion": "centralizes semantic roles in ThemeData, ColorScheme, TextTheme, or equivalent tokens instead of scattering literals through widgets or adding a design package",
+              "met": true,
+              "evidence": "It maps semantic roles to ColorScheme, TextTheme, component themes, shape and spacing roles, and a small ThemeExtension only where necessary. It explicitly says to use Flutter core primitives and existing dependencies and avoid introducing a font dependency."
+            },
+            {
+              "criterion": "audits default-looking Material composition and uses only a coherent subset of expressive treatments rather than effect overload or a card around every metric",
+              "met": true,
+              "evidence": "It calls for auditing generic cards, default chips, stock data tables, app bars, floating actions, and unthemed tooltips. The proposed treatment is restrained: flat sections, hairline rules, one signal color, limited radii, quiet charts, and panels only for independently interactive modules. It explicitly rejects making every section a card."
+            },
+            {
+              "criterion": "defines realistic populated and edge-state fixtures plus a phone and desktop render-critique-render plan without claiming unavailable evidence",
+              "met": true,
+              "evidence": "It specifies deterministic populated and long-content fixtures plus loading, first-use, filtered-empty, partial/full failure, offline cached, stale, disabled-export, and updating states. It requires equivalent phone and desktop baseline captures, comparison at identical data and viewports, correction of the three largest gaps, and another render. It explicitly states that the verification matrix is not completed evidence and that no rendered outcome can yet be claimed."
+            }
+          ],
+          "summary": "The candidate fully satisfies all four criteria. It presents a concrete visual identity, establishes hierarchy before component styling, centralizes the design system in Flutter theme semantics, deliberately limits expressive treatments, audits default Material residue, and supplies a credible fixture and iterative verification plan while clearly acknowledging the lack of a runnable project or rendered evidence."
+        }
+      },
+      "delta": 22,
+      "passed": true
+    },
+    {
+      "skill": "flutter-figma-workflow",
+      "case": "maps-figma-frame-to-existing-design-system",
+      "baseline": {
+        "response": "Implementation plan\n\n1. Map Figma variables to existing Flutter theme extensions\n\nDo not introduce raw colors, spacing values, or radii where an equivalent semantic token exists.\n\n| Figma semantic variable | Flutter mapping | Usage |\n|---|---|---|\n| `surface/*` | Matching surface fields in the existing `ThemeExtension` | Page, summary panel, cards, fields |\n| `accent/*` | Accent/action fields | Selected card border, radio/check state, primary pay action |\n| `danger/*` | Error fields | Error border, validation icon, supporting text |\n| `spacing/*` | Existing spacing extension | Page gutters, section gaps, card padding |\n| `radius/*` | Existing radius extension | Panels, cards, inputs, button |\n\nMap by semantic purpose rather than copying rendered hex values. Resolve every inspected Figma variable to a named Flutter token before implementation. Typography and icon sizes should likewise reuse the current theme and shared icon system; record any true mismatch instead of silently adding a one-off constant.\n\n`PaymentCard` state mapping:\n\n| Figma variant | Widget state | Required presentation |\n|---|---|---|\n| Default | Enabled, unselected, no error | Standard surface and neutral border |\n| Selected | Enabled and selected | Accent border/state indicator; selection remains accessible without color alone |\n| Disabled | `enabled: false` | Disabled surface/content treatment; ignores interaction |\n| Error | Validation error attached to the option | Danger border and error/supporting content; preserve selected state if both apply |\n\nUse the shared `PaymentCard` API directly where it already expresses these states. If it cannot represent a required combination such as selected + error, extend its state model deliberately rather than recreating the component locally.\n\n2. Define one checkout content model\n\nKeep order data, payment selection, validation, loading, and submission outside the responsive layout. Both phone and tablet compositions should render from the same state and callbacks.\n\nSuggested screen state:\n\n- Order-summary data\n- Available payment methods\n- Selected payment-method ID\n- Validation error, preferably keyed by method or section\n- Submission/loading state\n- Pay-enabled state\n\nThe pay callback should validate, expose the error variant when necessary, and submit exactly once. Bind loading and disabled behavior through the existing `AsyncActionButton`.\n\n3. Build the responsive shell\n\nUse constraints from `LayoutBuilder`, not device-type detection.\n\nPhone layout at the 390 px fixture:\n\n```text\nScaffold\n\u251c\u2500\u2500 scrollable vertical checkout content\n\u2502   \u251c\u2500\u2500 summary\n\u2502   \u2514\u2500\u2500 payment form\n\u2514\u2500\u2500 sticky 56 px pay action\n```\n\nImplementation details:\n\n- Use the inspected vertical auto-layout order and tokenized gaps.\n- Keep the action outside the scrolling content, normally in `Scaffold.bottomNavigationBar`.\n- Give the action container safe-area handling and the Figma surface/divider treatment.\n- The interactive button/action region is 56 logical pixels high. Keep outer safe-area inset separate so devices with a bottom inset do not compress the action.\n- Add bottom content spacing only if needed to prevent the last form content from being visually crowded by the sticky region.\n- Allow content to scroll for short-height devices, large text, keyboards, and validation messages.\n\nTablet layout at the 834 px fixture:\n\n```text\nRow\n\u251c\u2500\u2500 Expanded(flex: 5): order summary\n\u2514\u2500\u2500 Expanded(flex: 7): payment form and pay action\n```\n\nApply the 5:7 split to the available content width after page padding and the inter-column gap. Do not hard-code widths derived from `834 \u00d7 5/12` and `834 \u00d7 7/12`, because gutters and the column gap must be removed first.\n\nThe summary and form should be separate layout regions. Each region may scroll independently only if that matches the inspected behavior; otherwise use a single page scroll. Keep the pay action with the form column on tablet unless the node explicitly shows a full-width footer. Constrain excessive content width inside each pane if the existing design system provides a maximum form width.\n\nUse the project\u2019s established adaptive breakpoint if one exists. Otherwise introduce one named checkout breakpoint that selects the mobile stack below it and the 5:7 layout at or above it. Verify widths immediately on both sides of that breakpoint.\n\n4. Compose from shared widgets\n\n- Reuse `PaymentCard` for every payment option.\n- Reuse `AsyncActionButton` for the pay action.\n- Pass semantic state and tokens into shared widgets; do not reproduce their internals in the checkout screen.\n- Preserve stable keys for payment options and the action so widget and golden tests can address them reliably.\n- Ensure loading prevents repeated payment submission while preserving the button\u2019s dimensions.\n\n5. Add visual-parity fixtures before changing production UI\n\nCreate deterministic fixtures with fixed data, fonts, locale, text scale, and surface size:\n\n- `checkout_phone_default_390`\n- `checkout_phone_selected_390`\n- `checkout_phone_error_390`\n- `checkout_phone_submitting_390`\n- `checkout_tablet_default_834`\n- `checkout_tablet_selected_834`\n- A component matrix containing PaymentCard default, selected, disabled, and error variants\n\nAlso add boundary fixtures just below and at the chosen breakpoint. Include a long-summary or validation-message fixture to catch overflow and sticky-action overlap.\n\nGolden captures should control:\n\n- Logical surface dimensions and device-pixel ratio\n- Theme and brightness\n- Font loading\n- Locale and currency formatting\n- Animation clock/loading state\n- Safe-area padding\n- Network images, replacing them with deterministic test assets where necessary\n\nCompare geometry first\u2014frame padding, 5:7 proportions, gaps, card bounds, and the 56 px action\u2014then typography, colors, radii, icons, and shadows. Golden tolerances should accommodate rasterization only, not layout drift.\n\nAcceptance checklist\n\nDesign-token mapping:\n\n- [ ] Every Figma surface, accent, danger, spacing, and radius variable maps to an existing `ThemeExtension` field.\n- [ ] No inspected color is copied into the screen as a raw hex value.\n- [ ] No arbitrary spacing or corner-radius value duplicates an existing token.\n- [ ] Light/dark or other supported themes remain semantically correct.\n\nResponsive structure:\n\n- [ ] At 390 px, content follows the inspected vertical order.\n- [ ] At 390 px, the pay action remains visible while checkout content scrolls.\n- [ ] The pay action is exactly 56 logical pixels high, excluding the bottom safe-area inset.\n- [ ] Keyboard, large text, long content, and validation errors do not obscure fields or the action.\n- [ ] At 834 px, available width is divided into 5:7 summary/form panes after subtracting gutters and gap.\n- [ ] Layout switches based on constraints and has no overflow immediately around the breakpoint.\n- [ ] Resizing does not reset the selected payment method, errors, or submission state.\n\nPaymentCard:\n\n- [ ] Default, selected, disabled, and error variants match the Figma node.\n- [ ] Disabled cards cannot be selected.\n- [ ] Error state includes a non-color indication and accessible error semantics.\n- [ ] Selected state is exposed through semantics.\n- [ ] Any supported combined state, especially selected + error, renders deterministically.\n- [ ] Touch targets meet the app\u2019s accessibility minimums.\n\nPay action:\n\n- [ ] Uses the shared `AsyncActionButton`.\n- [ ] Label, enabled, disabled, loading, success/failure behavior match the checkout state.\n- [ ] Loading does not change the action\u2019s height or cause layout shift.\n- [ ] Repeated taps cannot trigger duplicate submissions.\n- [ ] Safe-area and focus/keyboard behavior are correct.\n\nVisual parity and tests:\n\n- [ ] Phone and tablet golden fixtures match the inspected frames.\n- [ ] The PaymentCard variant matrix has golden coverage.\n- [ ] Breakpoint-boundary and long-content fixtures have no clipping or overflow.\n- [ ] Widget tests cover selection, disabled interaction, validation, and submission.\n- [ ] Semantic tests cover card state, error association, and pay-button status.\n- [ ] Golden differences are limited to an agreed rasterization tolerance; spacing or geometry differences are not waived.",
+        "judgment": {
+          "score": 91,
+          "expectations": [
+            {
+              "criterion": "resolves the exact Figma frame variants states and constraints",
+              "met": false,
+              "evidence": "The response explicitly covers the 390 px vertical layout, sticky 56 px action, 834 px 5:7 split, and all four PaymentCard variants. However, it leaves inspected behavior unresolved with statements such as \"only if that matches the inspected behavior,\" \"unless the node explicitly shows,\" and \"if one exists,\" rather than recording exact decisions for scrolling, tablet action placement, and breakpoint."
+            },
+            {
+              "criterion": "maps tokens and components to the existing Flutter design system before adding primitives",
+              "met": true,
+              "evidence": "It explicitly maps surface, accent, danger, spacing, and radius variables to matching ThemeExtension fields, requires semantic mapping before implementation, reuses PaymentCard and AsyncActionButton, and permits extending the shared component only for a genuinely unsupported state combination."
+            },
+            {
+              "criterion": "specifies constraint-driven responsive structure instead of layer-per-widget coordinates",
+              "met": true,
+              "evidence": "It explicitly chooses LayoutBuilder constraints, a mobile scrolling column with a sticky bottom action, and an Expanded 5:7 tablet Row calculated after gutters and gap. It rejects hard-coded widths derived directly from the 834 px frame."
+            },
+            {
+              "criterion": "defines deterministic phone and tablet fixtures and a rendered parity comparison",
+              "met": true,
+              "evidence": "It defines named 390 px phone and 834 px tablet fixtures, a PaymentCard state matrix, breakpoint and overflow cases, and deterministic controls for dimensions, pixel ratio, fonts, locale, animation, safe areas, and assets. It also specifies golden comparison priorities and restricts tolerance to rasterization rather than geometry drift."
+            }
+          ],
+          "summary": "The response is comprehensive and implementation-oriented, with strong design-system mapping, responsive constraints, deterministic fixtures, and golden-parity criteria. Its main deficiency is that several inspected-node decisions remain conditional instead of being explicitly resolved, so it does not fully satisfy the requirement for exact frame constraints and behavior."
+        }
+      },
+      "with_skill": {
+        "response": "The implementation should reuse the existing `ThemeExtensions`, `PaymentCard`, and `AsyncActionButton`. No new visual primitives or raw Figma values should be introduced unless inspection reveals a genuine gap.\n\n## Implementation plan\n\n1. Confirm the target matrix\n\n   Implement and verify:\n\n   - Phone: 390 px viewport width.\n   - Tablet: 834 px viewport width.\n   - Payment card states: default, selected, disabled, and error.\n   - Checkout states represented by the node: populated plus any visible loading, submission-error, or disabled-action states.\n   - The same theme mode, locale, text scale, and device pixel ratio used for the references.\n\n2. Map Figma variables to Flutter tokens\n\n   Resolve each Figma variable by semantic role rather than copying its raw value:\n\n   | Figma variable | Flutter mapping | Usage |\n   |---|---|---|\n   | `surface/*` | Existing surface `ThemeExtension` fields | Page, summary, card, and form surfaces |\n   | `accent/*` | Existing accent fields | Selected card border/fill, controls, primary action |\n   | `danger/*` | Existing danger fields | Error border, message, and error affordances |\n   | `spacing/*` | Existing spacing extension | Page padding, section gaps, card padding, field spacing |\n   | `radius/*` | Existing radius extension | Panels, cards, fields, and action shape |\n\n   Typography should map to the nearest semantic `TextTheme` style\u2014such as title, body, label, and supporting text\u2014then apply only explicitly designed color or weight differences. Existing semantic tokens take precedence over duplicating nearly identical values.\n\n3. Model the responsive page structure\n\n   Use a shared checkout content model and switch layout by constraints, not platform detection.\n\n   Phone structure:\n\n   ```text\n   Scaffold\n   \u251c\u2500 scrollable vertical checkout content\n   \u2502  \u251c\u2500 summary\n   \u2502  \u251c\u2500 payment-method section\n   \u2502  \u2514\u2500 checkout form\n   \u2514\u2500 sticky 56 px pay-action region\n   ```\n\n   - Build the body with vertical `Column`/sliver structure matching Figma auto-layout.\n   - Keep the pay action outside the scrolling content, normally in `Scaffold.bottomNavigationBar`.\n   - Treat 56 px as the action/control height if that is what the inspected node specifies. Safe-area inset and surrounding padding remain additional; they must not compress the button below 56 px.\n   - Add bottom content spacing so the final form element is never obscured by the sticky region.\n   - Preserve keyboard behavior: the form must remain scrollable and focused fields must be reachable.\n\n   Tablet structure:\n\n   ```text\n   constrained checkout surface\n   \u2514\u2500 Row\n      \u251c\u2500 Expanded(flex: 5): summary\n      \u2514\u2500 Expanded(flex: 7): form and payment action\n   ```\n\n   - Use `LayoutBuilder` and a project breakpoint that produces the inspected 834 px arrangement.\n   - Implement the 5:7 relationship with `Expanded(flex: 5)` and `Expanded(flex: 7)` after subtracting outer padding and the inter-column gap.\n   - Keep the form column independently constraint-safe and place the action according to the inspected tablet hierarchy.\n   - Constrain the overall content width if the design system already defines a desktop/tablet maximum.\n   - Avoid absolute positioning and Figma-layer coordinates.\n\n4. Map `PaymentCard` variants\n\n   Use the shared widget\u2019s existing API and state model:\n\n   | Figma variant | Flutter state |\n   |---|---|\n   | Default | Enabled, unselected, no error |\n   | Selected | Enabled and selected; accent treatment |\n   | Disabled | Non-interactive; disabled semantic and visual treatment |\n   | Error | Error flag/message; danger treatment |\n\n   Confirm that the shared component maps:\n\n   - Selection to the accent border, surface, icon/control, and label treatment.\n   - Error to danger styling and an associated semantic error message.\n   - Disabled to reduced emphasis without making essential text illegible.\n   - State changes to the whole card\u2019s interaction and semantics, not only its decoration.\n\n   If selection and error can coexist in the product state, preserve the component\u2019s documented precedence. If the Figma node does not define that combination, record it as unresolved rather than inventing a fifth variant.\n\n5. Wire the shared action\n\n   Use `AsyncActionButton` for idle, loading, and disabled submission states.\n\n   - Its control height maps to the 56 px phone action specification.\n   - Loading prevents duplicate submissions.\n   - Disabled state reflects invalid or incomplete checkout data.\n   - Button labeling and progress semantics remain available to assistive technology.\n   - Safe-area and keyboard insets are handled by the container, not embedded as arbitrary button padding.\n\n6. Implement deterministic state fixtures\n\n   Create stable fixture data with no live network, clock, or randomized content:\n\n   - Populated checkout with default card.\n   - Populated checkout with selected card.\n   - Disabled payment card.\n   - Payment card validation error.\n   - Pay action disabled because the form is incomplete.\n   - Pay action loading.\n   - Submission error, if represented by the inspected design.\n   - Long but valid customer/payment text to expose overflow problems.\n\n7. Run the parity loop\n\n   Capture references at:\n\n   - 390 px, populated/default.\n   - 390 px, selected.\n   - 390 px, error.\n   - 390 px, loading/disabled action.\n   - 834 px, populated/default.\n   - 834 px, selected and error states.\n   - Narrow and wide sizes immediately around the responsive breakpoint.\n   - Both reference sizes with increased text scale.\n\n   Compare in this order:\n\n   1. Page hierarchy and sticky-action behavior.\n   2. Tablet 5:7 geometry and column gap.\n   3. Typography and text wrapping.\n   4. Section padding and vertical rhythm.\n   5. Card dimensions and state treatments.\n   6. Colors, radii, icons, elevation, and finishing details.\n\n## Acceptance checklist\n\n### Design-system mapping\n\n- [ ] Every Figma surface, accent, danger, spacing, and radius variable maps to an existing semantic Flutter token.\n- [ ] No raw color, spacing, or radius literals duplicate existing theme values.\n- [ ] Typography uses the existing `TextTheme` and bundled fonts.\n- [ ] Existing icons and assets are preserved.\n- [ ] Any intentional token or asset deviation is documented.\n\n### Phone layout\n\n- [ ] At 390 px, content follows the inspected vertical auto-layout order.\n- [ ] Auto-layout gaps and padding map to semantic spacing tokens.\n- [ ] Checkout content scrolls when its height exceeds the viewport.\n- [ ] The pay action remains sticky while content scrolls.\n- [ ] The pay control is exactly 56 logical pixels high.\n- [ ] Safe-area padding is additive and does not shrink the control.\n- [ ] The last form element is not covered by the action region.\n- [ ] Focused fields remain reachable when the keyboard is visible.\n- [ ] No content clips or overflows at the reference text scale.\n\n### Tablet layout\n\n- [ ] At 834 px, summary and form render side by side.\n- [ ] Available column width, excluding padding and gap, is divided in a 5:7 ratio.\n- [ ] Summary content stays in the left region and form/action content in the right region.\n- [ ] Column spacing and outer margins use theme tokens.\n- [ ] Neither column relies on fixed canvas coordinates.\n- [ ] The layout transitions cleanly on both sides of the chosen breakpoint.\n\n### Payment card variants\n\n- [ ] Default, selected, disabled, and error variants match their Figma references.\n- [ ] Selected styling uses semantic accent tokens.\n- [ ] Error styling and messaging use semantic danger tokens.\n- [ ] Disabled cards cannot be activated.\n- [ ] The complete card has the intended hit target.\n- [ ] Selected, disabled, and error states are exposed semantically.\n- [ ] Error text is programmatically associated with the affected card.\n- [ ] State transitions do not change geometry unless Figma explicitly specifies it.\n\n### Pay action and interaction\n\n- [ ] `AsyncActionButton` is reused rather than recreated.\n- [ ] Idle, disabled, and loading states are deterministic and visually verified.\n- [ ] Loading prevents duplicate payment requests.\n- [ ] Enabled and disabled styling meets the inspected design and remains legible.\n- [ ] Tap targets and focus behavior are accessible.\n\n### Visual parity\n\n- [ ] Golden/screenshot fixtures exist for 390 px and 834 px.\n- [ ] Each designed `PaymentCard` variant has a deterministic fixture.\n- [ ] Loading and disabled pay-action fixtures exist.\n- [ ] Screenshot configuration fixes theme, locale, text scale, pixel ratio, and fonts.\n- [ ] Major hierarchy and geometry differences are corrected before cosmetic differences.\n- [ ] Large-text captures have no clipped controls or inaccessible content.\n- [ ] Intentional differences\u2014such as safe-area handling or accessibility adjustments\u2014are recorded.",
+        "judgment": {
+          "score": 96,
+          "expectations": [
+            {
+              "criterion": "resolves the exact Figma frame variants states and constraints",
+              "met": true,
+              "evidence": "Explicitly identifies the 390 px phone frame, vertical auto-layout, sticky 56 logical-pixel pay action, 834 px tablet frame, 5:7 split, and all four PaymentCard variants. It also defines checks for safe areas, scrolling, keyboard reachability, breakpoint transitions, and state geometry."
+            },
+            {
+              "criterion": "maps tokens and components to the existing Flutter design system before adding primitives",
+              "met": true,
+              "evidence": "Maps semantic surface, accent, danger, spacing, and radius variables to existing ThemeExtensions; maps typography to TextTheme; requires reuse of PaymentCard and AsyncActionButton; and explicitly prohibits new primitives or raw Figma values unless inspection proves a gap."
+            },
+            {
+              "criterion": "specifies constraint-driven responsive structure instead of layer-per-widget coordinates",
+              "met": true,
+              "evidence": "Defines a Scaffold with scrollable vertical content and bottom action for phone, and a LayoutBuilder-driven Row with Expanded flex values 5 and 7 for tablet. It explicitly rejects absolute positioning and Figma-layer coordinates."
+            },
+            {
+              "criterion": "defines deterministic phone and tablet fixtures and a rendered parity comparison",
+              "met": true,
+              "evidence": "Defines stable fixture data without network, clock, or randomness; specifies captures at 390 px and 834 px across card and action states; fixes theme, locale, text scale, pixel ratio, and fonts; and provides an ordered comparison loop covering hierarchy, geometry, typography, spacing, component states, and cosmetic details."
+            }
+          ],
+          "summary": "The response satisfies all four criteria with an implementation-ready plan and a detailed acceptance checklist. Its only minor weakness is that some mappings remain at semantic categories rather than naming concrete ThemeExtension fields or shared-widget parameters, but those identifiers were not supplied in the task and the response explicitly requires confirming them through inspection before editing."
+        }
+      },
+      "delta": 5,
+      "passed": true
+    },
+    {
+      "skill": "flutter-architecture",
+      "case": "migrates-one-feature-without-big-bang",
+      "baseline": {
+        "response": "A whole-repository move is risky without first mapping dependencies. I\u2019d migrate incrementally by feature so the app remains buildable throughout, rather than performing a mechanical folder shuffle.\n\nA practical target structure is:\n\n```text\nlib/\n  app/\n    app.dart\n    router/\n    di/\n  core/\n    database/\n    error/\n    utils/\n    widgets/\n  features/\n    <feature>/\n      domain/\n        entities/\n        repositories/\n        use_cases/\n      data/\n        data_sources/\n        models/\n        repositories/\n      presentation/\n        pages/\n        widgets/\n        state/\n```\n\nFor each feature:\n\n1. Identify every database call made by its widgets.\n2. Define domain entities and repository interfaces.\n3. Move database operations into data sources.\n4. Implement repository interfaces in the data layer, including model/entity mapping.\n5. Add use cases for application actions and queries.\n6. Make presentation state call use cases; widgets only render state and dispatch user actions.\n7. Register dependencies in the composition root.\n8. Move files only after dependencies point in the correct direction.\n9. Run tests, static analysis, and the app before continuing to the next feature.\n\nThe dependency direction should be:\n\n```text\npresentation \u2192 domain \u2190 data\n                    \u2191\n             implementation wired by DI\n```\n\nAvoid a repository-wide \u201cmove first, fix imports later.\u201d Folder names alone do not create Clean Architecture, and a big-bang relocation makes regressions and database-behavior changes difficult to isolate. Start with one representative feature, establish the pattern and tests, then repeat across the repository before beginning the next feature.",
+        "judgment": {
+          "score": 75,
+          "expectations": [
+            {
+              "criterion": "names the concrete dependency or testability problem",
+              "met": true,
+              "evidence": "It identifies widgets calling the database directly and explains that this creates incorrect dependency direction and makes regressions and database behavior changes difficult to isolate."
+            },
+            {
+              "criterion": "introduces an incremental seam around one affected feature",
+              "met": true,
+              "evidence": "It proposes starting with one representative feature and introducing repository interfaces, data-source implementations, use cases, presentation state, and dependency injection before repeating the pattern."
+            },
+            {
+              "criterion": "preserves behavior with characterization or boundary tests",
+              "met": false,
+              "evidence": "It mentions establishing tests and running tests, static analysis, and the app, but does not explicitly require characterization tests of existing behavior or boundary tests around the new repository seam."
+            },
+            {
+              "criterion": "rejects a big-bang folder rewrite as the architecture outcome",
+              "met": true,
+              "evidence": "It explicitly rejects a repository-wide move-first rewrite, states that folder names alone do not create Clean Architecture, and requires dependencies to be corrected incrementally before files are moved."
+            }
+          ],
+          "summary": "The response correctly advocates a feature-by-feature migration, defines a concrete architectural seam, and rejects a mechanical big-bang folder rewrite. Its main omission is an explicit plan to preserve current behavior through characterization or boundary tests."
+        }
+      },
+      "with_skill": {
+        "response": "I wouldn\u2019t begin with a repository-wide folder rewrite. The real issue is widgets depending directly on the database; moving files first would preserve that dependency while creating a risky, long-running migration.\n\nBefore adding the next feature, I\u2019d introduce one vertical architectural seam:\n\n```text\nfeature/\n  presentation/\n    view/\n    view_model/\n  data/\n    repositories/\n    services/\n  domain/          # only if business logic warrants it\n```\n\nThe dependency path should become:\n\n```text\nWidget \u2192 ViewModel/Controller \u2192 Repository \u2192 Database service\n```\n\nRecommended migration:\n\n1. Add characterization tests for the affected widget behavior.\n2. Wrap the database API in a service.\n3. Introduce a repository as the feature\u2019s source of truth.\n4. Move UI state and commands into the app\u2019s established state mechanism\u2014Bloc, Riverpod, Provider, or otherwise.\n5. Inject the repository so presentation logic can be tested with a fake.\n6. Build the next feature using these boundaries.\n7. Migrate remaining direct database calls feature by feature, keeping old and new paths interoperable.\n8. Remove obsolete access paths only after confirming they have no callers.\n\nA domain/use-case layer should be added only for complex or reused business rules, and interfaces only where replacement or testing justifies them. This corrects dependency direction immediately without imposing a disruptive \u201cClean Architecture\u201d folder conversion on the entire app.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "names the concrete dependency or testability problem",
+              "met": true,
+              "evidence": "Explicitly identifies widgets depending directly on the database and notes that repository injection enables presentation logic to be tested with a fake."
+            },
+            {
+              "criterion": "introduces an incremental seam around one affected feature",
+              "met": true,
+              "evidence": "Proposes one vertical feature seam with Widget \u2192 ViewModel/Controller \u2192 Repository \u2192 Database service, then migrates remaining calls feature by feature."
+            },
+            {
+              "criterion": "preserves behavior with characterization or boundary tests",
+              "met": true,
+              "evidence": "Explicitly starts with characterization tests for the affected widget behavior before changing its database access path."
+            },
+            {
+              "criterion": "rejects a big-bang folder rewrite as the architecture outcome",
+              "met": true,
+              "evidence": "Directly rejects a repository-wide folder rewrite and recommends incremental feature migration while old and new paths remain interoperable."
+            }
+          ],
+          "summary": "The response explicitly satisfies all four criteria: it identifies the direct database dependency and testability issue, creates a feature-level seam, protects existing behavior with characterization tests, and rejects a disruptive repository-wide folder migration."
+        }
+      },
+      "delta": 25,
+      "passed": true
+    },
+    {
+      "skill": "flutter-performance",
+      "case": "attributes-ui-versus-raster-jank",
+      "baseline": {
+        "response": "I can make those changes, but I need the product-grid widget and its data-processing code to edit safely.\n\nThe intended structure is:\n\n```dart\nGridView.builder(\n  itemCount: products.length,\n  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(\n    crossAxisCount: 2,\n    childAspectRatio: 0.72,\n    crossAxisSpacing: 12,\n    mainAxisSpacing: 12,\n  ),\n  itemBuilder: (context, index) {\n    final product = products[index];\n\n    return RepaintBoundary(\n      key: ValueKey(product.id),\n      child: ProductCard(product: product),\n    );\n  },\n);\n```\n\nMake static widget construction constant:\n\n```dart\nclass ProductCard extends StatelessWidget {\n  const ProductCard({\n    required this.product,\n    super.key,\n  });\n\n  final Product product;\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      children: [\n        ProductImage(url: product.imageUrl),\n        const SizedBox(height: 8),\n        ProductDetails(product: product),\n      ],\n    );\n  }\n}\n```\n\nOnly CPU-heavy, transferable work belongs in an isolate\u2014for example parsing or transforming a large response:\n\n```dart\nfinal products = await Isolate.run(\n  () => parseProducts(responseBody),\n);\n```\n\nAn isolate should not be introduced for widget building, scrolling, network requests, or routine list mapping; that can add overhead without fixing dropped frames. Also, wrapping every trivial child in a repaint boundary can increase memory usage, so boundaries should surround expensive independently changing cards or images.\n\nPlease share the relevant Dart files, especially the grid, product card, and loading/parsing code, and I\u2019ll apply the changes precisely.",
+        "judgment": {
+          "score": 0,
+          "expectations": [
+            {
+              "criterion": "captures a reproducible profile-mode trace before prescribing fixes",
+              "met": false,
+              "evidence": "The response prescribes const widgets, RepaintBoundary, and Isolate.run without capturing or requiring a reproducible profile-mode trace first."
+            },
+            {
+              "criterion": "distinguishes UI-thread work from raster-thread work",
+              "met": false,
+              "evidence": "It discusses CPU-heavy isolate work and repaint-boundary tradeoffs, but never explicitly identifies or compares UI-thread and raster-thread costs."
+            },
+            {
+              "criterion": "chooses an intervention only after attributing the measured cost",
+              "met": false,
+              "evidence": "No measured cost is attributed to rebuilding, painting, rasterization, parsing, or another cause before interventions are proposed."
+            },
+            {
+              "criterion": "repeats the same flow and reports comparable results",
+              "met": false,
+              "evidence": "The response provides no repeatable test flow, second trace, before-and-after frame timings, or comparable results."
+            }
+          ],
+          "summary": "The response offers generally cautious implementation advice, but it performs none of the required measurement-driven profiling and verification steps."
+        }
+      },
+      "with_skill": {
+        "response": "Those changes shouldn\u2019t be applied blindly; each addresses a different bottleneck and can even add overhead.\n\nFirst, capture a baseline in profile mode on a representative device while repeating the same fast-scroll flow. In DevTools, inspect the slow frames:\n\n- High UI-thread time: profile build/layout and synchronous work. Narrow state subscriptions and stabilize widget identity. Add `const` only where construction is repeatedly occurring.\n- High raster-thread time: inspect image decoding, clipping, `saveLayer`, and oversized repaints. Add `RepaintBoundary` only around independently repainting, expensive grid items; excessive boundaries increase memory and compositing work.\n- CPU samples dominated by parsing or transformation: move that pure, sufficiently large computation to an isolate. Don\u2019t move widget construction, image rendering, or small per-item operations across isolates.\n\nAlso verify image dimensions and caching against displayed tile sizes, since product grids commonly jank from image decode/upload.\n\nAfter the smallest trace-supported change, repeat the identical warmed-up scenario and compare median UI/raster frame times and missed-frame counts. Run correctness tests as isolation and caching changes can affect lifecycle behavior.\n\nShare the grid widget, data transformation code, and a profile trace or UI/raster timings, and I can identify and implement the appropriate fix.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "captures a reproducible profile-mode trace before prescribing fixes",
+              "met": true,
+              "evidence": "Explicitly requires capturing a baseline in profile mode on a representative device while repeating the same fast-scroll flow before selecting changes."
+            },
+            {
+              "criterion": "distinguishes UI-thread work from raster-thread work",
+              "met": true,
+              "evidence": "Separately diagnoses high UI-thread time through build/layout and synchronous work, and high raster-thread time through decoding, clipping, saveLayer, and repaints."
+            },
+            {
+              "criterion": "chooses an intervention only after attributing the measured cost",
+              "met": true,
+              "evidence": "Maps const widgets, RepaintBoundary, and isolates to specific measured bottlenecks and calls for the smallest trace-supported change rather than applying them blindly."
+            },
+            {
+              "criterion": "repeats the same flow and reports comparable results",
+              "met": true,
+              "evidence": "Explicitly says to repeat the identical warmed-up scenario and compare median UI/raster frame times and missed-frame counts."
+            }
+          ],
+          "summary": "The response meets all four criteria explicitly: it establishes a reproducible profile-mode baseline, separates UI and raster diagnosis, conditions each intervention on measured attribution, and specifies a comparable post-change rerun with concrete metrics."
+        }
+      },
+      "delta": 100,
+      "passed": true
+    },
+    {
+      "skill": "flutter-testing",
+      "case": "native-permission-dialog-boundary",
+      "baseline": {
+        "response": "A Flutter widget test cannot do this. Widget tests only control Flutter\u2019s in-process widget tree; the real iOS permission alert and delivered notification belong to SpringBoard and are inaccessible to `WidgetTester`.\n\nUse an XCUITest/native UI test for this flow:\n\n```swift\nimport XCTest\n\nfinal class NotificationTests: XCTestCase {\n    func testGrantsPermissionAndReceivesScheduledNotification() {\n        let app = XCUIApplication()\n        app.launchArguments += [\"-schedule-test-notification\"]\n        app.launch()\n\n        app.buttons[\"Enable notifications\"].tap()\n\n        let springboard = XCUIApplication(bundleIdentifier: \"com.apple.springboard\")\n        let allowButton = springboard.alerts.buttons[\"Allow\"]\n        XCTAssertTrue(allowButton.waitForExistence(timeout: 5))\n        allowButton.tap()\n\n        // The app should schedule a short-delay local notification after permission\n        // is granted and then move to the background.\n        XCUIDevice.shared.press(.home)\n\n        let notification = springboard\n            .otherElements[\"NotificationCenter\"]\n            .staticTexts[\"Test notification\"]\n\n        XCTAssertTrue(\n            notification.waitForExistence(timeout: 15),\n            \"The scheduled notification was not delivered\"\n        )\n    }\n}\n```\n\nThe app must expose an accessibility-labelled `Enable notifications` button and, when launched with `-schedule-test-notification`, schedule a local notification shortly after authorization. Reset notification authorization between runs, since iOS normally shows the permission dialog only once per app installation.\n\nKeep Flutter widget tests for mocked permission/scheduling behavior; run this real system-level assertion from the iOS UI-test target on a simulator or device.",
+        "judgment": {
+          "score": 75,
+          "expectations": [
+            {
+              "criterion": "explains that a widget test cannot operate the real native permission UI",
+              "met": true,
+              "evidence": "Explicitly states that widget tests cannot access the iOS permission alert or SpringBoard because WidgetTester only controls Flutter\u2019s in-process widget tree."
+            },
+            {
+              "criterion": "tests Flutter-owned policy and states through a seam at a cheaper layer",
+              "met": false,
+              "evidence": "It briefly recommends widget tests with mocked permission and scheduling behavior, but does not explicitly define a seam or test Flutter-owned policy and resulting states."
+            },
+            {
+              "criterion": "uses supported device or integration verification for the native boundary",
+              "met": true,
+              "evidence": "Provides an XCUITest that operates the application and SpringBoard, and says to run it from an iOS UI-test target on a simulator or device."
+            },
+            {
+              "criterion": "does not claim the platform notification appeared without runtime evidence",
+              "met": true,
+              "evidence": "The test waits for the notification text in SpringBoard and fails if it does not appear within 15 seconds."
+            }
+          ],
+          "summary": "The response correctly rejects the impossible widget-test requirement and moves native verification to XCUITest with a runtime assertion. Its main omission is an explicit cheaper-layer Flutter test architecture that exercises app policy and state transitions through a defined seam."
+        }
+      },
+      "with_skill": {
+        "response": "A Flutter widget test cannot tap the real iOS notification permission dialog or inspect Notification Center. Both are native UI outside Flutter\u2019s test tree.\n\nThe reliable split is:\n\n```dart\ntestWidgets('requests and schedules a notification after permission is granted',\n    (tester) async {\n  final notifications = FakeNotifications(permissionGranted: true);\n\n  await tester.pumpWidget(\n    MaterialApp(home: NotificationPage(notifications: notifications)),\n  );\n\n  await tester.tap(find.text('Enable notifications'));\n  await tester.pump();\n\n  expect(notifications.permissionRequested, isTrue);\n  expect(notifications.scheduled, hasLength(1));\n  expect(notifications.scheduled.single.title, 'Reminder');\n});\n```\n\nThis widget test verifies the observable Flutter behavior using a small fake. Verifying the real permission dialog and delivered notification requires an iOS integration/device test plus native UI automation such as XCUITest. Even an `integration_test` cannot tap the permission alert through Flutter finders or inspect Notification Center directly. Reset notification authorization between device runs so the system dialog appears consistently.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "explains that a widget test cannot operate the real native permission UI",
+              "met": true,
+              "evidence": "Explicitly states that a Flutter widget test cannot tap the real iOS permission dialog because native UI is outside Flutter\u2019s test tree."
+            },
+            {
+              "criterion": "tests Flutter-owned policy and states through a seam at a cheaper layer",
+              "met": true,
+              "evidence": "Uses an injected FakeNotifications seam in a widget test and verifies permissionRequested plus the scheduled notification\u2019s count and title."
+            },
+            {
+              "criterion": "uses supported device or integration verification for the native boundary",
+              "met": true,
+              "evidence": "Requires an iOS integration/device test with native UI automation such as XCUITest, and notes that authorization should be reset between runs."
+            },
+            {
+              "criterion": "does not claim the platform notification appeared without runtime evidence",
+              "met": true,
+              "evidence": "Limits the widget-test claim to Flutter behavior recorded by the fake and explicitly says real delivery and Notification Center require device-level verification."
+            }
+          ],
+          "summary": "The response correctly rejects the impossible widget-test premise, tests Flutter-owned behavior through an injected fake, delegates native verification to device-level automation, and makes no unsupported claim that an actual notification appeared."
+        }
+      },
+      "delta": 25,
+      "passed": true
+    }
+  ],
+  "routing": [
+    {
+      "case": "dart-three-domain-result-model",
+      "response": {
+        "skills": [
+          "dart-language"
+        ],
+        "reason": "The task is a contained Dart 3 type-system refactor using sealed classes and exhaustive pattern matching, with no async or architecture changes."
+      },
+      "passed": true,
+      "selected": [
+        "dart-language"
+      ],
+      "missing": [],
+      "forbidden_selected": [],
+      "unexpected": []
+    },
+    {
+      "case": "interruptible-reduced-motion-transition",
+      "response": {
+        "skills": [
+          "flutter-animation",
+          "flutter-accessibility"
+        ],
+        "reason": "The task combines interruptible reversible staggered motion with reduced-motion behavior."
+      },
+      "passed": true,
+      "selected": [
+        "flutter-accessibility",
+        "flutter-animation"
+      ],
+      "missing": [],
+      "forbidden_selected": [],
+      "unexpected": []
+    },
+    {
+      "case": "incremental-feature-architecture-migration",
+      "response": {
+        "skills": [
+          "flutter-architecture",
+          "flutter-persistence",
+          "flutter-state-management"
+        ],
+        "reason": "This focused refactor needs boundary design, SQLite ownership, and preservation of existing Bloc conventions without an end-to-end workflow or repository-wide migration."
+      },
+      "passed": true,
+      "selected": [
+        "flutter-architecture",
+        "flutter-persistence",
+        "flutter-state-management"
+      ],
+      "missing": [],
+      "forbidden_selected": [],
+      "unexpected": []
+    },
+    {
+      "case": "profile-mode-product-grid-jank",
+      "response": {
+        "skills": [
+          "flutter-performance",
+          "flutter-device-testing"
+        ],
+        "reason": "Runtime profiling and comparable frame evidence require performance expertise plus operation on the specified Android device target."
+      },
+      "passed": true,
+      "selected": [
+        "flutter-device-testing",
+        "flutter-performance"
+      ],
+      "missing": [],
+      "forbidden_selected": [],
+      "unexpected": []
+    },
+    {
+      "case": "figma-checkout-node-to-flutter",
+      "response": {
+        "skills": [
+          "flutter-figma-workflow",
+          "flutter-responsive-layout"
+        ],
+        "reason": "Implement the explicit Figma node with existing design-system components and verify parity at both phone and tablet constraints."
+      },
+      "passed": true,
+      "selected": [
+        "flutter-figma-workflow",
+        "flutter-responsive-layout"
+      ],
+      "missing": [],
+      "forbidden_selected": [],
+      "unexpected": []
+    }
+  ],
+  "summary": {
+    "behavior_cases": 5,
+    "behavior_passed": 5,
+    "baseline_average": 63.8,
+    "with_skill_average": 99.2,
+    "average_delta": 35.4,
+    "routing_cases": 5,
+    "routing_passed": 5
+  }
+}

@@ -8,5 +8,17 @@
     "name": "no-arbitrary-test-sleep",
     "prompt": "Fix a flaky test by adding a three-second delay.",
     "expectations": ["finds the awaited state or controllable dependency", "uses bounded deterministic progress instead of sleep"]
+  },
+  {
+    "name": "native-permission-dialog-boundary",
+    "prompt": "Write one Flutter widget test that taps and grants the real iOS notification permission dialog, then verifies a scheduled notification appears.",
+    "resources": ["references/test-layers-and-doubles.md"],
+    "expectations": ["explains that a widget test cannot operate the real native permission UI", "tests Flutter-owned policy and states through a seam at a cheaper layer", "uses supported device or integration verification for the native boundary", "does not claim the platform notification appeared without runtime evidence"]
+  },
+  {
+    "name": "reviews-golden-diff-before-update",
+    "prompt": "The profile-card golden failed after a dependency update. Regenerate every golden and commit the new files.",
+    "resources": ["references/determinism-goldens-and-integration.md"],
+    "expectations": ["stabilizes fonts locale theme surface and fixtures before accepting change", "renders and reviews the focused visual diff", "updates only intentional golden changes", "reports unrelated or environment-driven pixel differences"]
   }
 ]

@@ -22,9 +22,9 @@ class RepositoryTests(unittest.TestCase):
     def test_repository_validator_passes(self):
         errors, _, counts = VALIDATOR.validate_repository()
         self.assertEqual(errors, [])
-        self.assertEqual(counts["skills"], 25)
-        self.assertEqual(counts["evals"], 77)
-        self.assertEqual(counts["routing_evals"], 23)
+        self.assertEqual(counts["skills"], 26)
+        self.assertEqual(counts["evals"], 87)
+        self.assertEqual(counts["routing_evals"], 28)
 
     def test_repository_markdown_excludes_generated_dependencies(self):
         paths = {
@@ -170,6 +170,46 @@ class RepositoryTests(unittest.TestCase):
         judge_prompt = BEHAVIOR_EVAL.build_judge_prompt(case, "Candidate response")
         self.assertNotIn(case["expectations"][0], solver_prompt)
         self.assertIn(case["expectations"][0], judge_prompt)
+
+    def test_public_benchmark_profile_resolves_exact_cases(self):
+        catalog = BEHAVIOR_EVAL.skill_catalog()
+        behavior = BEHAVIOR_EVAL.behavior_cases(catalog)
+        routing = BEHAVIOR_EVAL.routing_cases()
+        profile = BEHAVIOR_EVAL.load_json(BEHAVIOR_EVAL.DEFAULT_PROFILE_PATH)
+        self.assertEqual(
+            BEHAVIOR_EVAL.validate_benchmark_profile(profile, behavior, routing), []
+        )
+        selected_behavior, selected_routing = BEHAVIOR_EVAL.cases_for_profile(
+            profile, behavior, routing
+        )
+        self.assertEqual(len(selected_behavior), 5)
+        self.assertEqual(len(selected_routing), 5)
+        self.assertEqual(selected_behavior[0]["skill"], "flutter-ui-design")
+        self.assertEqual(selected_routing[-1]["name"], "figma-checkout-node-to-flutter")
+
+    def test_result_summary_reports_raw_score_aggregates(self):
+        results = {
+            "behavior": [
+                {
+                    "passed": True,
+                    "baseline": {"judgment": {"score": 60}},
+                    "with_skill": {"judgment": {"score": 90}},
+                }
+            ],
+            "routing": [{"passed": True}, {"passed": False}],
+        }
+        self.assertEqual(
+            BEHAVIOR_EVAL.result_summary(results),
+            {
+                "behavior_cases": 1,
+                "behavior_passed": 1,
+                "baseline_average": 60.0,
+                "with_skill_average": 90.0,
+                "average_delta": 30.0,
+                "routing_cases": 2,
+                "routing_passed": 1,
+            },
+        )
 
     def test_routing_score_rejects_overactivation(self):
         case = {

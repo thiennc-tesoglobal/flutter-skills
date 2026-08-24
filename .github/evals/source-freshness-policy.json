@@ -1,0 +1,5 @@
+{
+  "verified_at": "2026-08-24",
+  "max_age_days": 90,
+  "review_policy": "Review primary-source claims and update verified_at after a maintainer checks changed Flutter, Dart, Figma, Android, Apple, and package documentation."
+}

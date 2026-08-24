@@ -28,10 +28,10 @@ IGNORED_LINK_DIRECTORIES = {
     "coverage",
     "node_modules",
 }
-EXPECTED_VERSION = "0.1.1"
-EXPECTED_SKILL_COUNT = 25
-EXPECTED_EVAL_COUNT = 77
-EXPECTED_ROUTING_EVAL_COUNT = 23
+EXPECTED_VERSION = "0.2.0"
+EXPECTED_SKILL_COUNT = 26
+EXPECTED_EVAL_COUNT = 87
+EXPECTED_ROUTING_EVAL_COUNT = 28
 EXPECTED_BUNDLES = {
     "all-flutter-skills": {
         "dart-concurrency",
@@ -44,6 +44,7 @@ EXPECTED_BUNDLES = {
         "flutter-ci-cd",
         "flutter-code-review",
         "flutter-device-testing",
+        "flutter-figma-workflow",
         "flutter-localization",
         "flutter-navigation",
         "flutter-networking",
@@ -72,6 +73,7 @@ EXPECTED_BUNDLES = {
     "flutter-ui-skills": {
         "flutter-accessibility",
         "flutter-animation",
+        "flutter-figma-workflow",
         "flutter-localization",
         "flutter-navigation",
         "flutter-responsive-layout",

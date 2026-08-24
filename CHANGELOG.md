@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0 - Unreleased
+
+- Add `flutter-figma-workflow` for evidence-based Figma-to-Flutter mapping and screenshot parity.
+- Deepen performance, testing, and architecture guidance through case-selected references.
+- Add representative raw benchmark results and a reproducible benchmark profile.
+- Close routing gaps for Dart language, animation, architecture, performance, and Figma work.
+- Add a scheduled source-freshness audit with machine-readable artifacts.
+
 ## 0.1.1 - 2026-08-24
 
 - Add the `@thiennc/flutter-skills` npm CLI for version-pinned one-command installation.

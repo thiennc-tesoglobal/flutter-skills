@@ -1,0 +1,33 @@
+{
+  "name": "flutter-skills-v0.2-representative",
+  "description": "A fixed public sample covering visual design, Figma translation, architecture, performance, testing, and the routing gaps closed in v0.2.0.",
+  "behavior": [
+    {
+      "skill": "flutter-ui-design",
+      "case": "transforms-bland-dashboard-with-a-clear-signature"
+    },
+    {
+      "skill": "flutter-figma-workflow",
+      "case": "maps-figma-frame-to-existing-design-system"
+    },
+    {
+      "skill": "flutter-architecture",
+      "case": "migrates-one-feature-without-big-bang"
+    },
+    {
+      "skill": "flutter-performance",
+      "case": "attributes-ui-versus-raster-jank"
+    },
+    {
+      "skill": "flutter-testing",
+      "case": "native-permission-dialog-boundary"
+    }
+  ],
+  "routing": [
+    "dart-three-domain-result-model",
+    "interruptible-reduced-motion-transition",
+    "incremental-feature-architecture-migration",
+    "profile-mode-product-grid-jank",
+    "figma-checkout-node-to-flutter"
+  ]
+}

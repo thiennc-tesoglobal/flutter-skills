@@ -32,7 +32,7 @@
     "prompt": "Redesign this bland Flutter analytics dashboard with clear hierarchy, coherent typography, color and surfaces, plus professional loading, empty, and error states while preserving its state management.",
     "required": ["flutter-ui-design"],
     "optional": ["flutter-accessibility", "flutter-responsive-layout", "flutter-testing", "flutter-ui-patterns"],
-    "forbidden": ["flutter-architecture", "flutter-app-workflow", "flutter-visual-effects"]
+    "forbidden": ["flutter-architecture", "flutter-app-workflow", "flutter-figma-workflow", "flutter-visual-effects"]
   },
   {
     "name": "offline-api-cache",
@@ -171,5 +171,40 @@
     "required": ["dart-concurrency"],
     "optional": ["flutter-networking", "flutter-testing"],
     "forbidden": ["flutter-app-workflow", "flutter-architecture", "flutter-performance"]
+  },
+  {
+    "name": "dart-three-domain-result-model",
+    "prompt": "Our Dart SDK constraint supports Dart 3. Refactor a parser result API from loosely typed maps into an exhaustive sealed success/failure model with pattern matching, without changing app architecture or adding asynchronous work.",
+    "required": ["dart-language"],
+    "optional": ["flutter-testing"],
+    "forbidden": ["dart-concurrency", "flutter-app-workflow", "flutter-architecture", "flutter-state-management"]
+  },
+  {
+    "name": "interruptible-reduced-motion-transition",
+    "prompt": "Implement an interruptible staggered card transition in Flutter that reverses cleanly and becomes an immediate state change when reduced motion is requested.",
+    "required": ["flutter-animation"],
+    "optional": ["flutter-accessibility", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-ui-design", "flutter-visual-effects"]
+  },
+  {
+    "name": "incremental-feature-architecture-migration",
+    "prompt": "Evolve one legacy Flutter feature whose widgets call SQLite directly into clear UI, repository, and service boundaries. Preserve the app's existing Bloc conventions and avoid a whole-repository rewrite.",
+    "required": ["flutter-architecture"],
+    "optional": ["flutter-persistence", "flutter-state-management", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-ui-design"]
+  },
+  {
+    "name": "profile-mode-product-grid-jank",
+    "prompt": "A Flutter product grid repeatedly drops frames during fast scrolling on a mid-range Android device. Profile and attribute the bottleneck, make the smallest justified fix, and report comparable before and after evidence.",
+    "required": ["flutter-performance"],
+    "optional": ["flutter-device-testing", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-architecture", "flutter-observability", "flutter-ui-design"]
+  },
+  {
+    "name": "figma-checkout-node-to-flutter",
+    "prompt": "Implement the supplied Figma checkout node in our Flutter app using its existing theme and shared payment components, then verify visual parity at the reference phone size and the specified tablet breakpoint.",
+    "required": ["flutter-figma-workflow"],
+    "optional": ["flutter-accessibility", "flutter-responsive-layout", "flutter-testing", "flutter-ui-patterns"],
+    "forbidden": ["flutter-app-workflow", "flutter-architecture", "flutter-ui-design"]
   }
 ]

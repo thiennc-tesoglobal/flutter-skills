@@ -25,6 +25,8 @@ Do not replace behavior assertions with implementation details such as private m
 - Give tests independent data and clean up global bindings, files, databases, and subscriptions.
 - Update a golden only after reviewing the rendered difference.
 
+Load [test layers and doubles](references/test-layers-and-doubles.md) when choosing boundaries, fakes, plugin seams, or native-UI coverage. Load [determinism, goldens, and integration](references/determinism-goldens-and-integration.md) for async flakiness, visual contracts, or device flows.
+
 ## Verification
 
 Use the Dart and Flutter MCP test capability when available or the repository's established test command otherwise. Run the narrow test during iteration, then the relevant suite. Report skipped platforms, flaky behavior, or environment dependencies instead of treating them as success.

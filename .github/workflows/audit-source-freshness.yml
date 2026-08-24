@@ -1,0 +1,31 @@
+name: Audit Source Freshness
+
+on:
+  schedule:
+    - cron: "17 3 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Source Links and Verification Age
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Audit source reachability and verification age
+        run: |
+          python3 .github/scripts/audit_source_freshness.py \
+            --output source-freshness.json \
+            --fail-on-broken \
+            --fail-on-stale
+
+      - name: Upload raw audit report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: source-freshness-${{ github.run_id }}
+          path: source-freshness.json
+          if-no-files-found: warn
