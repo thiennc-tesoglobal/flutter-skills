@@ -30,8 +30,8 @@ IGNORED_LINK_DIRECTORIES = {
 }
 EXPECTED_VERSION = "0.2.0"
 EXPECTED_SKILL_COUNT = 28
-EXPECTED_EVAL_COUNT = 97
-EXPECTED_ROUTING_EVAL_COUNT = 33
+EXPECTED_EVAL_COUNT = 117
+EXPECTED_ROUTING_EVAL_COUNT = 36
 EXPECTED_BUNDLES = {
     "all-flutter-skills": {
         "dart-concurrency",
@@ -189,6 +189,10 @@ def validate_skill(skill_dir: Path) -> tuple[list[str], list[str], int, int]:
                 if relative not in linked:
                     errors.append(f"{skill_dir.name}: unlinked reference {relative}")
                 errors.extend(local_link_errors(reference))
+
+    for child in skill_dir.iterdir():
+        if child.is_dir() and child.name not in {"evals", "references"} and not any(child.rglob("*")):
+            warnings.append(f"{skill_dir.name}: empty subdirectory {child.name}/")
 
     eval_path = skill_dir / "evals" / "cases.json"
     if not eval_path.is_file():

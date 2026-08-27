@@ -8,5 +8,23 @@
     "name": "obfuscation-preserves-symbols",
     "prompt": "Enable Dart obfuscation and discard all symbol files after release.",
     "expectations": ["preserves split debug information securely", "explains crash deobfuscation requirement"]
+  },
+  {
+    "name": "flavor-alignment-across-platforms",
+    "prompt": "Add a staging flavor to our app that already has production configured on Android and iOS.",
+    "expectations": [
+      "aligns Android productFlavors, Apple schemes and configurations, and Dart defines consistently",
+      "maps the service configuration files to the correct flavor",
+      "tests that the staging build produces a distinct application ID or bundle identifier"
+    ]
+  },
+  {
+    "name": "version-follows-repository-policy",
+    "prompt": "Bump the version for a hotfix release. The app uses pubspec.yaml as the version source.",
+    "expectations": [
+      "reads and follows the existing versioning convention from pubspec.yaml",
+      "increments patch without changing the build number policy",
+      "does not introduce a second version source or override native version files manually"
+    ]
   }
 ]

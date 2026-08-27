@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 - Unreleased
+## 0.2.0 - 2026-08-27
 
 - Add `flutter-figma-workflow` for evidence-based Figma-to-Flutter mapping and screenshot parity.
 - Add `flutter-background-execution` for OS-scheduled jobs, foreground services, headless callbacks, and interruption-safe delivery.
@@ -9,6 +9,10 @@
 - Add representative raw benchmark results and a reproducible benchmark profile.
 - Close routing gaps for Dart language, animation, architecture, performance, and Figma work.
 - Add a scheduled source-freshness audit with machine-readable artifacts.
+- Expand evaluation coverage from 97 to 117 behavior cases across 10 skills.
+- Add reference documents for state management, navigation, animation, localization, and responsive layout.
+- Add 3 routing cases for localization+layout, animation+testing, and SDK upgrade+signing scenarios.
+- Add empty-directory and low-eval-count advisory warnings to the repository validator.
 
 ## 0.1.1 - 2026-08-24
 

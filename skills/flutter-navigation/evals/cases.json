@@ -8,5 +8,23 @@
     "name": "simple-modal-needs-no-router-package",
     "prompt": "Add one confirmation dialog to a small app using Navigator.",
     "expectations": ["keeps the simple existing navigation mechanism", "does not add a routing dependency"]
+  },
+  {
+    "name": "tab-shell-preserves-independent-history",
+    "prompt": "Add bottom navigation with three tabs. Each tab should keep its own navigation stack when switching between tabs.",
+    "expectations": [
+      "uses nested navigators or equivalent shell routing to isolate tab histories",
+      "preserves each tab's back stack when switching between tabs",
+      "tests forward and back navigation within and across tabs"
+    ]
+  },
+  {
+    "name": "redirect-loop-prevention",
+    "prompt": "Redirect unauthenticated users to login and redirect authenticated users away from login to the home screen.",
+    "expectations": [
+      "makes redirect logic deterministic and prevents infinite redirect cycles",
+      "handles edge cases like expired sessions and deep-link targets after login",
+      "tests the redirect chain from an unauthenticated deep link through login to the target"
+    ]
   }
 ]

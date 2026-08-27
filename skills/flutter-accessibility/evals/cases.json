@@ -8,5 +8,23 @@
     "name": "large-text-preserves-action",
     "prompt": "The checkout button disappears at 200% text scaling.",
     "expectations": ["fixes responsive layout without disabling scaling", "verifies reading order and essential action reachability"]
+  },
+  {
+    "name": "focus-order-matches-visual-order",
+    "prompt": "A form's tab key jumps from email to submit, skipping the password field. Fix the keyboard focus traversal.",
+    "expectations": [
+      "inspects and adjusts the semantic or focus traversal order to match visual reading order",
+      "does not rely solely on widget tree order when explicit FocusTraversalOrder is needed",
+      "tests the corrected focus sequence with keyboard navigation"
+    ]
+  },
+  {
+    "name": "respects-reduced-motion-preference",
+    "prompt": "Add a page transition animation that slides and bounces. Make it accessible.",
+    "expectations": [
+      "reads the platform reduced motion preference via the project-compatible API",
+      "replaces nonessential motion with an instant or minimal transition when reduced motion is active",
+      "preserves the task completion path regardless of motion setting"
+    ]
   }
 ]

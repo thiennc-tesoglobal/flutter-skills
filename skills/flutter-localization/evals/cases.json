@@ -8,5 +8,23 @@
     "name": "preserves-existing-localization-tool",
     "prompt": "Add one translated onboarding screen to an app with an established gen_l10n setup.",
     "expectations": ["extends existing ARB and generation configuration", "does not introduce a second localization package"]
+  },
+  {
+    "name": "unsupported-locale-falls-back-safely",
+    "prompt": "A user's phone is set to Thai but our app only supports English, Vietnamese, and Arabic. What happens?",
+    "expectations": [
+      "defines explicit fallback behavior in the localization delegate or MaterialApp",
+      "does not crash or show raw message keys for unsupported locales",
+      "tests the app renders correctly with a locale outside the supported set"
+    ]
+  },
+  {
+    "name": "date-format-respects-locale",
+    "prompt": "Display order timestamps. Use the same date format for all locales to keep the UI consistent.",
+    "expectations": [
+      "rejects a single hardcoded date format across locales",
+      "uses locale-aware DateFormat for user-facing timestamps",
+      "tests that dates render correctly in representative locales including RTL"
+    ]
   }
 ]

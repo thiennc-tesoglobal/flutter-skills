@@ -241,5 +241,26 @@
     "required": ["flutter-ci-cd", "flutter-dependency-upgrades"],
     "optional": ["flutter-platform-integration", "flutter-testing"],
     "forbidden": ["dart-language", "flutter-app-workflow", "flutter-build-release"]
+  },
+  {
+    "name": "rtl-localized-checkout-on-narrow-phone",
+    "prompt": "Localize the checkout screen for Arabic with correct RTL layout, currency formatting, and ensure all actions remain reachable at 200% text scale on a 320dp-wide phone.",
+    "required": ["flutter-localization", "flutter-responsive-layout"],
+    "optional": ["flutter-accessibility", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-architecture", "flutter-ui-design"]
+  },
+  {
+    "name": "ticker-leak-in-route-transition-test",
+    "prompt": "A widget test fails because an AnimationController from a route transition animation leaks its ticker after the test disposes the widget. Fix the leak and verify the animation still works without launching a device.",
+    "required": ["flutter-animation", "flutter-testing"],
+    "optional": [],
+    "forbidden": ["flutter-device-testing", "flutter-app-workflow", "flutter-performance", "flutter-visual-effects"]
+  },
+  {
+    "name": "major-sdk-bump-with-signing-and-artifact-verification",
+    "prompt": "Upgrade the Flutter SDK to the next major stable, re-sign the staging Android artifact with the existing keystore, and verify the build installs and launches on a connected device. Do not upload to any store.",
+    "required": ["flutter-dependency-upgrades", "flutter-build-release"],
+    "optional": ["flutter-device-testing", "flutter-platform-integration", "flutter-testing"],
+    "forbidden": ["dart-language", "flutter-app-workflow", "flutter-ci-cd"]
   }
 ]

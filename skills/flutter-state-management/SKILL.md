@@ -32,6 +32,8 @@ Test meaningful transitions, failure recovery, disposal, and repeated events. In
 
 Architecture-wide dependency direction belongs to `flutter-architecture`; persistence and remote caching belong to their data specialists.
 
+When disposal behavior or lifecycle leaks are in scope, follow the [lifecycle and disposal reference](references/lifecycle-and-disposal.md). For async state modeling and error recovery, follow the [async state patterns reference](references/async-state-patterns.md).
+
 ## Sources
 
 - [Flutter state management fundamentals](https://docs.flutter.dev/get-started/fundamentals/state-management)

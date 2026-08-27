@@ -8,5 +8,23 @@
     "name": "interruptible-controller-lifecycle",
     "prompt": "Build a draggable panel animation that can reverse midway.",
     "expectations": ["uses explicit lifecycle-owned animation control", "handles interruption and reversal", "disposes controller and verifies ticker behavior"]
+  },
+  {
+    "name": "staggered-sequence-with-shared-controller",
+    "prompt": "Animate three cards entering sequentially with overlapping intervals using separate AnimationControllers for each card.",
+    "expectations": [
+      "uses a single controller with staggered Interval curves rather than multiple controllers",
+      "disposes the controller correctly in the owning State",
+      "tests intermediate and completed states of the staggered sequence"
+    ]
+  },
+  {
+    "name": "hero-tag-uniqueness-across-list",
+    "prompt": "Add Hero transitions from a product grid to a detail screen. Products can appear in multiple tabs.",
+    "expectations": [
+      "ensures Hero tags are unique per visual instance not just per product ID",
+      "handles the case where the same product appears in multiple tab contexts",
+      "tests navigation forward and back without tag collision assertion errors"
+    ]
   }
 ]

@@ -8,5 +8,23 @@
     "name": "local-state-stays-local",
     "prompt": "Move a password visibility toggle into the app-wide Riverpod container.",
     "expectations": ["recognizes ephemeral local UI state", "keeps it local unless cross-screen behavior requires otherwise"]
+  },
+  {
+    "name": "state-disposed-with-lifecycle-owner",
+    "prompt": "A stream controller in a ChangeNotifier leaks because nothing closes it. Fix the leak.",
+    "expectations": [
+      "implements dispose to close controllers and cancel subscriptions owned by the notifier",
+      "tests that disposal is called and resources are released when the owner is removed",
+      "does not introduce global or static lifetime to avoid disposal"
+    ]
+  },
+  {
+    "name": "async-state-models-all-outcomes",
+    "prompt": "Add a product detail fetch. Use a boolean isLoading flag and a nullable error string.",
+    "expectations": [
+      "models loading, success, error, and empty states distinctly rather than overlapping booleans",
+      "prevents impossible combinations like both loading and error being true",
+      "tests transitions through each state including retry after error"
+    ]
   }
 ]

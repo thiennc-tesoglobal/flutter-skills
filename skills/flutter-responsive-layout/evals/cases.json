@@ -8,5 +8,23 @@
     "name": "no-device-name-breakpoints",
     "prompt": "Show the tablet layout only when the device model contains iPad.",
     "expectations": ["rejects device-name branching", "uses content-driven available-width constraints"]
+  },
+  {
+    "name": "navigation-adapts-to-window-width",
+    "prompt": "Our app uses a bottom navigation bar. On wide screens it should switch to a NavigationRail or a persistent drawer.",
+    "expectations": [
+      "selects the navigation pattern from available width constraints not device type",
+      "shares route and selection state across the compact and expanded layouts",
+      "tests boundary widths just below and above the breakpoint"
+    ]
+  },
+  {
+    "name": "content-readable-on-large-display",
+    "prompt": "Make the article detail screen look good on a 13-inch tablet in landscape.",
+    "expectations": [
+      "constrains readable content width rather than stretching text edge to edge",
+      "uses the extra space productively for supporting content or whitespace",
+      "does not merely scale up the phone layout"
+    ]
   }
 ]

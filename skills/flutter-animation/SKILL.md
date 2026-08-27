@@ -27,6 +27,8 @@ Read platform accessibility preferences through the project-compatible Flutter A
 
 Test initial, in-progress, completed, reversed, interrupted, and reduced-motion states where relevant. Check for ticker leaks and profile complex motion in profile mode on a representative device.
 
+When motion patterns or reduced motion is in scope, follow the [motion patterns and reduced motion reference](references/motion-patterns-and-reduced-motion.md).
+
 ## Sources
 
 - [Flutter animations](https://docs.flutter.dev/ui/animations)

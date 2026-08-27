@@ -25,6 +25,8 @@ Read `pubspec.yaml`, `l10n.yaml`, existing ARB files, generated localization acc
 
 Generate localizations, analyze, and test representative locales including an RTL locale, long strings, plurals, missing resources, and locale-aware formats. Run key screens with large text because localization and layout failures often combine.
 
+When formatting messages or localization is in scope, follow the [ICU messages and formatting reference](references/icu-messages-and-formatting.md).
+
 ## Sources
 
 - [Internationalizing Flutter apps](https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization)

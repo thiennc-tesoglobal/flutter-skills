@@ -25,6 +25,10 @@ Reproduce the layout on the failing viewport with text scaling and the relevant 
 
 Exercise boundary widths just below and above each breakpoint, long localized strings, large text, landscape, and the intended desktop/web window sizes. Add a focused widget or golden test for regressions that visual assertions can represent reliably.
 
+## References
+
+When adaptive navigation is in scope, follow the [adaptive navigation patterns reference](references/adaptive-navigation-patterns.md).
+
 ## Sources
 
 - [Adaptive and responsive design](https://docs.flutter.dev/ui/adaptive-responsive)

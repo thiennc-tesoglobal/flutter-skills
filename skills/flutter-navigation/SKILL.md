@@ -25,6 +25,11 @@ Identify the current router, route ownership, authentication flow, tab/shell str
 
 Test cold deep links, warm links, back/forward behavior, authentication redirects, invalid parameters, restoration where required, and each supported shell/tab history.
 
+## References
+
+When tab shell patterns or independent back histories are in scope, follow the [nested shell navigation reference](references/nested-shell-navigation.md).
+When handling deep links or state restoration, follow the [deep link and restoration reference](references/deep-link-and-restoration.md).
+
 ## Sources
 
 - [Flutter navigation and routing](https://docs.flutter.dev/ui/navigation)

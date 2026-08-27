@@ -8,5 +8,23 @@
     "name": "records-not-for-domain-identity",
     "prompt": "Replace every model in the app with Dart records.",
     "expectations": ["does not apply records universally", "keeps named domain types where evolution or validation matters"]
+  },
+  {
+    "name": "sealed-hierarchy-exhaustive-switch",
+    "prompt": "Refactor a payment result enum with status string and optional error message into a sealed class hierarchy so the compiler prevents missing cases.",
+    "expectations": [
+      "creates a sealed hierarchy that makes switch exhaustive",
+      "checks SDK constraint supports sealed classes before using them",
+      "preserves the public API or documents the breaking change"
+    ]
+  },
+  {
+    "name": "extension-type-does-not-hide-runtime-cost",
+    "prompt": "Wrap a raw int user ID in an extension type to add type safety and make it as performant as a raw int at runtime.",
+    "expectations": [
+      "uses extension type for zero-cost compile-time wrapping",
+      "acknowledges that extension types erase at runtime and do not prevent misuse across dynamic boundaries",
+      "does not claim runtime enforcement identical to a class wrapper"
+    ]
   }
 ]

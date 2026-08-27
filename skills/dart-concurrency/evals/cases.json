@@ -8,5 +8,23 @@
     "name": "no-isolate-for-network-wait",
     "prompt": "Move every HTTP request into an isolate to make the UI faster.",
     "expectations": ["rejects isolates for ordinary I/O wait", "profiles or isolates only CPU-bound processing"]
+  },
+  {
+    "name": "stream-subscription-disposed-with-owner",
+    "prompt": "Listen to a Firestore stream in a StatefulWidget and cancel it when the widget is removed.",
+    "expectations": [
+      "cancels the subscription in dispose rather than relying on garbage collection",
+      "guards setState calls after async gaps with a mounted or lifecycle check",
+      "tests disposal during an active stream emission"
+    ]
+  },
+  {
+    "name": "isolate-error-reaches-caller",
+    "prompt": "Run CPU-heavy image compression in an isolate and crash it with an invalid codec. The UI should show an error, not hang.",
+    "expectations": [
+      "propagates isolate errors back to the caller instead of silently failing",
+      "preserves or wraps the original stack trace",
+      "tests error and cancellation paths in addition to success"
+    ]
   }
 ]
