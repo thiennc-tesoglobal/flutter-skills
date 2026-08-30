@@ -24,6 +24,9 @@ First identify which specialist skills are discoverable in the current environme
 - Advanced glass, blur, refraction, shaders, or custom optical rendering: `flutter-visual-effects`
 - Widget composition, layout mechanics, motion, or routing: the matching Flutter UI specialist
 - APIs or storage: `flutter-networking`, `flutter-persistence`
+- Sign-in, session, or passkey behavior: `flutter-authentication`
+- Store purchases, subscriptions, or entitlement restoration: `flutter-in-app-purchases`
+- Product events, funnels, attribution, or experiments: `flutter-product-analytics`
 - Model-backed product behavior: `flutter-ai-integration`
 - Reusable Dart packages or Flutter plugins: `flutter-package-development`
 - Local or remote notification delivery: `flutter-notifications`

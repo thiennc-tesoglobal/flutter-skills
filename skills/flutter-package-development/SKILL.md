@@ -38,7 +38,11 @@ Do not turn an app-specific bridge into a public package merely because reuse is
 
 Format and analyze the supported SDK surface, run unit and widget tests, and exercise the example or integration fixture on every affected platform. Test public behavior rather than private structure. For a compatibility change, verify representative consumers or the oldest and newest supported dependency combinations where practical.
 
-Run `dart pub publish --dry-run` only when publication readiness is in scope. Publishing, changing package ownership, applying tags, or creating releases requires explicit authorization; a successful dry run is not a publication.
+Run `dart pub publish --dry-run` only when publication readiness is in scope. Inspect its complete output, resolve or explicitly account for every warning and included file, and rerun it after metadata or package-content changes. A successful dry run proves neither consumer compatibility nor publication authorization.
+
+Publishing, changing package ownership, applying tags, or creating releases requires explicit authorization. Immediately before an authorized publish, resolve the exact package name, version, authenticated account or publisher, and final dry-run result; do not infer the target identity from an available credential or create tags and releases as an unrequested side effect.
+
+If repository or command access is unavailable, state that readiness remains unverified and give an executable inspection plan with pass/fail criteria. Cover metadata and SDK compatibility, license and consumer documentation, public API and changelog compatibility, package contents reported by the dry run, credentials and target publisher, and every dry-run warning; do not stop at requesting the missing files or output.
 
 State the platforms and SDK combinations actually exercised and any remaining consumer, platform, or registry boundary.
 

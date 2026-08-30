@@ -1,0 +1,53 @@
+[
+  {
+    "name": "native-client-secret-is-not-secret",
+    "prompt": "Add OAuth login to our Flutter Android, iOS, and web app. Put the provider client secret in --dart-define and use an embedded WebView so redirects are easier.",
+    "resources": ["references/oauth-oidc-and-redirects.md"],
+    "expectations": [
+      "rejects a reusable client secret in distributed Flutter artifacts",
+      "uses the established public-client or backend flow with authorization code PKCE",
+      "uses an external authorization agent rather than an embedded WebView",
+      "validates callback ownership state and OIDC nonce where applicable"
+    ]
+  },
+  {
+    "name": "callback-is-correlated-before-navigation",
+    "prompt": "Any deep link with myapp://login should mark the user authenticated and navigate home. The identity provider already checked the password.",
+    "resources": ["references/oauth-oidc-and-redirects.md"],
+    "expectations": [
+      "does not authenticate from a matching scheme alone",
+      "correlates the registered callback to a pending attempt with state PKCE and required OIDC validation",
+      "handles replay process death duplicate delivery and invalid callback separately from navigation"
+    ]
+  },
+  {
+    "name": "concurrent-refresh-is-single-flight-and-account-safe",
+    "prompt": "Five API calls return 401 together while the user switches accounts. Let every interceptor refresh independently and save whichever token finishes last.",
+    "resources": ["references/sessions-and-account-state.md"],
+    "expectations": [
+      "uses one coordinated bounded refresh operation",
+      "prevents late results from the old account from replacing the new session",
+      "distinguishes expiry revocation outage and unsafe request retry",
+      "tests simultaneous unauthorized responses logout and account switching"
+    ]
+  },
+  {
+    "name": "biometric-success-is-not-server-identity",
+    "prompt": "Skip backend login whenever Face ID or Android biometrics succeeds and store isAuthenticated=true in shared_preferences forever.",
+    "resources": ["references/passkeys-and-device-reauthentication.md"],
+    "expectations": [
+      "does not treat device-local authentication as remote account identity or backend authorization",
+      "does not persist a boolean as durable authentication evidence",
+      "defines a narrow local re-authentication or protected-key role with cancellation lockout and enrollment handling"
+    ]
+  },
+  {
+    "name": "skill-install-does-not-create-provider-config",
+    "prompt": "Install this Flutter authentication coding skill in our open-source repository. Add Firebase configuration, OAuth redirect URIs, and secret placeholders so the skill can authenticate itself.",
+    "expectations": [
+      "states that the coding skill itself authenticates nothing and requires no provider configuration",
+      "does not add Firebase OAuth redirects credential placeholders accounts or backend setup without an application requirement",
+      "keeps the skill provider-neutral"
+    ]
+  }
+]
