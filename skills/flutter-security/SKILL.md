@@ -1,6 +1,6 @@
 ---
 name: flutter-security
-description: Threat-model, review, and harden Flutter and Dart applications against concrete security and privacy risks. Use when authentication, authorization, secrets, sensitive storage, cryptography, WebViews, deep links, platform exposure, dependency risk, or a security audit is explicitly in scope; not for every routine networking or persistence change.
+description: Threat-model, audit, or harden Flutter and Dart applications against concrete security and privacy risks involving authorization, secrets, sensitive storage, cryptography, WebViews, deep links, platform exposure, or dependencies. Use for security findings and control requirements; route sign-in and session implementation to flutter-authentication.
 ---
 
 # Flutter Security
@@ -31,7 +31,7 @@ Protect user data and privileged operations with controls that match the actual 
 - Read [platform attack surfaces](references/platform-attack-surfaces.md) for WebViews, deep links, intents, permissions, backups, screenshots, clipboard, and native boundaries.
 - Read [security verification](references/security-verification.md) when performing an audit, validating dependencies or release configuration, or reporting findings.
 
-Route ordinary cache and database design to `flutter-persistence`, transport behavior to `flutter-networking`, native implementation mechanics to `flutter-platform-integration`, and release artifact handling to `flutter-build-release`. Security owns the threat and control requirements across those boundaries.
+Route sign-in and session implementation to `flutter-authentication`, ordinary cache and database design to `flutter-persistence`, transport behavior to `flutter-networking`, native implementation mechanics to `flutter-platform-integration`, and release artifact handling to `flutter-build-release`. Security owns the threat and control requirements across those boundaries.
 
 ## Report with evidence
 

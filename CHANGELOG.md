@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.0 - Unreleased
+
+- Add `flutter-in-app-purchases` for store transaction lifecycles, trusted verification, idempotent entitlements, subscriptions, restoration, and sandbox evidence.
+- Add provider-neutral `flutter-authentication` for OAuth and OIDC redirects, PKCE, coordinated session refresh, logout, account switching, passkeys, and device re-authentication.
+- Add provider-neutral `flutter-product-analytics` for semantic event contracts, consent-aware identity, deduplication, funnels, experiments, and end-to-end ingestion verification.
+- Add behavior and routing evaluations that distinguish store billing from physical checkout, authentication from broad security review, and product analytics from operational observability.
+- Calibrate sandbox-readiness evaluation to require explicit inspection and deterministic store evidence without fabricating repository or console access.
+- Tighten authentication discovery boundaries across security and networking, and add an authenticated-transport routing regression.
+- Refresh the fixed public benchmark for the six specialist boundaries added across v0.2.1 and v0.3.0.
+- Strengthen package dry-run inspection and native-plugin clean-start verification from measured forward-evaluation failures.
+- Calibrate the package-readiness evaluation to reward an executable evidence plan when its tool-free harness cannot inspect the repository.
+- Bound each forward-evaluation agent invocation so a stalled solver cannot hang the full benchmark indefinitely.
+- Make unavailable analytics ingestion and dashboard boundaries explicit instead of reporting only a generic pending state.
+
 ## 0.2.1 - 2026-08-30
 
 - Add `flutter-package-development` for reusable public APIs, plugin shape, federation, consumer compatibility, and publication readiness.

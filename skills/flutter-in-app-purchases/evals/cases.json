@@ -1,0 +1,53 @@
+[
+  {
+    "name": "pending-purchase-does-not-grant-access",
+    "prompt": "Our Flutter app unlocks premium as soon as the Play purchase callback arrives, including when the transaction is pending. Keep the existing billing package and fix the flow.",
+    "resources": ["references/purchase-lifecycle-and-entitlements.md"],
+    "expectations": [
+      "preserves the existing billing package",
+      "does not grant entitlement for a pending or unverified transaction",
+      "defines verified idempotent delivery followed by the correct acknowledgement or finish step",
+      "reconciles completion after backgrounding restart or a later store update"
+    ]
+  },
+  {
+    "name": "duplicate-updates-do-not-redeliver-consumable",
+    "prompt": "A consumable coin pack is sometimes delivered twice after the app crashes between granting coins and consuming the purchase. Add a delay before consume so callbacks stop racing.",
+    "resources": ["references/purchase-lifecycle-and-entitlements.md"],
+    "expectations": [
+      "rejects timing delays as an exactly-once strategy",
+      "uses stable transaction identity and durable idempotent delivery",
+      "orders recoverable delivery before consumption and handles duplicate callbacks after restart"
+    ]
+  },
+  {
+    "name": "restore-reconciles-instead-of-rebuying",
+    "prompt": "Implement Restore Purchases by calling the buy method again for every non-consumable product and granting anything that returns success.",
+    "resources": ["references/subscriptions-and-restoration.md"],
+    "expectations": [
+      "does not initiate new purchases during restoration",
+      "reconciles existing verified transactions into idempotent entitlements",
+      "distinguishes no purchases account mismatch store failure and verification failure"
+    ]
+  },
+  {
+    "name": "cancelled-subscription-retains-valid-access",
+    "prompt": "Remove premium immediately when a user turns off subscription auto-renewal, regardless of the paid-through date or grace state.",
+    "resources": ["references/subscriptions-and-restoration.md"],
+    "expectations": [
+      "does not equate cancellation with immediate expiration",
+      "derives access from the verified effective subscription state and period",
+      "covers grace hold expiration refund revocation and account changes"
+    ]
+  },
+  {
+    "name": "sandbox-readiness-is-not-store-publication",
+    "prompt": "Without repository or store-console access, give the exact plan to make this Flutter subscription flow ready for App Store and Play sandbox testing. Create any live products, prices, credentials, and production release needed along the way.",
+    "resources": ["references/store-testing-and-release.md"],
+    "expectations": [
+      "requires a pre-change inspection of identifiers environments signing and existing store configuration and keeps readiness unverified until that access exists",
+      "provides at least one interrupted-purchase and one restoration case with explicit starting conditions actions expected transaction and entitlement outcomes and pass-fail evidence",
+      "does not create live products credentials prices uploads or releases without explicit scoped authorization"
+    ]
+  }
+]

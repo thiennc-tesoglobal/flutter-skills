@@ -304,5 +304,54 @@
     "required": ["flutter-networking"],
     "optional": ["dart-concurrency", "flutter-persistence", "flutter-testing", "flutter-ui-patterns"],
     "forbidden": ["flutter-ai-integration", "flutter-app-workflow"]
+  },
+  {
+    "name": "verified-store-subscription-entitlement",
+    "prompt": "Add App Store and Play subscriptions to the existing Flutter app, verify transactions with its backend, restore access after reinstall, and handle pending, grace, expiration, and account switching without changing the billing provider.",
+    "required": ["flutter-in-app-purchases"],
+    "optional": ["flutter-authentication", "flutter-networking", "flutter-persistence", "flutter-product-analytics", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-build-release"]
+  },
+  {
+    "name": "physical-goods-checkout-is-not-iap",
+    "prompt": "Build a card checkout form for physical grocery delivery through the existing payment processor API. No digital content or app-store product is sold.",
+    "required": ["flutter-networking", "flutter-ui-patterns"],
+    "optional": ["flutter-security", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-in-app-purchases"]
+  },
+  {
+    "name": "oauth-pkce-session-lifecycle",
+    "prompt": "Implement provider-neutral OAuth login for Flutter mobile and web with PKCE, verified redirects, coordinated refresh, logout, and safe account switching while preserving the current router and HTTP client.",
+    "required": ["flutter-authentication"],
+    "optional": ["flutter-navigation", "flutter-networking", "flutter-persistence", "flutter-security", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow"]
+  },
+  {
+    "name": "authentication-threat-review-stays-security-led",
+    "prompt": "Audit this Flutter repository for concrete authentication vulnerabilities involving token storage, redirect interception, authorization enforcement, and logout cleanup. Report findings only; do not implement a new login flow.",
+    "required": ["flutter-security"],
+    "optional": ["flutter-authentication", "flutter-code-review"],
+    "forbidden": ["flutter-app-workflow"]
+  },
+  {
+    "name": "existing-session-authenticated-http-transport",
+    "prompt": "The existing login flow and session owner already expose access and refresh tokens. Update the current Dio interceptor to attach the access token, coordinate one refresh after concurrent 401 responses, retry only safe requests, and map terminal unauthorized failures without changing the identity provider, login UI, token storage, or account lifecycle.",
+    "required": ["flutter-networking"],
+    "optional": ["dart-concurrency", "flutter-authentication", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-security"]
+  },
+  {
+    "name": "consent-aware-product-funnel",
+    "prompt": "Instrument the signup-to-purchase product funnel with stable events, anonymous-to-account identity rules, consent handling, duplicate prevention, and staging backend verification while preserving the current analytics provider.",
+    "required": ["flutter-product-analytics"],
+    "optional": ["flutter-authentication", "flutter-in-app-purchases", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-observability"]
+  },
+  {
+    "name": "production-crash-context-is-not-product-analytics",
+    "prompt": "Add release-correlated crash capture and operational breadcrumbs for a production Flutter checkout failure without collecting payment or customer data.",
+    "required": ["flutter-observability"],
+    "optional": ["flutter-build-release", "flutter-security", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-product-analytics"]
   }
 ]

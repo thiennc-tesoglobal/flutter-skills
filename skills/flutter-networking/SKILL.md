@@ -1,6 +1,6 @@
 ---
 name: flutter-networking
-description: Build or review Flutter remote data and transport boundaries across HTTP, GraphQL, WebSocket, SSE, or Socket.IO. Use for API contracts, authentication, pagination, retries, reconnection, caching, and error mapping; route local storage ownership to flutter-persistence.
+description: Build or review Flutter remote data and transport boundaries across HTTP, GraphQL, WebSocket, SSE, or Socket.IO. Use for API contracts, authenticated request transport, pagination, retries, reconnection, caching, and error mapping; route sign-in and session semantics to flutter-authentication and local storage ownership to flutter-persistence.
 ---
 
 # Flutter Networking

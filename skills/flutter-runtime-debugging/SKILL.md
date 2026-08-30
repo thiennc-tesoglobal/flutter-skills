@@ -26,7 +26,7 @@ Before choosing a fix, require the first incorrect transition at every implicate
 
 Change one relevant variable at a time. Temporary instrumentation must be bounded, redact sensitive data, and be removed or converted into appropriate durable diagnostics before completion.
 
-Hot reload preserves state and is not proof that startup, registration, initialization, generated code, or native configuration is correct. Use hot restart, full restart, rebuild, or reinstall when the changed boundary requires it.
+Hot reload preserves state and is not proof that startup, registration, initialization, generated code, or native configuration is correct. For plugin or native registration changes, perform a full rebuild and clean-process launch on every affected supported target before the first Dart call. Inspect startup and registration logs for errors, and verify that unsupported targets fail through the package's documented behavior rather than an accidental missing-plugin path. Reinstall when stale native artifacts or installation state could survive the rebuild.
 
 ## Boundaries
 

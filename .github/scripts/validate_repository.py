@@ -28,10 +28,10 @@ IGNORED_LINK_DIRECTORIES = {
     "coverage",
     "node_modules",
 }
-EXPECTED_VERSION = "0.2.1"
-EXPECTED_SKILL_COUNT = 31
-EXPECTED_EVAL_COUNT = 132
-EXPECTED_ROUTING_EVAL_COUNT = 42
+EXPECTED_VERSION = "0.3.0"
+EXPECTED_SKILL_COUNT = 34
+EXPECTED_EVAL_COUNT = 147
+EXPECTED_ROUTING_EVAL_COUNT = 49
 EXPECTED_BUNDLES = {
     "all-flutter-skills": {
         "dart-concurrency",
@@ -41,6 +41,7 @@ EXPECTED_BUNDLES = {
         "flutter-animation",
         "flutter-app-workflow",
         "flutter-architecture",
+        "flutter-authentication",
         "flutter-background-execution",
         "flutter-build-release",
         "flutter-ci-cd",
@@ -48,6 +49,7 @@ EXPECTED_BUNDLES = {
         "flutter-dependency-upgrades",
         "flutter-device-testing",
         "flutter-figma-workflow",
+        "flutter-in-app-purchases",
         "flutter-localization",
         "flutter-navigation",
         "flutter-networking",
@@ -57,6 +59,7 @@ EXPECTED_BUNDLES = {
         "flutter-performance",
         "flutter-persistence",
         "flutter-platform-integration",
+        "flutter-product-analytics",
         "flutter-responsive-layout",
         "flutter-runtime-debugging",
         "flutter-security",
@@ -71,6 +74,7 @@ EXPECTED_BUNDLES = {
         "dart-language",
         "flutter-ai-integration",
         "flutter-architecture",
+        "flutter-authentication",
         "flutter-dependency-upgrades",
         "flutter-networking",
         "flutter-persistence",
@@ -90,17 +94,20 @@ EXPECTED_BUNDLES = {
     },
     "flutter-engineering-skills": {
         "flutter-app-workflow",
+        "flutter-authentication",
         "flutter-background-execution",
         "flutter-build-release",
         "flutter-ci-cd",
         "flutter-code-review",
         "flutter-dependency-upgrades",
         "flutter-device-testing",
+        "flutter-in-app-purchases",
         "flutter-notifications",
         "flutter-observability",
         "flutter-package-development",
         "flutter-performance",
         "flutter-platform-integration",
+        "flutter-product-analytics",
         "flutter-runtime-debugging",
         "flutter-security",
         "flutter-testing",

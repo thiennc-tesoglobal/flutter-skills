@@ -358,9 +358,12 @@ def validate_judgment(
 
 
 class AgentRunner:
-    def __init__(self, agent: str, model: str | None) -> None:
+    def __init__(
+        self, agent: str, model: str | None, timeout_seconds: float = 180.0
+    ) -> None:
         self.agent = agent
         self.model = model
+        self.timeout_seconds = timeout_seconds
         executable = shutil.which(agent)
         if executable is None:
             raise EvalError(f"required agent executable not found: {agent}")
@@ -392,13 +395,20 @@ class AgentRunner:
             ]
             if self.model:
                 command.extend(["--model", self.model])
-            completed = subprocess.run(
-                command,
-                input=prompt,
-                text=True,
-                capture_output=True,
-                check=False,
-            )
+            try:
+                completed = subprocess.run(
+                    command,
+                    input=prompt,
+                    text=True,
+                    capture_output=True,
+                    check=False,
+                    timeout=self.timeout_seconds,
+                )
+            except subprocess.TimeoutExpired as error:
+                raise EvalError(
+                    f"{self.agent} eval timed out after "
+                    f"{self.timeout_seconds:g} seconds"
+                ) from error
             if completed.returncode:
                 detail = completed.stderr.strip() or completed.stdout.strip()
                 raise EvalError(detail or "claude eval failed")
@@ -423,13 +433,20 @@ class AgentRunner:
             if self.model:
                 command.extend(["--model", self.model])
             command.append("-")
-            completed = subprocess.run(
-                command,
-                input=prompt,
-                text=True,
-                capture_output=True,
-                check=False,
-            )
+            try:
+                completed = subprocess.run(
+                    command,
+                    input=prompt,
+                    text=True,
+                    capture_output=True,
+                    check=False,
+                    timeout=self.timeout_seconds,
+                )
+            except subprocess.TimeoutExpired as error:
+                raise EvalError(
+                    f"{self.agent} eval timed out after "
+                    f"{self.timeout_seconds:g} seconds"
+                ) from error
             if completed.returncode:
                 detail = completed.stderr.strip() or completed.stdout.strip()
                 raise EvalError(detail or "codex eval failed")
@@ -576,6 +593,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--judge-agent", choices=("claude", "codex"))
     parser.add_argument("--model")
     parser.add_argument("--judge-model")
+    parser.add_argument(
+        "--agent-timeout",
+        type=float,
+        default=180.0,
+        help="maximum seconds for each solver or judge invocation",
+    )
     parser.add_argument("--skill", action="append", help="filter behavior skill")
     parser.add_argument("--case", help="regular expression for case names")
     parser.add_argument("--max-cases", type=int, default=1)
@@ -597,6 +620,8 @@ def main() -> int:
     args = parse_args()
     if args.max_cases < 1:
         raise EvalError("--max-cases must be positive")
+    if args.agent_timeout <= 0:
+        raise EvalError("--agent-timeout must be positive")
     if not 0 <= args.threshold <= 100:
         raise EvalError("--threshold must be between 0 and 100")
 
@@ -641,8 +666,10 @@ def main() -> int:
             profile, all_behavior, all_routing
         )
 
-    solver = AgentRunner(args.agent, args.model)
-    judge = AgentRunner(args.judge_agent or args.agent, args.judge_model)
+    solver = AgentRunner(args.agent, args.model, args.agent_timeout)
+    judge = AgentRunner(
+        args.judge_agent or args.agent, args.judge_model, args.agent_timeout
+    )
     results: dict[str, Any] = {
         "created_at": dt.datetime.now(dt.timezone.utc).isoformat(),
         "agent": args.agent,

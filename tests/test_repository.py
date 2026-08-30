@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import subprocess
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -23,9 +24,9 @@ class RepositoryTests(unittest.TestCase):
     def test_repository_validator_passes(self):
         errors, _, counts = VALIDATOR.validate_repository()
         self.assertEqual(errors, [])
-        self.assertEqual(counts["skills"], 31)
-        self.assertEqual(counts["evals"], 132)
-        self.assertEqual(counts["routing_evals"], 42)
+        self.assertEqual(counts["skills"], 34)
+        self.assertEqual(counts["evals"], 147)
+        self.assertEqual(counts["routing_evals"], 49)
 
     def test_codex_plugin_and_marketplace_resolve_the_full_catalog(self):
         plugin = json.loads(
@@ -245,6 +246,45 @@ class RepositoryTests(unittest.TestCase):
         self.assertNotIn("traces the lifecycle", expectations)
         self.assertNotIn("repeats the original", expectations)
 
+    def test_tool_free_iap_eval_requires_inspection_without_fabricating_access(self):
+        cases = json.loads(
+            (
+                ROOT
+                / "skills"
+                / "flutter-in-app-purchases"
+                / "evals"
+                / "cases.json"
+            ).read_text(encoding="utf-8")
+        )
+        case = next(
+            item
+            for item in cases
+            if item["name"] == "sandbox-readiness-is-not-store-publication"
+        )
+        expectations = " ".join(case["expectations"])
+        self.assertIn("requires a pre-change inspection", expectations)
+        self.assertIn("interrupted-purchase and one restoration", expectations)
+        self.assertNotIn("inspects identifiers", expectations)
+
+    def test_tool_free_package_eval_accepts_an_executable_review_plan(self):
+        cases = json.loads(
+            (
+                ROOT
+                / "skills"
+                / "flutter-package-development"
+                / "evals"
+                / "cases.json"
+            ).read_text(encoding="utf-8")
+        )
+        case = next(
+            item
+            for item in cases
+            if item["name"] == "dry-run-does-not-authorize-publish"
+        )
+        expectations = " ".join(case["expectations"])
+        self.assertIn("executable review with pass-fail criteria", expectations)
+        self.assertIn("without fabricating repository access", expectations)
+
     def test_public_benchmark_profile_resolves_exact_cases(self):
         catalog = BEHAVIOR_EVAL.skill_catalog()
         behavior = BEHAVIOR_EVAL.behavior_cases(catalog)
@@ -256,10 +296,13 @@ class RepositoryTests(unittest.TestCase):
         selected_behavior, selected_routing = BEHAVIOR_EVAL.cases_for_profile(
             profile, behavior, routing
         )
-        self.assertEqual(len(selected_behavior), 5)
-        self.assertEqual(len(selected_routing), 5)
-        self.assertEqual(selected_behavior[0]["skill"], "flutter-ui-design")
-        self.assertEqual(selected_routing[-1]["name"], "figma-checkout-node-to-flutter")
+        self.assertEqual(len(selected_behavior), 6)
+        self.assertEqual(len(selected_routing), 7)
+        self.assertEqual(selected_behavior[0]["skill"], "flutter-package-development")
+        self.assertEqual(
+            selected_routing[-1]["name"],
+            "production-crash-context-is-not-product-analytics",
+        )
 
     def test_result_summary_reports_raw_score_aggregates(self):
         results = {
@@ -301,6 +344,20 @@ class RepositoryTests(unittest.TestCase):
             capture_output=True,
             check=False,
         )
+
+    def test_agent_runner_bounds_stalled_invocations(self):
+        with patch.object(BEHAVIOR_EVAL.shutil, "which", return_value="/bin/claude"):
+            runner = BEHAVIOR_EVAL.AgentRunner("claude", None, timeout_seconds=12)
+        with patch.object(
+            BEHAVIOR_EVAL.subprocess,
+            "run",
+            side_effect=subprocess.TimeoutExpired(["/bin/claude"], 12),
+        ):
+            with self.assertRaisesRegex(
+                BEHAVIOR_EVAL.EvalError,
+                "claude eval timed out after 12 seconds",
+            ):
+                runner.run("prompt")
 
     def test_routing_score_rejects_overactivation(self):
         case = {

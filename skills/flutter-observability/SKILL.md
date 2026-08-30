@@ -26,7 +26,7 @@ Load only the references relevant to the request.
 ## Boundaries
 
 - `flutter-performance` owns profile-mode measurement and optimization decisions; production traces can reveal a regression or candidate bottleneck but are not proof of an optimization.
-- Product analytics owns funnels, attribution, conversion, and business events; operational telemetry answers reliability and incident-diagnosis questions. State this distinction when instrumenting a user journey so analytics events or UI tracking do not leak into the operational contract.
+- `flutter-product-analytics` owns funnels, attribution, conversion, experiments, and business events; operational telemetry answers reliability and incident-diagnosis questions. State this distinction when instrumenting a user journey so analytics events or UI tracking do not leak into the operational contract.
 - `flutter-networking` owns HTTP behavior; this skill defines safe correlation and outcome signals around it.
 - `flutter-security` owns a broad security review; this skill enforces telemetry minimization, redaction, consent, retention awareness, and least exposure.
 - `flutter-build-release` owns artifact and symbol production; this skill verifies release/build identifiers and symbol upload linkage.
