@@ -5,20 +5,21 @@
   },
   "metadata": {
     "description": "Focused Flutter and Dart Agent Skills for complete app delivery",
-    "version": "0.2.0"
+    "version": "0.2.1"
   },
   "plugins": [
     {
       "name": "all-flutter-skills",
       "source": "./",
       "description": "Complete Flutter and Dart delivery collection",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "category": "development",
       "strict": false,
       "skills": [
         "./skills/dart-concurrency",
         "./skills/dart-language",
         "./skills/flutter-accessibility",
+        "./skills/flutter-ai-integration",
         "./skills/flutter-animation",
         "./skills/flutter-app-workflow",
         "./skills/flutter-architecture",
@@ -34,10 +35,12 @@
         "./skills/flutter-networking",
         "./skills/flutter-notifications",
         "./skills/flutter-observability",
+        "./skills/flutter-package-development",
         "./skills/flutter-performance",
         "./skills/flutter-persistence",
         "./skills/flutter-platform-integration",
         "./skills/flutter-responsive-layout",
+        "./skills/flutter-runtime-debugging",
         "./skills/flutter-security",
         "./skills/flutter-state-management",
         "./skills/flutter-testing",
@@ -50,12 +53,13 @@
       "name": "flutter-core-skills",
       "source": "./",
       "description": "Dart, architecture, state, data, and testing skills",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "category": "development",
       "strict": false,
       "skills": [
         "./skills/dart-concurrency",
         "./skills/dart-language",
+        "./skills/flutter-ai-integration",
         "./skills/flutter-architecture",
         "./skills/flutter-dependency-upgrades",
         "./skills/flutter-networking",
@@ -68,7 +72,7 @@
       "name": "flutter-ui-skills",
       "source": "./",
       "description": "Flutter UI, effects, layout, motion, navigation, accessibility, and localization skills",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "category": "development",
       "strict": false,
       "skills": [
@@ -87,7 +91,7 @@
       "name": "flutter-engineering-skills",
       "source": "./",
       "description": "End-to-end delivery, review, security, performance, platform, release, and device verification skills",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "category": "development",
       "strict": false,
       "skills": [
@@ -100,8 +104,10 @@
         "./skills/flutter-device-testing",
         "./skills/flutter-notifications",
         "./skills/flutter-observability",
+        "./skills/flutter-package-development",
         "./skills/flutter-performance",
         "./skills/flutter-platform-integration",
+        "./skills/flutter-runtime-debugging",
         "./skills/flutter-security",
         "./skills/flutter-testing"
       ]

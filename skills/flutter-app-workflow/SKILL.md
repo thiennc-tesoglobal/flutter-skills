@@ -24,10 +24,13 @@ First identify which specialist skills are discoverable in the current environme
 - Advanced glass, blur, refraction, shaders, or custom optical rendering: `flutter-visual-effects`
 - Widget composition, layout mechanics, motion, or routing: the matching Flutter UI specialist
 - APIs or storage: `flutter-networking`, `flutter-persistence`
+- Model-backed product behavior: `flutter-ai-integration`
+- Reusable Dart packages or Flutter plugins: `flutter-package-development`
 - Local or remote notification delivery: `flutter-notifications`
 - OS-scheduled, foreground-service, or headless background work: `flutter-background-execution`
 - Flutter/Dart SDK, dependency graph, lockfile, or native toolchain upgrades: `flutter-dependency-upgrades`
 - Production diagnostics, crash context, logs, or traces: `flutter-observability`
+- Reproducing and diagnosing a failure in a running app: `flutter-runtime-debugging`
 - Language or async behavior: `dart-language`, `dart-concurrency`
 - Security or privacy hardening: `flutter-security`
 - Explicit review or audit findings: `flutter-code-review`

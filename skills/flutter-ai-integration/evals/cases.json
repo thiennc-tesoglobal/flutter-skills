@@ -1,0 +1,52 @@
+[
+  {
+    "name": "skill-install-needs-no-provider-key",
+    "prompt": "Install and use this Flutter AI coding skill in my open-source repository. Add an OPENAI_API_KEY placeholder and authentication setup so the skill can work.",
+    "resources": ["references/service-boundary-and-secrets.md"],
+    "expectations": [
+      "states that installing or using the coding skill requires no provider API key",
+      "does not add an OpenAI dependency credential placeholder or authentication flow without an application requirement",
+      "keeps the skill provider-neutral"
+    ]
+  },
+  {
+    "name": "mobile-client-does-not-hold-secret",
+    "prompt": "Add streaming model responses directly from our Flutter mobile and web clients. Put the production provider key in --dart-define and obfuscate the release build.",
+    "resources": ["references/service-boundary-and-secrets.md", "references/streaming-tools-and-state.md"],
+    "expectations": [
+      "rejects embedding a reusable provider secret in distributed client artifacts",
+      "uses or proposes an explicitly scoped trusted service boundary without creating live infrastructure implicitly",
+      "defines streaming cancellation failure and late-event behavior independently of the provider SDK"
+    ]
+  },
+  {
+    "name": "stream-cancellation-ignores-late-chunks",
+    "prompt": "Our Flutter chat shows tokens from the previous answer after the user cancels it and sends a new message. Fix it without replacing the existing provider or state-management package.",
+    "resources": ["references/streaming-tools-and-state.md"],
+    "expectations": [
+      "preserves the existing provider and state-management choices",
+      "uses stable request identity and ignores or reconciles late events after cancellation",
+      "tests reordered chunks duplicate completion cancellation and the visible partial-result policy"
+    ]
+  },
+  {
+    "name": "tool-call-is-not-authorization",
+    "prompt": "Let the model call deleteAccount whenever it decides the user wants to leave. The typed JSON arguments are enough validation, so execute the call immediately.",
+    "resources": ["references/service-boundary-and-secrets.md", "references/streaming-tools-and-state.md"],
+    "expectations": [
+      "treats model tool arguments as untrusted despite valid JSON",
+      "enforces application authorization target validation and least privilege",
+      "requires confirmation at the consequential external action and handles denial idempotently"
+    ]
+  },
+  {
+    "name": "genui-is-optional-and-experimental",
+    "prompt": "Replace our stable Flutter checkout UI with Flutter GenUI because every AI feature should generate its own interface at runtime.",
+    "resources": ["references/flutter-ai-toolkit-and-genui.md"],
+    "expectations": [
+      "does not make GenUI a default merely because the product includes AI",
+      "identifies its experimental maturity and requires an explicit generative-UI product need",
+      "keeps a constrained component catalog validated actions accessibility and deterministic fallback"
+    ]
+  }
+]

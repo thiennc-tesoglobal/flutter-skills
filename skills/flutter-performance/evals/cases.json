@@ -13,7 +13,7 @@
     "name": "attributes-ui-versus-raster-jank",
     "prompt": "A product grid misses frames during fast scrolling. Add const widgets, repaint boundaries, and an isolate so it becomes smooth.",
     "resources": ["references/profile-and-frame-analysis.md"],
-    "expectations": ["captures a reproducible profile-mode trace before prescribing fixes", "distinguishes UI-thread work from raster-thread work", "chooses an intervention only after attributing the measured cost", "repeats the same flow and reports comparable results"]
+    "expectations": ["requires a reproducible profile-mode trace before prescribing fixes", "distinguishes UI-thread work from raster-thread work", "chooses an intervention only after attributing the measured cost", "defines a repeat of the same flow and comparable before-and-after metrics"]
   },
   {
     "name": "finds-retained-lifecycle-owner",

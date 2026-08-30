@@ -32,6 +32,8 @@ When adding, removing, or renaming a skill, update:
 - `skills/<name>/SKILL.md`
 - `skills/<name>/evals/cases.json`
 - `.claude-plugin/marketplace.json`
+- `.codex-plugin/plugin.json`
+- `.agents/plugins/marketplace.json`
 - `.tessl-plugin/plugin.json`
 - `README.md` counts and catalog
 - `CHANGELOG.md`
@@ -51,6 +53,8 @@ bash .github/scripts/run_dart_skills_lint.sh
 claude plugin validate .
 npx skills add . --list
 ```
+
+When forward-evaluation behavior changes, run the smallest relevant executed case or the fixed public profile and retain the raw result. Do not rewrite skills without a measured failure or a current primary-source change.
 
 For a full audit or release review, follow [the maintainer audit workflow](.github/maintainer/flutter-skill-audit.md).
 

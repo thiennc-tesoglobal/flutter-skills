@@ -28,15 +28,16 @@ IGNORED_LINK_DIRECTORIES = {
     "coverage",
     "node_modules",
 }
-EXPECTED_VERSION = "0.2.0"
-EXPECTED_SKILL_COUNT = 28
-EXPECTED_EVAL_COUNT = 117
-EXPECTED_ROUTING_EVAL_COUNT = 36
+EXPECTED_VERSION = "0.2.1"
+EXPECTED_SKILL_COUNT = 31
+EXPECTED_EVAL_COUNT = 132
+EXPECTED_ROUTING_EVAL_COUNT = 42
 EXPECTED_BUNDLES = {
     "all-flutter-skills": {
         "dart-concurrency",
         "dart-language",
         "flutter-accessibility",
+        "flutter-ai-integration",
         "flutter-animation",
         "flutter-app-workflow",
         "flutter-architecture",
@@ -52,10 +53,12 @@ EXPECTED_BUNDLES = {
         "flutter-networking",
         "flutter-notifications",
         "flutter-observability",
+        "flutter-package-development",
         "flutter-performance",
         "flutter-persistence",
         "flutter-platform-integration",
         "flutter-responsive-layout",
+        "flutter-runtime-debugging",
         "flutter-security",
         "flutter-state-management",
         "flutter-testing",
@@ -66,6 +69,7 @@ EXPECTED_BUNDLES = {
     "flutter-core-skills": {
         "dart-concurrency",
         "dart-language",
+        "flutter-ai-integration",
         "flutter-architecture",
         "flutter-dependency-upgrades",
         "flutter-networking",
@@ -94,8 +98,10 @@ EXPECTED_BUNDLES = {
         "flutter-device-testing",
         "flutter-notifications",
         "flutter-observability",
+        "flutter-package-development",
         "flutter-performance",
         "flutter-platform-integration",
+        "flutter-runtime-debugging",
         "flutter-security",
         "flutter-testing",
     },
@@ -237,12 +243,15 @@ def normalized_skill_paths(values: list[str]) -> set[str]:
 def validate_packages(skill_names: set[str]) -> list[str]:
     errors: list[str] = []
     marketplace = load_json(ROOT / ".claude-plugin" / "marketplace.json")
+    codex = load_json(ROOT / ".codex-plugin" / "plugin.json")
+    codex_marketplace = load_json(ROOT / ".agents" / "plugins" / "marketplace.json")
     tessl = load_json(ROOT / ".tessl-plugin" / "plugin.json")
     tessl_root = load_json(ROOT / "tessl.json")
     npm_package = load_json(ROOT / "package.json")
 
     versions = {
         marketplace.get("metadata", {}).get("version"),
+        codex.get("version"),
         tessl.get("version"),
         npm_package.get("version"),
     }
@@ -280,6 +289,41 @@ def validate_packages(skill_names: set[str]) -> list[str]:
     if tessl.get("name") != tessl_root.get("name"):
         errors.append("Tessl package names are not aligned")
 
+    if codex.get("name") != "flutter-skills":
+        errors.append("Codex plugin name must be flutter-skills")
+    if codex.get("skills") != "./skills/":
+        errors.append("Codex plugin must expose ./skills/")
+    if any(field in codex for field in ("apps", "mcpServers")):
+        errors.append("Codex plugin must not declare apps or MCP servers without companion files")
+    codex_interface = codex.get("interface", {})
+    required_interface = {
+        "displayName": "Flutter Skills",
+        "developerName": "thiennc-tesoglobal",
+        "category": "Developer Tools",
+    }
+    for field, expected in required_interface.items():
+        if codex_interface.get(field) != expected:
+            errors.append(f"Codex plugin interface {field} must be {expected!r}")
+    if codex_interface.get("capabilities") != ["Skills"]:
+        errors.append("Codex plugin capabilities must describe its Skills surface")
+
+    codex_entries = codex_marketplace.get("plugins", [])
+    if codex_marketplace.get("name") != "flutter-skills" or len(codex_entries) != 1:
+        errors.append("Codex marketplace must contain the flutter-skills plugin")
+    else:
+        codex_entry = codex_entries[0]
+        if codex_entry.get("name") != codex.get("name"):
+            errors.append("Codex marketplace and plugin names are not aligned")
+        if codex_entry.get("source") != {"source": "local", "path": "./"}:
+            errors.append("Codex marketplace must resolve the repository-root plugin")
+        if codex_entry.get("policy") != {
+            "installation": "AVAILABLE",
+            "authentication": "ON_INSTALL",
+        }:
+            errors.append("Codex marketplace policy is incomplete")
+        if codex_entry.get("category") != "Developer Tools":
+            errors.append("Codex marketplace category must be Developer Tools")
+
     if npm_package.get("name") != "@thiennc/flutter-skills":
         errors.append("npm package name must be @thiennc/flutter-skills")
     if npm_package.get("private") is True:
@@ -290,6 +334,8 @@ def validate_packages(skill_names: set[str]) -> list[str]:
         errors.append("npm package must pin skills@1.5.23")
     if npm_package.get("publishConfig", {}).get("access") != "public":
         errors.append("npm package must publish with public access")
+    if npm_package.get("publishConfig", {}).get("provenance") is not True:
+        errors.append("npm package must publish provenance")
     return errors
 
 

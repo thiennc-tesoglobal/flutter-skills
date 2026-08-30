@@ -48,10 +48,10 @@ claude plugin validate .
 npx skills add . --list
 ```
 
-Confirm exact membership across `skills/`, Claude bundles, and Tessl metadata. Review version alignment, README counts, changelog entries, CI status, and missing release credentials.
+Confirm exact membership across `skills/`, Codex plugin metadata, Claude bundles, and Tessl metadata. Review version alignment, README counts, changelog entries, CI status, npm registry state, and missing release credentials.
 
 ## Release gate
 
-A release is ready only when validation passes, clean discovery returns the expected catalog, changed behavior has evaluation coverage, versions align, and release notes describe user-visible changes. Run `python3 .github/scripts/validate_repository.py --release` to require a dated version heading and reject an `Unreleased` marker before publication.
+A release is ready only when validation passes, clean discovery returns the expected catalog, changed behavior has executed evaluation evidence, versions align, the npm trusted publisher targets `release.yml`, and release notes describe user-visible changes. Run `python3 .github/scripts/validate_repository.py --release` to require a dated version heading and reject an `Unreleased` marker before publication.
 
 Do not create a tag, GitHub Release, Tessl publication, or other registry release without user authorization.

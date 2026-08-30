@@ -1,6 +1,6 @@
 ---
 name: flutter-platform-integration
-description: Implement or review Flutter platform channels, Pigeon APIs, FFI and build hooks, plugins, platform views, add-to-app boundaries, web interop, and native lifecycle integration. Use when Dart must communicate with native platforms; route ordinary notification delivery to flutter-notifications unless it needs a custom native bridge.
+description: Implement or review Flutter platform channels, Pigeon APIs, FFI and build hooks, native plugin implementations, platform views, add-to-app boundaries, web interop, and native lifecycle integration. Use when Dart must communicate with native platforms; route reusable package APIs, federation, and publication readiness to flutter-package-development.
 ---
 
 # Flutter Platform Integration
@@ -21,6 +21,8 @@ Keep domain models outside the channel contract. Version or evolve messages comp
 
 - Read [integration strategy](references/integration-strategy.md) when choosing among an existing package, channels or Pigeon, FFI, JS interop, and platform views.
 - Read [plugin development](references/plugin-development.md) when creating or evolving a reusable plugin package, federated implementation, platform interface, or multi-platform native API.
+
+`flutter-package-development` owns reusable public APIs, package shape, compatibility, federation decisions, consumer quality, and publication readiness. Use both skills when package design and native implementation are material.
 
 ## Lifecycle and platforms
 

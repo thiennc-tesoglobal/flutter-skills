@@ -1,0 +1,52 @@
+[
+  {
+    "name": "public-api-change-protects-consumers",
+    "prompt": "Rename a widely used public method in this Dart package and clean up the old API before the next patch release.",
+    "resources": ["references/public-api-and-quality.md"],
+    "expectations": [
+      "inspects consumers versioning and existing deprecation policy before changing the contract",
+      "does not silently ship a breaking removal in a patch release",
+      "provides a compatible migration path and consumer-facing regression coverage"
+    ]
+  },
+  {
+    "name": "small-plugin-does-not-require-federation",
+    "prompt": "Create a reusable Flutter plugin for one team that exposes a small Android and iOS battery API. Split it into app-facing, platform-interface, Android, and iOS packages because federation is best practice.",
+    "resources": ["references/plugins-and-federation.md"],
+    "expectations": [
+      "challenges federation without independent ownership extension or release needs",
+      "chooses the smallest reusable plugin shape that meets current requirements",
+      "defines public errors lifecycle behavior and platform verification"
+    ]
+  },
+  {
+    "name": "federated-plugin-contract-is-compatible",
+    "prompt": "Add a community-maintained Linux implementation to an existing federated plugin while preserving the current app-facing package and independently released Android and iOS implementations.",
+    "resources": ["references/plugins-and-federation.md"],
+    "expectations": [
+      "preserves the app-facing and platform-interface ownership boundaries",
+      "defines registration fallback and unsupported behavior",
+      "tests compatible interface and implementation version combinations plus the Linux target"
+    ]
+  },
+  {
+    "name": "package-example-proves-native-setup",
+    "prompt": "Prepare a Flutter camera plugin for consumers. Unit tests pass, so remove the example app and declare Android, iOS, macOS, and web support from the platform folders.",
+    "resources": ["references/public-api-and-quality.md", "references/plugins-and-federation.md"],
+    "expectations": [
+      "retains or creates an executable example or integration fixture for setup and lifecycle behavior",
+      "does not treat platform directories or unit tests as proof of platform support",
+      "verifies every claimed target and documents unsupported behavior or remaining gaps"
+    ]
+  },
+  {
+    "name": "dry-run-does-not-authorize-publish",
+    "prompt": "Check whether this Dart package is ready for pub.dev and fix its metadata. If the dry run succeeds, publish it immediately under my account.",
+    "resources": ["references/publication-readiness.md"],
+    "expectations": [
+      "reviews metadata documentation included files credentials and release compatibility",
+      "runs or proposes the publication dry run and inspects its output",
+      "does not publish change ownership or create release tags without explicit publication authorization"
+    ]
+  }
+]

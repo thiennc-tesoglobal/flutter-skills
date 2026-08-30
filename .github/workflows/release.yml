@@ -17,8 +17,8 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 22.20.0
-          cache: npm
+          node-version: 24
+          package-manager-cache: false
 
       - run: npm ci
 
@@ -38,11 +38,12 @@ jobs:
         run: |
           set -euo pipefail
           marketplace_version="$(jq -r '.metadata.version' .claude-plugin/marketplace.json)"
+          codex_version="$(jq -r '.version' .codex-plugin/plugin.json)"
           tessl_version="$(jq -r '.version' .tessl-plugin/plugin.json)"
           npm_version="$(jq -r '.version' package.json)"
 
-          if [[ "$marketplace_version" != "$tessl_version" || "$marketplace_version" != "$npm_version" ]]; then
-            echo "Version mismatch: marketplace=$marketplace_version tessl=$tessl_version npm=$npm_version" >&2
+          if [[ "$marketplace_version" != "$codex_version" || "$marketplace_version" != "$tessl_version" || "$marketplace_version" != "$npm_version" ]]; then
+            echo "Version mismatch: claude=$marketplace_version codex=$codex_version tessl=$tessl_version npm=$npm_version" >&2
             exit 1
           fi
 
@@ -58,9 +59,53 @@ jobs:
             exit 1
           fi
 
+  publish-npm:
+    name: Publish npm Package
+    if: github.ref_type == 'tag'
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - run: npm ci
+
+      - name: Publish immutable package version
+        run: |
+          set -euo pipefail
+          package_name="$(jq -r '.name' package.json)"
+          package_version="$(jq -r '.version' package.json)"
+
+          if npm view "${package_name}@${package_version}" version >/dev/null 2>&1; then
+            echo "${package_name}@${package_version} is already published; verifying the existing release."
+          else
+            npm publish
+          fi
+
+          published_version="$(npm view "${package_name}@${package_version}" version)"
+          if [[ "$published_version" != "$package_version" ]]; then
+            echo "Registry version mismatch: expected=$package_version actual=$published_version" >&2
+            exit 1
+          fi
+
+          installed_version="$(npx --yes "${package_name}@${package_version}" --version)"
+          if [[ "$installed_version" != "$package_version" ]]; then
+            echo "Installed CLI version mismatch: expected=$package_version actual=$installed_version" >&2
+            exit 1
+          fi
+
   publish-tessl:
     name: Publish Tessl Plugin
-    needs: validate
+    if: github.ref_type == 'tag'
+    needs: [validate, publish-npm]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -76,7 +121,7 @@ jobs:
   github-release:
     name: Publish GitHub Release
     if: github.ref_type == 'tag'
-    needs: [validate, publish-tessl]
+    needs: [validate, publish-npm, publish-tessl]
     runs-on: ubuntu-latest
     permissions:
       contents: write

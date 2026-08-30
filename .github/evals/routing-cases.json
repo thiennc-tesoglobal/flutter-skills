@@ -262,5 +262,47 @@
     "required": ["flutter-dependency-upgrades", "flutter-build-release"],
     "optional": ["flutter-device-testing", "flutter-platform-integration", "flutter-testing"],
     "forbidden": ["dart-language", "flutter-app-workflow", "flutter-ci-cd"]
+  },
+  {
+    "name": "reusable-federated-plugin-release",
+    "prompt": "Evolve our publicly consumed Flutter plugin with an independently maintained Linux implementation, a compatible platform interface, an example app, and pub.dev readiness checks without publishing it.",
+    "required": ["flutter-package-development"],
+    "optional": ["flutter-platform-integration", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-build-release"]
+  },
+  {
+    "name": "app-owned-native-bridge-not-package",
+    "prompt": "Add a small typed Android and iOS bridge used only by this Flutter app for a product-specific scanner API; it will not be distributed as a package.",
+    "required": ["flutter-platform-integration"],
+    "optional": ["flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-package-development"]
+  },
+  {
+    "name": "attach-to-running-lifecycle-failure",
+    "prompt": "A running Flutter add-to-app screen becomes stuck only after the host app backgrounds and resumes. Attach without destroying the failing state, identify the first incorrect lifecycle transition, fix it, and repeat the same flow.",
+    "required": ["flutter-runtime-debugging"],
+    "optional": ["flutter-device-testing", "flutter-platform-integration", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-observability", "flutter-performance"]
+  },
+  {
+    "name": "planned-device-smoke-test-not-debugging",
+    "prompt": "Run the already passing checkout acceptance flow on the specified Android emulator and record whether rotation and process recreation preserve the cart.",
+    "required": ["flutter-device-testing"],
+    "optional": ["flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-runtime-debugging"]
+  },
+  {
+    "name": "provider-neutral-streaming-model-chat",
+    "prompt": "Add streamed AI assistant responses to this Flutter app through its existing backend and provider, handle cancellation and tool confirmation, and do not change its state-management package.",
+    "required": ["flutter-ai-integration"],
+    "optional": ["dart-concurrency", "flutter-networking", "flutter-security", "flutter-testing", "flutter-ui-patterns"],
+    "forbidden": ["flutter-app-workflow", "flutter-observability"]
+  },
+  {
+    "name": "human-support-chat-is-not-ai",
+    "prompt": "Build realtime text chat between customers and human support agents over the existing WebSocket API, including reconnect and missed-message recovery. No model generates or interprets messages.",
+    "required": ["flutter-networking"],
+    "optional": ["dart-concurrency", "flutter-persistence", "flutter-testing", "flutter-ui-patterns"],
+    "forbidden": ["flutter-ai-integration", "flutter-app-workflow"]
   }
 ]

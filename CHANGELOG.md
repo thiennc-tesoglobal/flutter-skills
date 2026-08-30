@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.1 - 2026-08-30
+
+- Add `flutter-package-development` for reusable public APIs, plugin shape, federation, consumer compatibility, and publication readiness.
+- Add `flutter-runtime-debugging` for evidence-driven reproduction, process attachment, DevTools diagnosis, restart boundaries, and runtime verification.
+- Add provider-neutral `flutter-ai-integration` for model service boundaries, streaming state, tool calls, structured output, and optional Flutter AI Toolkit or GenUI adoption without requiring provider credentials to install the skill.
+- Add behavior and routing evaluations that distinguish the new specialists from app-owned platform bridges, planned device testing, ordinary APIs, and human chat.
+- Calibrate the runtime-debugging forward-evaluation rubric to require honest evidence without demanding fabricated tool execution from a tool-free response.
+- Add trusted npm publishing with provenance, registry verification, and tag-only release gates.
+- Add native Codex plugin and marketplace metadata for the full skill catalog.
+- Record exact agent versions in opt-in local forward-evaluation results.
+- Extend repository validation and tests across npm, Codex, Claude, Tessl, and evaluation workflows.
+- Correct the performance forward-evaluation rubric so a tool-free response is judged on requiring evidence rather than fabricating traces.
+
 ## 0.2.0 - 2026-08-27
 
 - Add `flutter-figma-workflow` for evidence-based Figma-to-Flutter mapping and screenshot parity.

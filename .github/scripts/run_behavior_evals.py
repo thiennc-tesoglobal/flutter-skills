@@ -366,6 +366,18 @@ class AgentRunner:
             raise EvalError(f"required agent executable not found: {agent}")
         self.executable = executable
 
+    def version(self) -> str:
+        completed = subprocess.run(
+            [self.executable, "--version"],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if completed.returncode:
+            detail = completed.stderr.strip() or completed.stdout.strip()
+            raise EvalError(detail or f"unable to read {self.agent} version")
+        return completed.stdout.strip()
+
     def run(self, prompt: str) -> str:
         if self.agent == "claude":
             command = [
@@ -634,8 +646,10 @@ def main() -> int:
     results: dict[str, Any] = {
         "created_at": dt.datetime.now(dt.timezone.utc).isoformat(),
         "agent": args.agent,
+        "agent_version": solver.version(),
         "model": args.model,
         "judge_agent": args.judge_agent or args.agent,
+        "judge_agent_version": judge.version(),
         "judge_model": args.judge_model,
         "catalog_version": load_json(ROOT / "package.json")["version"],
         "profile": profile,

@@ -1,0 +1,52 @@
+[
+  {
+    "name": "attach-preserves-failing-state",
+    "prompt": "A Flutter add-to-app screen is already stuck in a customer's debug build after returning from the host app. Restart it and add print statements until the issue disappears.",
+    "resources": ["references/reproduction-and-attachment.md"],
+    "expectations": [
+      "preserves the failing state and attaches to the existing process when possible",
+      "records the host and Flutter lifecycle sequence before changing it",
+      "uses bounded diagnostics and does not claim a fix when restarting only hides the symptom"
+    ]
+  },
+  {
+    "name": "hot-reload-does-not-prove-plugin-registration",
+    "prompt": "I added a native plugin and its Dart call works after several hot reloads. Confirm plugin startup is fixed.",
+    "resources": ["references/reproduction-and-attachment.md"],
+    "expectations": [
+      "rejects hot reload as proof of native registration or startup behavior",
+      "uses a full rebuild and clean launch on each affected target",
+      "checks registration startup errors and unsupported-platform behavior"
+    ]
+  },
+  {
+    "name": "first-incorrect-state-before-edit",
+    "prompt": "After refreshing a profile twice, the UI sometimes shows the previous account name and then throws a null assertion. Add a delay before rendering to fix it.",
+    "resources": ["references/devtools-diagnosis.md"],
+    "expectations": [
+      "reproduces the request and state transition ordering before editing",
+      "finds the first incorrect ownership cancellation or stale-result boundary rather than treating the final assertion as the cause",
+      "does not use an arbitrary delay and adds a regression for reversed completion or disposal"
+    ]
+  },
+  {
+    "name": "memory-growth-needs-repeated-flow",
+    "prompt": "DevTools shows a large heap after opening a chart once. Prove there is a leak and clear every image and Flutter cache when the route closes.",
+    "resources": ["references/devtools-diagnosis.md"],
+    "expectations": [
+      "does not infer a leak from one large heap snapshot",
+      "uses repeated enter-exit cycles snapshots and retained ownership evidence",
+      "fixes the owning listener controller subscription or platform handle instead of globally clearing caches"
+    ]
+  },
+  {
+    "name": "runtime-fix-repeats-original-flow",
+    "prompt": "A permission denial crashes only on Android after backgrounding and returning. Patch the null check and mark it fixed once analysis passes.",
+    "resources": ["references/reproduction-and-attachment.md", "references/devtools-diagnosis.md"],
+    "expectations": [
+      "captures the Android permission and background-foreground reproduction contract",
+      "requires tracing the lifecycle and error mapping boundary instead of relying on a defensive null check",
+      "requires repeating the original runtime flow and adding a focused regression before claiming verification"
+    ]
+  }
+]

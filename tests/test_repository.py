@@ -2,6 +2,7 @@ import importlib.util
 import json
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,9 +23,41 @@ class RepositoryTests(unittest.TestCase):
     def test_repository_validator_passes(self):
         errors, _, counts = VALIDATOR.validate_repository()
         self.assertEqual(errors, [])
-        self.assertEqual(counts["skills"], 28)
-        self.assertEqual(counts["evals"], 117)
-        self.assertEqual(counts["routing_evals"], 36)
+        self.assertEqual(counts["skills"], 31)
+        self.assertEqual(counts["evals"], 132)
+        self.assertEqual(counts["routing_evals"], 42)
+
+    def test_codex_plugin_and_marketplace_resolve_the_full_catalog(self):
+        plugin = json.loads(
+            (ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
+        )
+        marketplace = json.loads(
+            (ROOT / ".agents" / "plugins" / "marketplace.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(plugin["name"], "flutter-skills")
+        self.assertEqual(plugin["skills"], "./skills/")
+        self.assertEqual(plugin["interface"]["capabilities"], ["Skills"])
+        self.assertEqual(marketplace["plugins"][0]["name"], plugin["name"])
+        self.assertEqual(
+            marketplace["plugins"][0]["source"],
+            {"source": "local", "path": "./"},
+        )
+
+    def test_release_workflow_publishes_and_verifies_npm_before_other_channels(self):
+        workflow = (ROOT / ".github" / "workflows" / "release.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("publish-npm:", workflow)
+        self.assertIn("id-token: write", workflow)
+        self.assertIn("npm publish", workflow)
+        self.assertIn('npm view "${package_name}@${package_version}" version', workflow)
+        self.assertIn('npx --yes "${package_name}@${package_version}" --version', workflow)
+        self.assertIn("needs: [validate, publish-npm]", workflow)
+        self.assertNotIn("NODE_AUTH_TOKEN", workflow)
+        self.assertLess(workflow.index("publish-npm:"), workflow.index("publish-tessl:"))
+        self.assertGreaterEqual(workflow.count("if: github.ref_type == 'tag'"), 3)
 
     def test_repository_markdown_excludes_generated_dependencies(self):
         paths = {
@@ -171,6 +204,47 @@ class RepositoryTests(unittest.TestCase):
         self.assertNotIn(case["expectations"][0], solver_prompt)
         self.assertIn(case["expectations"][0], judge_prompt)
 
+    def test_tool_free_performance_eval_scores_required_evidence_not_fake_artifacts(self):
+        cases = json.loads(
+            (
+                ROOT
+                / "skills"
+                / "flutter-performance"
+                / "evals"
+                / "cases.json"
+            ).read_text(encoding="utf-8")
+        )
+        case = next(
+            item
+            for item in cases
+            if item["name"] == "attributes-ui-versus-raster-jank"
+        )
+        expectations = " ".join(case["expectations"])
+        self.assertIn("requires a reproducible profile-mode trace", expectations)
+        self.assertIn("defines a repeat of the same flow", expectations)
+        self.assertNotIn("captures a reproducible", expectations)
+
+    def test_tool_free_runtime_eval_scores_required_evidence_not_fake_artifacts(self):
+        cases = json.loads(
+            (
+                ROOT
+                / "skills"
+                / "flutter-runtime-debugging"
+                / "evals"
+                / "cases.json"
+            ).read_text(encoding="utf-8")
+        )
+        case = next(
+            item
+            for item in cases
+            if item["name"] == "runtime-fix-repeats-original-flow"
+        )
+        expectations = " ".join(case["expectations"])
+        self.assertIn("requires tracing", expectations)
+        self.assertIn("requires repeating", expectations)
+        self.assertNotIn("traces the lifecycle", expectations)
+        self.assertNotIn("repeats the original", expectations)
+
     def test_public_benchmark_profile_resolves_exact_cases(self):
         catalog = BEHAVIOR_EVAL.skill_catalog()
         behavior = BEHAVIOR_EVAL.behavior_cases(catalog)
@@ -209,6 +283,23 @@ class RepositoryTests(unittest.TestCase):
                 "routing_cases": 2,
                 "routing_passed": 1,
             },
+        )
+
+    def test_agent_runner_reports_the_exact_cli_version(self):
+        completed = type(
+            "Completed",
+            (),
+            {"returncode": 0, "stdout": "codex-cli 1.2.3\n", "stderr": ""},
+        )()
+        with patch.object(BEHAVIOR_EVAL.shutil, "which", return_value="/bin/codex"):
+            runner = BEHAVIOR_EVAL.AgentRunner("codex", None)
+        with patch.object(BEHAVIOR_EVAL.subprocess, "run", return_value=completed) as run:
+            self.assertEqual(runner.version(), "codex-cli 1.2.3")
+        run.assert_called_once_with(
+            ["/bin/codex", "--version"],
+            text=True,
+            capture_output=True,
+            check=False,
         )
 
     def test_routing_score_rejects_overactivation(self):

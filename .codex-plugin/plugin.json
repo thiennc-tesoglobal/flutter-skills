@@ -1,0 +1,36 @@
+{
+  "name": "flutter-skills",
+  "version": "0.2.1",
+  "description": "Package-neutral Flutter and Dart skills for building, reviewing, testing, and releasing applications.",
+  "author": {
+    "name": "thiennc-tesoglobal",
+    "url": "https://github.com/thiennc-tesoglobal"
+  },
+  "homepage": "https://github.com/thiennc-tesoglobal/flutter-skills",
+  "repository": "https://github.com/thiennc-tesoglobal/flutter-skills",
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "flutter",
+    "dart",
+    "codex",
+    "skills",
+    "mobile"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Flutter Skills",
+    "shortDescription": "Build and ship Flutter apps with focused skills.",
+    "longDescription": "Use package-neutral Flutter and Dart skills for complete delivery, focused implementation, review, testing, performance, security, and release workflows.",
+    "developerName": "thiennc-tesoglobal",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Skills"
+    ],
+    "websiteURL": "https://github.com/thiennc-tesoglobal/flutter-skills",
+    "defaultPrompt": [
+      "Build a complete Flutter feature and verify it.",
+      "Review this Flutter change for concrete risks.",
+      "Diagnose and fix this Flutter performance issue."
+    ]
+  }
+}
