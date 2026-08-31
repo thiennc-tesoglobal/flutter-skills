@@ -1,0 +1,147 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Neutral Store API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {"url": "https://api.example.invalid/v1"}
+  ],
+  "paths": {
+    "/customers": {
+      "get": {
+        "tags": ["Customers"],
+        "operationId": "listCustomers",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {"type": "array", "items": {"type": "string"}},
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Customer page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/Customer"}
+                }
+              }
+            }
+          }
+        },
+        "security": [{"bearerAuth": []}]
+      }
+    },
+    "/documents": {
+      "post": {
+        "tags": ["Documents"],
+        "operationId": "uploadDocument",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["file"],
+                "properties": {
+                  "file": {"type": "string", "contentMediaType": "application/pdf"},
+                  "label": {"type": ["string", "null"]}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created document",
+            "content": {
+              "application/json": {"schema": {"$ref": "#/components/schemas/Document"}}
+            }
+          }
+        },
+        "security": [{"bearerAuth": []}]
+      }
+    },
+    "/documents/{id}/content": {
+      "get": {
+        "tags": ["Documents"],
+        "operationId": "downloadDocument",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "string", "format": "uuid"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Document bytes",
+            "content": {"application/pdf": {"schema": {"type": "string", "contentEncoding": "base64"}}}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Problem"}}}
+          }
+        },
+        "security": [{"bearerAuth": []}]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"}
+    },
+    "schemas": {
+      "Customer": {
+        "oneOf": [
+          {"$ref": "#/components/schemas/PersonCustomer"},
+          {"$ref": "#/components/schemas/BusinessCustomer"}
+        ],
+        "discriminator": {
+          "propertyName": "kind",
+          "mapping": {
+            "person": "#/components/schemas/PersonCustomer",
+            "business": "#/components/schemas/BusinessCustomer"
+          }
+        }
+      },
+      "PersonCustomer": {
+        "type": "object",
+        "required": ["id", "kind", "name"],
+        "properties": {
+          "id": {"type": "string", "format": "uuid"},
+          "kind": {"const": "person"},
+          "name": {"type": "string"},
+          "metadata": {"type": "object", "additionalProperties": true}
+        }
+      },
+      "BusinessCustomer": {
+        "type": "object",
+        "required": ["id", "kind", "legalName"],
+        "properties": {
+          "id": {"type": "string", "format": "uuid"},
+          "kind": {"const": "business"},
+          "legalName": {"type": "string"}
+        }
+      },
+      "Document": {
+        "type": "object",
+        "required": ["id", "state"],
+        "properties": {
+          "id": {"type": "string", "format": "uuid"},
+          "state": {"type": "string", "enum": ["processing", "ready", "rejected"]},
+          "parent": {"$ref": "#/components/schemas/Document"}
+        }
+      },
+      "Problem": {
+        "type": "object",
+        "required": ["code"],
+        "properties": {
+          "code": {"type": "string"},
+          "message": {"type": ["string", "null"]}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Neutral Legacy API",
+    "version": "1.0.0"
+  },
+  "host": "legacy.example.invalid",
+  "basePath": "/api",
+  "schemes": ["https"],
+  "paths": {
+    "/rewards": {
+      "get": {
+        "tags": ["Rewards"],
+        "operationId": "listRewards",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Reward list",
+            "schema": {"type": "array", "items": {"$ref": "#/definitions/Reward"}}
+          }
+        },
+        "security": [{"apiKey": []}]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "apiKey": {"type": "apiKey", "name": "X-API-Key", "in": "header"}
+  },
+  "definitions": {
+    "Reward": {
+      "type": "object",
+      "required": ["id", "points"],
+      "properties": {
+        "id": {"type": "string"},
+        "points": {"type": "integer", "format": "int64"}
+      }
+    }
+  }
+}

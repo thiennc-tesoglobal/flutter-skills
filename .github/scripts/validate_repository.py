@@ -29,9 +29,9 @@ IGNORED_LINK_DIRECTORIES = {
     "node_modules",
 }
 EXPECTED_VERSION = "0.4.0"
-EXPECTED_SKILL_COUNT = 35
-EXPECTED_EVAL_COUNT = 152
-EXPECTED_ROUTING_EVAL_COUNT = 51
+EXPECTED_SKILL_COUNT = 36
+EXPECTED_EVAL_COUNT = 157
+EXPECTED_ROUTING_EVAL_COUNT = 54
 EXPECTED_BUNDLES = {
     "all-flutter-skills": {
         "dart-concurrency",
@@ -53,6 +53,7 @@ EXPECTED_BUNDLES = {
         "flutter-localization",
         "flutter-navigation",
         "flutter-networking",
+        "flutter-openapi-client",
         "flutter-notifications",
         "flutter-observability",
         "flutter-package-development",
@@ -78,6 +79,7 @@ EXPECTED_BUNDLES = {
         "flutter-authentication",
         "flutter-dependency-upgrades",
         "flutter-networking",
+        "flutter-openapi-client",
         "flutter-persistence",
         "flutter-state-management",
         "flutter-testing",

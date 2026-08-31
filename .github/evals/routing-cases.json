@@ -367,5 +367,26 @@
     "required": ["flutter-authentication"],
     "optional": ["flutter-navigation", "flutter-networking", "flutter-security", "flutter-testing"],
     "forbidden": ["flutter-app-workflow", "flutter-webview"]
+  },
+  {
+    "name": "swagger-ui-inventory-and-scoped-flutter-client",
+    "prompt": "Read the complete OpenAPI contract behind this Swagger UI without executing its remote JavaScript, report every operation and schema, then generate only the Customer tag using the Flutter app's existing Dio and serialization setup.",
+    "required": ["flutter-openapi-client"],
+    "optional": ["flutter-networking", "flutter-security", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-package-development"]
+  },
+  {
+    "name": "ordinary-dio-retry-is-not-openapi-generation",
+    "prompt": "The existing Dio client already has typed request and response models. Fix cancellation and bounded retry behavior for one idempotent GET endpoint; no Swagger or OpenAPI contract is being read or changed.",
+    "required": ["flutter-networking"],
+    "optional": ["dart-concurrency", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-openapi-client"]
+  },
+  {
+    "name": "reusable-openapi-dart-sdk",
+    "prompt": "Generate and maintain a publicly distributed Dart SDK from this versioned OpenAPI contract, preserve consumer compatibility, add an example, and prepare a pub.dev dry run without publishing it.",
+    "required": ["flutter-openapi-client", "flutter-package-development"],
+    "optional": ["flutter-networking", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-build-release"]
   }
 ]
