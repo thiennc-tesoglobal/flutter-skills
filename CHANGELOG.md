@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0 - Unreleased
+
+- Add provider-neutral `flutter-webview` for embedded content policy, JavaScript bridges, cookies and sessions, file flows, permissions, and lifecycle verification without adding credentials or changing packages by default.
+- Add behavior and routing regressions that distinguish embedded first-party web content from OAuth external-user-agent flows, Flutter navigation, API transport, and broad WebView security audits.
+- Record a maintainer-only optimization backlog from executed benchmark failures and coverage gaps.
+
 ## 0.3.0 - 2026-08-31
 
 - Add `flutter-in-app-purchases` for store transaction lifecycles, trusted verification, idempotent entitlements, subscriptions, restoration, and sandbox evidence.

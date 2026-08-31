@@ -353,5 +353,19 @@
     "required": ["flutter-observability"],
     "optional": ["flutter-build-release", "flutter-security", "flutter-testing"],
     "forbidden": ["flutter-app-workflow", "flutter-product-analytics"]
+  },
+  {
+    "name": "embedded-first-party-web-checkout-bridge",
+    "prompt": "Our Flutter app already depends on a WebView plugin. Implement an embedded first-party checkout page with that dependency, a strict origin policy, a typed JavaScript completion bridge, cookie-aware logout, external-link handoff, and Android/iOS device verification. The plugin itself is not being changed or distributed.",
+    "required": ["flutter-webview"],
+    "optional": ["flutter-authentication", "flutter-device-testing", "flutter-navigation", "flutter-security", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-networking", "flutter-platform-integration"]
+  },
+  {
+    "name": "oauth-external-user-agent-is-not-webview",
+    "prompt": "Add OAuth sign-in with authorization code PKCE, state, verified redirects, refresh, and logout to this Flutter mobile app. The provider requires a system browser or authentication session and forbids embedded WebViews.",
+    "required": ["flutter-authentication"],
+    "optional": ["flutter-navigation", "flutter-networking", "flutter-security", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-webview"]
   }
 ]

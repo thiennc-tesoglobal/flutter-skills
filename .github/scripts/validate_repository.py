@@ -28,10 +28,10 @@ IGNORED_LINK_DIRECTORIES = {
     "coverage",
     "node_modules",
 }
-EXPECTED_VERSION = "0.3.0"
-EXPECTED_SKILL_COUNT = 34
-EXPECTED_EVAL_COUNT = 147
-EXPECTED_ROUTING_EVAL_COUNT = 49
+EXPECTED_VERSION = "0.4.0"
+EXPECTED_SKILL_COUNT = 35
+EXPECTED_EVAL_COUNT = 152
+EXPECTED_ROUTING_EVAL_COUNT = 51
 EXPECTED_BUNDLES = {
     "all-flutter-skills": {
         "dart-concurrency",
@@ -68,6 +68,7 @@ EXPECTED_BUNDLES = {
         "flutter-ui-design",
         "flutter-ui-patterns",
         "flutter-visual-effects",
+        "flutter-webview",
     },
     "flutter-core-skills": {
         "dart-concurrency",
@@ -111,6 +112,7 @@ EXPECTED_BUNDLES = {
         "flutter-runtime-debugging",
         "flutter-security",
         "flutter-testing",
+        "flutter-webview",
     },
 }
 
