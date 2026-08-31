@@ -1,6 +1,6 @@
 {
   "name": "thiennc-tesoglobal/flutter-skills",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Focused Agent Skills for complete Flutter and Dart app delivery.",
   "private": false,
   "repository": "https://github.com/thiennc-tesoglobal/flutter-skills",
@@ -38,6 +38,7 @@
     "skills/flutter-testing",
     "skills/flutter-ui-design",
     "skills/flutter-ui-patterns",
-    "skills/flutter-visual-effects"
+    "skills/flutter-visual-effects",
+    "skills/flutter-webview"
   ]
 }

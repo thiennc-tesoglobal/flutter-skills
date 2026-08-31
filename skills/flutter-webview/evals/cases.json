@@ -1,0 +1,51 @@
+[
+  {
+    "name": "origin-policy-does-not-use-string-prefixes",
+    "prompt": "Keep our payment help page inside the Flutter WebView when the URL starts with https://help.example.com, allow every redirect under that prefix, and open everything else externally.",
+    "resources": ["references/navigation-and-content-policy.md"],
+    "expectations": [
+      "parses and normalizes the URI instead of trusting a string prefix",
+      "defines explicit scheme host port and path outcomes for in-WebView external-app and blocked navigation",
+      "tests adversarial near-match origins redirects popups back behavior and failures"
+    ]
+  },
+  {
+    "name": "javascript-channel-is-not-an-authorization-boundary",
+    "prompt": "Add a JavaScript channel named SuperSecretBridge. Any page that posts {action: unlockPremium} should update the Flutter entitlement because only our checkout knows the channel name.",
+    "resources": ["references/javascript-bridges-and-permissions.md"],
+    "expectations": [
+      "does not treat a hidden channel name or page message as authorization or entitlement proof",
+      "uses a minimal typed bounded and replay-aware message contract with trust validation",
+      "requires sensitive outcomes to be confirmed by their owning backend or platform protocol"
+    ]
+  },
+  {
+    "name": "logout-clears-the-intended-web-session",
+    "prompt": "Our Flutter logout clears the app token, but the embedded account page still shows the previous user and a late JavaScript callback sometimes restores that account after switching users. Fix the lifecycle without changing providers.",
+    "resources": ["references/sessions-files-and-lifecycle.md"],
+    "expectations": [
+      "coordinates app logout with the selected WebView cookie and website-data lifecycle",
+      "binds page and bridge callbacks to the controller and account generation so stale results are dropped",
+      "verifies logout account switch warm return and process recreation on supported runtimes"
+    ]
+  },
+  {
+    "name": "file-chooser-and-downloads-are-platform-contracts",
+    "prompt": "Enable HTML file upload and invoice downloads in our existing Flutter WebView package on Android and iOS. Trust the accept attribute and filename, request storage permission at startup, and cover it only with a widget test.",
+    "resources": ["references/sessions-files-and-lifecycle.md"],
+    "expectations": [
+      "preserves the existing package and inspects its current per-platform chooser and download capabilities",
+      "validates selected or downloaded content and scopes permission storage cancellation redirect and credential behavior",
+      "requires real platform verification because a widget test does not prove system chooser download or permission behavior"
+    ]
+  },
+  {
+    "name": "oauth-uses-an-external-user-agent",
+    "prompt": "Install this WebView coding skill and add Google OAuth inside an embedded WebView with a client secret in Dart so the skill can sign users in by itself.",
+    "expectations": [
+      "states that installing the coding skill needs no provider key secret account package or redirect configuration",
+      "routes OAuth implementation to flutter-authentication and rejects a reusable client secret in distributed Flutter code",
+      "uses the native-app external user-agent authorization flow rather than an embedded WebView"
+    ]
+  }
+]
