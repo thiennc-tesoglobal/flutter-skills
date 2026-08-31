@@ -17,6 +17,7 @@ Use this file for failures and weak signals observed in executed forward evaluat
 - `flutter-product-analytics:sdk-log-is-not-end-to-end-proof`: record client dispatch, provider ingestion, and downstream dashboard or funnel evidence separately.
 - `flutter-webview` routing: the first focused run interpreted “existing Flutter WebView package” as reusable-package development and selected `flutter-package-development`. The app-focused prompt now states that the existing dependency is not being changed or distributed; both WebView and OAuth boundary cases pass in the retained rerun.
 - `flutter-openapi-client:swagger-ui-discovery-does-not-execute-remote-javascript`: the first focused run chose safe static inspection but omitted unsupported executable syntax and the acquisition boundary. The skill now requires a discovery ledger; the retained rerun passed at 96.
+- `flutter-openapi-client:external-refs-do-not-expand-network-or-credential-authority`: the first focused run blocked the explicit metadata target but omitted per-hop handling, all inherited sensitive material, and traversal bounds. The skill now constrains network, filesystem, credential-origin, redirect, and resource authority; the retained rerun passed at 100.
 - Forward-evaluation execution: bound each solver invocation so a stalled agent cannot hang the full profile.
 
 ## Promotion rule
