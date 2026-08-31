@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.0 - 2026-08-30
+## 0.3.0 - 2026-08-31
 
 - Add `flutter-in-app-purchases` for store transaction lifecycles, trusted verification, idempotent entitlements, subscriptions, restoration, and sandbox evidence.
 - Add provider-neutral `flutter-authentication` for OAuth and OIDC redirects, PKCE, coordinated session refresh, logout, account switching, passkeys, and device re-authentication.
