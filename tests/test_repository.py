@@ -63,6 +63,11 @@ class RepositoryTests(unittest.TestCase):
         )
         self.assertIn('smoke_directory="$(mktemp -d)"', workflow)
         self.assertIn("needs: [validate, publish-npm]", workflow)
+        self.assertIn('grep -Fq "already exists"', workflow)
+        self.assertIn(
+            "Tessl version already exists; treating the immutable release as verified.",
+            workflow,
+        )
         self.assertNotIn("NODE_AUTH_TOKEN", workflow)
         self.assertLess(workflow.index("publish-npm:"), workflow.index("publish-tessl:"))
         self.assertGreaterEqual(workflow.count("if: github.ref_type == 'tag'"), 3)

@@ -135,7 +135,21 @@ jobs:
         with:
           token: ${{ secrets.TESSL_TOKEN }}
       - name: Publish Tessl plugin
-        run: tessl plugin publish .
+        run: |
+          set +e
+          publish_output="$(tessl plugin publish . 2>&1)"
+          publish_status=$?
+          set -e
+          printf '%s\n' "$publish_output"
+
+          if [[ $publish_status -eq 0 ]]; then
+            exit 0
+          fi
+          if grep -Fq "already exists" <<<"$publish_output"; then
+            echo "Tessl version already exists; treating the immutable release as verified."
+            exit 0
+          fi
+          exit "$publish_status"
 
   github-release:
     name: Publish GitHub Release
