@@ -2,6 +2,8 @@
 
 ## 0.4.0 - Unreleased
 
+- Add provider-neutral `flutter-openapi-client` for safe Swagger UI discovery, complete OpenAPI inventory, scoped Dart client generation, schema fidelity, and consumer-aware contract drift without adding credentials or replacing the project's networking stack by default.
+- Add neutral Swagger 2.0, OpenAPI 3.1, and inline Swagger UI fixtures plus behavior and routing regressions that distinguish contract generation from ordinary HTTP transport and reusable package publication.
 - Add provider-neutral `flutter-webview` for embedded content policy, JavaScript bridges, cookies and sessions, file flows, permissions, and lifecycle verification without adding credentials or changing packages by default.
 - Add behavior and routing regressions that distinguish embedded first-party web content from OAuth external-user-agent flows, Flutter navigation, API transport, and broad WebView security audits.
 - Record a maintainer-only optimization backlog from executed benchmark failures and coverage gaps.

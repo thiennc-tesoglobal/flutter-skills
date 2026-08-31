@@ -35,6 +35,7 @@
         "./skills/flutter-localization",
         "./skills/flutter-navigation",
         "./skills/flutter-networking",
+        "./skills/flutter-openapi-client",
         "./skills/flutter-notifications",
         "./skills/flutter-observability",
         "./skills/flutter-package-development",
@@ -68,6 +69,7 @@
         "./skills/flutter-authentication",
         "./skills/flutter-dependency-upgrades",
         "./skills/flutter-networking",
+        "./skills/flutter-openapi-client",
         "./skills/flutter-persistence",
         "./skills/flutter-state-management",
         "./skills/flutter-testing"
