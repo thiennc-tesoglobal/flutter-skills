@@ -5,6 +5,11 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing immutable tag to recover or republish through the release gates
+        required: false
+        type: string
 
 jobs:
   validate:
@@ -14,6 +19,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.release_tag || github.ref }}
 
       - uses: actions/setup-node@v6
         with:
@@ -34,7 +41,7 @@ jobs:
 
       - name: Check release versions
         env:
-          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          RELEASE_TAG: ${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || '' }}
         run: |
           set -euo pipefail
           marketplace_version="$(jq -r '.metadata.version' .claude-plugin/marketplace.json)"
@@ -61,7 +68,7 @@ jobs:
 
   publish-npm:
     name: Publish npm Package
-    if: github.ref_type == 'tag'
+    if: github.ref_type == 'tag' || inputs.release_tag != ''
     needs: validate
     runs-on: ubuntu-latest
     permissions:
@@ -69,6 +76,8 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.release_tag || github.ref }}
 
       - uses: actions/setup-node@v6
         with:
@@ -90,13 +99,20 @@ jobs:
             npm publish
           fi
 
-          published_version="$(npm view "${package_name}@${package_version}" version)"
+          published_version=""
+          for attempt in {1..12}; do
+            if published_version="$(npm view "${package_name}@${package_version}" version 2>/dev/null)"; then
+              break
+            fi
+            echo "Registry has not exposed ${package_name}@${package_version} yet (attempt ${attempt}/12)."
+            sleep 5
+          done
           if [[ "$published_version" != "$package_version" ]]; then
             echo "Registry version mismatch: expected=$package_version actual=$published_version" >&2
             exit 1
           fi
 
-          installed_version="$(npx --yes "${package_name}@${package_version}" --version)"
+          installed_version="$(npm exec --yes --package="${package_name}@${package_version}" -- flutter-skills --version)"
           if [[ "$installed_version" != "$package_version" ]]; then
             echo "Installed CLI version mismatch: expected=$package_version actual=$installed_version" >&2
             exit 1
@@ -104,7 +120,7 @@ jobs:
 
   publish-tessl:
     name: Publish Tessl Plugin
-    if: github.ref_type == 'tag'
+    if: github.ref_type == 'tag' || inputs.release_tag != ''
     needs: [validate, publish-npm]
     runs-on: ubuntu-latest
     permissions:
@@ -112,6 +128,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.release_tag || github.ref }}
       - uses: tesslio/setup-tessl@v2
         with:
           token: ${{ secrets.TESSL_TOKEN }}
@@ -120,7 +138,7 @@ jobs:
 
   github-release:
     name: Publish GitHub Release
-    if: github.ref_type == 'tag'
+    if: github.ref_type == 'tag' || inputs.release_tag != ''
     needs: [validate, publish-npm, publish-tessl]
     runs-on: ubuntu-latest
     permissions:
@@ -129,12 +147,17 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: ${{ inputs.release_tag || github.ref }}
       - name: Create release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
         run: |
-          gh release create "$RELEASE_TAG" \
-            --verify-tag \
-            --title "Flutter Skills $RELEASE_TAG" \
-            --generate-notes
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "GitHub Release $RELEASE_TAG already exists."
+          else
+            gh release create "$RELEASE_TAG" \
+              --verify-tag \
+              --title "Flutter Skills $RELEASE_TAG" \
+              --generate-notes
+          fi

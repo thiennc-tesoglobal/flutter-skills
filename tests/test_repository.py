@@ -54,7 +54,13 @@ class RepositoryTests(unittest.TestCase):
         self.assertIn("id-token: write", workflow)
         self.assertIn("npm publish", workflow)
         self.assertIn('npm view "${package_name}@${package_version}" version', workflow)
-        self.assertIn('npx --yes "${package_name}@${package_version}" --version', workflow)
+        self.assertIn("release_tag:", workflow)
+        self.assertIn("inputs.release_tag || github.ref", workflow)
+        self.assertIn("for attempt in {1..12}", workflow)
+        self.assertIn(
+            'npm exec --yes --package="${package_name}@${package_version}" -- flutter-skills --version',
+            workflow,
+        )
         self.assertIn("needs: [validate, publish-npm]", workflow)
         self.assertNotIn("NODE_AUTH_TOKEN", workflow)
         self.assertLess(workflow.index("publish-npm:"), workflow.index("publish-tessl:"))
