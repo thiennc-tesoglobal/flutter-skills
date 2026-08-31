@@ -82,7 +82,7 @@ For a focused task, name the specialist directly or let the agent route from the
 
 ## Quality
 
-The catalog contains **36 skills**, **157 behavior-focused evaluation cases**, and **54 cross-catalog routing cases**. Validation checks metadata, references, Codex/Claude/Tessl packaging, tests, and clean installation discovery.
+The catalog contains **36 skills**, **158 behavior-focused evaluation cases**, and **54 cross-catalog routing cases**. Validation checks metadata, references, Codex/Claude/Tessl packaging, tests, and clean installation discovery.
 
 Representative baseline-versus-skill benchmark results and the reproducible profile are published in [benchmarks](benchmarks/README.md). They are a transparent sample, not a claim that one model or a small case set proves every workflow.
 

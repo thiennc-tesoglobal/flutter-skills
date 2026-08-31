@@ -15,5 +15,7 @@ The initial failed result is retained so the routing-case correction remains aud
 - [`flutter-openapi-client-behavior-initial.json`](flutter-openapi-client-behavior-initial.json): safe Swagger UI discovery scored 55 because the response did not explicitly report unsupported executable initialization syntax or define the acquisition boundary.
 - [`flutter-openapi-client-behavior.json`](flutter-openapi-client-behavior.json): after requiring a discovery ledger for fetched, inaccessible, excluded, and unsupported resources, the same case passed at 96.
 - [`flutter-openapi-client-routing.json`](flutter-openapi-client-routing.json): OpenAPI generation, ordinary Dio retry, and reusable SDK routing all passed (3/3).
+- [`flutter-openapi-client-ref-security-initial.json`](flutter-openapi-client-ref-security-initial.json): malicious external-reference acquisition scored 45 because the response did not cover every redirect/reference hop, all inherited sensitive material, or bounded traversal.
+- [`flutter-openapi-client-ref-security.json`](flutter-openapi-client-ref-security.json): after adding explicit network, filesystem, credential-origin, redirect, and traversal boundaries, the same security behavior passed at 100.
 
-The initial behavior failure is retained so the instruction change remains tied to measured evidence.
+The initial behavior failures are retained so each instruction change remains tied to measured evidence.
