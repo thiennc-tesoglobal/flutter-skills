@@ -112,7 +112,8 @@ jobs:
             exit 1
           fi
 
-          installed_version="$(npm exec --yes --package="${package_name}@${package_version}" -- flutter-skills --version)"
+          smoke_directory="$(mktemp -d)"
+          installed_version="$(npm exec --yes --prefix "$smoke_directory" --package="${package_name}@${package_version}" -- flutter-skills --version)"
           if [[ "$installed_version" != "$package_version" ]]; then
             echo "Installed CLI version mismatch: expected=$package_version actual=$installed_version" >&2
             exit 1
