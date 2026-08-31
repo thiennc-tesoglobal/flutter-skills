@@ -16,21 +16,21 @@ python3 .github/scripts/run_behavior_evals.py \
 
 Raw results are intentionally committed without removing responses, judgments, selections, or failed cases. Case identifiers resolve to the versioned prompts and rubrics under `skills/*/evals` and `.github/evals`. The current profile is a six-case behavior and seven-case routing sample on one agent configuration; it is useful regression evidence, not proof of quality across every model, app, or skill.
 
-## v0.3.0 initial result
+## v0.3.0 result
 
 Run on 2026-08-30 with `codex-cli 0.151.0-alpha.7.2`, its default model, the same agent as solver and judge, and an 80-point behavior threshold.
 
 | Behavior case | Baseline | With skill | Delta |
 |---|---:|---:|---:|
-| `flutter-package-development` | 55 | 98 | +43 |
-| `flutter-runtime-debugging` | 8 | 100 | +92 |
+| `flutter-package-development` | 30 | 96 | +66 |
+| `flutter-runtime-debugging` | 15 | 100 | +85 |
 | `flutter-ai-integration` | 0 | 100 | +100 |
-| `flutter-authentication` | 75 | 100 | +25 |
-| `flutter-in-app-purchases` | 33 | 100 | +67 |
-| `flutter-product-analytics` | 67 | 67 | 0 |
-| **Average** | **39.67** | **94.17** | **+54.5** |
+| `flutter-authentication` | 100 | 100 | 0 |
+| `flutter-in-app-purchases` | 42 | 100 | +58 |
+| `flutter-product-analytics` | 67 | 100 | +33 |
+| **Average** | **42.33** | **99.33** | **+57.0** |
 
-Five of six behavior cases and all seven routing cases passed. The analytics failure showed that “end-to-end pending” did not identify the unavailable provider-ingestion and downstream-dashboard boundaries precisely enough, so the skill now requires those boundaries to be recorded explicitly as unverified. The failed raw run remains in [codex-default-initial.json](v0.3.0/codex-default-initial.json); no post-fix score is claimed until the fixed profile is rerun.
+All six behavior cases and all seven routing cases passed. See [codex-default.json](v0.3.0/codex-default.json) for the final raw run. The first run is retained as [codex-default-initial.json](v0.3.0/codex-default-initial.json); its analytics failure showed that “end-to-end pending” did not identify the unavailable provider-ingestion and downstream-dashboard boundaries precisely enough, so the skill now records those boundaries explicitly as unverified.
 
 ## v0.2.0 result
 
