@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.0 - Unreleased
+## 0.4.0 - 2026-09-02
 
 - Constrain `flutter-openapi-client` external references and redirects by network, filesystem, credential-origin, and bounded-traversal trust policies so an untrusted contract cannot silently expand acquisition authority.
 - Add provider-neutral `flutter-openapi-client` for safe Swagger UI discovery, complete OpenAPI inventory, scoped Dart client generation, schema fidelity, and consumer-aware contract drift without adding credentials or replacing the project's networking stack by default.
