@@ -4,9 +4,9 @@
 [![Validation](https://github.com/thiennc-tesoglobal/flutter-skills/actions/workflows/validate-repository.yml/badge.svg)](https://github.com/thiennc-tesoglobal/flutter-skills/actions/workflows/validate-repository.yml)
 [![License](https://img.shields.io/badge/License-BSD--3--Clause-blue)](LICENSE)
 
-36 package-neutral Agent Skills for building, reviewing, testing, and releasing Flutter apps and packages without forcing a provider, state-management package, or folder structure.
+36 package-neutral Agent Skills for building, reviewing, testing, and shipping Flutter and Dart projects.
 
-> Bộ skill giúp AI coding agent đọc dự án Flutter, chọn đúng chuyên môn, triển khai và xác minh kết quả theo conventions sẵn có.
+The skills help coding agents choose the right workflow, preserve the project's existing architecture and packages, and verify changes with evidence.
 
 ## Install
 
@@ -16,45 +16,48 @@ Choose skills interactively:
 npx @thiennc/flutter-skills
 ```
 
-Start with the end-to-end workflow for a complete app or feature:
+Install a focused skill for Codex:
 
 ```sh
-npx @thiennc/flutter-skills \
-  --agent codex \
-  --skill flutter-app-workflow
+npx @thiennc/flutter-skills --agent codex --skill flutter-app-workflow
 ```
 
-Install one specialist when the task is focused:
+Project installation is the default. Add `--global` to install for all projects.
+
+You can also install directly from GitHub:
 
 ```sh
-npx @thiennc/flutter-skills \
-  --agent codex \
-  --skill flutter-ui-design
+npx skills add thiennc-tesoglobal/flutter-skills
 ```
 
-Project installation is the default. Add `--global` to use the selected skills across projects.
+## Plugins
 
-The direct GitHub installer remains available: `npx skills add thiennc-tesoglobal/flutter-skills`.
-
-> In a regular terminal, the installer asks which skills and agents to use. Inside Codex, it may detect Codex and install non-interactively; pass `--skill` explicitly when you do not want all 36 skills.
-
-### Codex plugin
-
-Install the native Codex plugin when you want the complete catalog managed as one plugin:
+Codex:
 
 ```sh
 codex plugin marketplace add thiennc-tesoglobal/flutter-skills
 codex plugin add flutter-skills@flutter-skills
 ```
 
-### Claude Code bundles
+Claude Code:
 
 ```sh
 /plugin marketplace add thiennc-tesoglobal/flutter-skills
 /plugin install flutter-core-skills@flutter-skills
 ```
 
-Available bundles: `all-flutter-skills`, `flutter-core-skills`, `flutter-ui-skills`, and `flutter-engineering-skills`.
+Claude bundles: `all-flutter-skills`, `flutter-core-skills`, `flutter-ui-skills`, and `flutter-engineering-skills`.
+
+## Use
+
+Name a skill when the task is specific:
+
+```text
+Use $flutter-openapi-client to read this Swagger contract and generate
+only the Customer APIs using the project's existing networking stack.
+```
+
+For broader work, start with `$flutter-app-workflow`. Agents load only the selected skill and relevant references, not the full catalog.
 
 ## Catalog
 
@@ -69,25 +72,10 @@ Available bundles: `all-flutter-skills`, `flutter-core-skills`, `flutter-ui-skil
 | Quality | `flutter-code-review`, `flutter-security`, `flutter-testing`, `flutter-runtime-debugging`, `flutter-performance`, `flutter-observability`, `flutter-accessibility`, `flutter-localization` |
 | Platform & packages | `flutter-background-execution`, `flutter-platform-integration`, `flutter-package-development`, `flutter-notifications`, `flutter-webview` |
 
-## Use
-
-Codex and compatible agents first see skill names and descriptions, then load only the relevant `SKILL.md` and references.
-
-```text
-Use $flutter-app-workflow to build a polished offline-first todo app,
-preserve the existing architecture, add tests, and verify it on Android.
-```
-
-For a focused task, name the specialist directly or let the agent route from the request. Installing every skill does not load every skill into the task context.
-
 ## Quality
 
-The catalog contains **36 skills**, **158 behavior-focused evaluation cases**, and **54 cross-catalog routing cases**. Validation checks metadata, references, Codex/Claude/Tessl packaging, tests, and clean installation discovery.
-
-Representative baseline-versus-skill benchmark results and the reproducible profile are published in [benchmarks](benchmarks/README.md). They are a transparent sample, not a claim that one model or a small case set proves every workflow.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for validation and contribution instructions, and [docs/SOURCES.md](docs/SOURCES.md) for the source policy.
+The catalog contains **36 skills**, **158 behavior-focused evaluation cases**, and **54 cross-catalog routing cases**. See [benchmarks](benchmarks/README.md) for measured examples and [CONTRIBUTING.md](CONTRIBUTING.md) for validation and contribution rules.
 
 ## License
 
-BSD 3-Clause. Flutter and Dart are trademarks of Google LLC. This independent project is not affiliated with or endorsed by Google or the Flutter team.
+BSD 3-Clause. Flutter and Dart are trademarks of Google LLC. This project is independent and is not endorsed by Google or the Flutter team.
