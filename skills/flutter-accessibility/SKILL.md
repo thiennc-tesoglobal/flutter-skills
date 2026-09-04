@@ -26,6 +26,11 @@ Identify the primary task, semantic reading order, actionable controls, dynamic 
 
 Use widget tests with semantics enabled and Flutter's accessibility guideline matchers where suitable. Also test the changed flow with TalkBack or VoiceOver and keyboard navigation on supported desktop/web targets.
 
+## References
+
+- Read [semantics and screen readers](references/semantics-and-screen-readers.md) when annotating custom widgets with Semantics, merging subtrees, or triggering dynamic voice announcements.
+- Read [target sizes and contrast](references/target-sizes-and-contrast.md) when auditing WCAG AA contrast ratios, minimum touch targets, or large text scaling adaptation.
+
 ## Sources
 
 - [Flutter accessibility](https://docs.flutter.dev/ui/accessibility)

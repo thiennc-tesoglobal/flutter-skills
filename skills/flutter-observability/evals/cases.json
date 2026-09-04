@@ -16,5 +16,16 @@
     "prompt": "Production crashes are visible in our dashboard but cannot be tied to an app version and their stacks are unreadable. Diagnose and fix the observability gap.",
     "expectations": ["inspects the existing vendor build and release pipeline before proposing replacement", "aligns release build environment and symbol upload identity", "coordinates symbol retention with build release behavior", "does not claim success until a controlled event has a readable stack or clearly states the blocked backend evidence"],
     "resources": ["references/vendor-and-verification.md", "references/error-and-crash-capture.md"]
+  },
+  {
+    "name": "bounded-offline-buffer-and-sampling-controls",
+    "prompt": "Configure production telemetry for an app with millions of daily active users. Implement trace and log sampling, enforce bounded offline event storage when the device is disconnected, and drop low-priority events before high-priority crash breadcrumbs when limits are exceeded.",
+    "resources": ["references/logging-tracing-privacy.md", "references/vendor-and-verification.md"],
+    "expectations": [
+      "configures client-side sampling and event rate limiting to protect device and backend resources",
+      "enforces a strictly bounded offline buffer with an explicit eviction and priority policy",
+      "prioritizes error and crash breadcrumbs over routine operational logs during buffer pressure",
+      "verifies offline behavior and degraded mode without losing high-severity diagnostics"
+    ]
   }
 ]

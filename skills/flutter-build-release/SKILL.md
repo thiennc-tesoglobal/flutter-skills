@@ -26,6 +26,11 @@ Read SDK constraints, flavors/schemes, bundle/application IDs, version source, s
 
 Run formatting, analysis, tests, and a clean release build for each intended target/flavor. Install or serve the built artifact and smoke-test startup plus a critical flow. Record artifact path, version, flavor, target, and remaining store-side work.
 
+## References
+
+- Read [flavor and scheme alignment](references/flavor-and-scheme-alignment.md) when coordinating product flavors, Xcode schemes, application IDs, and service configuration files.
+- Read [obfuscation and symbols](references/obfuscation-and-symbols.md) when configuring Dart AOT obfuscation, symbol splitting, mapping archives, or stack trace deobfuscation.
+
 ## Sources
 
 - [Flutter deployment](https://docs.flutter.dev/deployment)

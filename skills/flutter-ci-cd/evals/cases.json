@@ -16,5 +16,16 @@
     "prompt": "Extend our existing GitHub Actions delivery workflow to build signed Android and iOS staging artifacts without upload. Release configuration already lives in tool/build_staging_android.sh and tool/build_staging_ios.sh; those scripts produce the signed artifacts plus mapping.txt and dSYMs. Signing and future store credentials already exist as protected environment secrets. Do not change flavors, signing configuration, scripts, tag, upload, or release anything.",
     "expectations": ["separates validation build signing and external publication stages", "keeps credentials in protected provider secrets with least privilege and no log exposure", "orchestrates the established flavor signing artifact and symbol commands instead of redefining release configuration", "builds or dry-runs artifacts but does not upload tag release or publish without explicit authorization"],
     "resources": ["references/delivery-and-secrets.md", "references/provider-and-monorepo.md"]
+  },
+  {
+    "name": "matrix-build-caching-and-secret-isolation",
+    "prompt": "Configure a matrix build in GitHub Actions for Linux, macOS, and Windows runners to test unit and integration suites. Use safe caching keyed to lockfiles, enforce secret isolation so forks cannot access deploy tokens, and do not publish any package or release.",
+    "resources": ["references/quality-gates.md", "references/delivery-and-secrets.md", "references/provider-and-monorepo.md"],
+    "expectations": [
+      "configures matrix jobs across target runners without duplicating pipeline definitions unsafely",
+      "keys caches to immutable OS and lockfile hashes so cache hits are deterministic",
+      "restricts deployment secrets to protected environments and blocks fork access",
+      "does not trigger publication, tagging, or release actions"
+    ]
   }
 ]

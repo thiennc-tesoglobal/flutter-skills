@@ -28,6 +28,11 @@ Do not hide async ownership inside global helpers. Keep retry and timeout policy
 
 Test success, failure, cancellation/disposal, and out-of-order completion. Run static analysis; add a focused stress or fake-time test when timing is central to the bug.
 
+## References
+
+- Read [isolate communication and worker pools](references/isolate-communication-and-worker-pools.md) when handling heavy CPU computations, port messaging, or background worker threads.
+- Read [stream cancellation and debouncing](references/stream-cancellation-and-debouncing.md) when managing subscription lifecycles, race conditions, debounce/throttle, or latest-wins semantics.
+
 ## Sources
 
 - [Dart concurrency](https://dart.dev/language/concurrency)

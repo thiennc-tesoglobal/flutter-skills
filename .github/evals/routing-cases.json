@@ -388,5 +388,26 @@
     "required": ["flutter-openapi-client", "flutter-package-development"],
     "optional": ["flutter-networking", "flutter-testing"],
     "forbidden": ["flutter-app-workflow", "flutter-build-release"]
+  },
+  {
+    "name": "flavor-build-configuration-vs-ci-pipeline",
+    "prompt": "Configure Android productFlavors and iOS build configurations for a new staging environment in our Flutter project files, including separate bundle IDs and dart-define values. No CI workflow files or remote pipeline runners are being configured.",
+    "required": ["flutter-build-release"],
+    "optional": ["flutter-device-testing", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-ci-cd"]
+  },
+  {
+    "name": "os-periodic-sync-vs-local-reminder",
+    "prompt": "Schedule an hourly background catalog synchronisation job that runs even when the app is terminated using WorkManager and BGTaskScheduler. Do not post any user-visible notifications or alerts.",
+    "required": ["flutter-background-execution"],
+    "optional": ["flutter-networking", "flutter-persistence", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-notifications"]
+  },
+  {
+    "name": "screen-reader-semantics-audit-vs-visual-redesign",
+    "prompt": "Audit and fix the accessibility tree for a custom checkout button and order card so TalkBack and VoiceOver announce state and actions clearly. Do not change the visual styling, theme, colors, or art direction.",
+    "required": ["flutter-accessibility"],
+    "optional": ["flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-ui-design", "flutter-visual-effects"]
   }
 ]

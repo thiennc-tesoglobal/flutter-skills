@@ -26,6 +26,11 @@ Use running-app inspection from the Dart and Flutter MCP server when it is avail
 
 Do not assume a successful compilation proves correct runtime behavior. Avoid hardcoded coordinates when semantic finders or integration-test APIs are available. Make test setup explicit and clean up only artifacts created by the test.
 
+## References
+
+- Read [device discovery and emulators](references/device-discovery-and-emulators.md) when querying connected hardware, capturing platform crash logs, or exercising OS lifecycle states.
+- Read [integration test workflows](references/integration-test-workflows.md) when writing or running `package:integration_test` suites, deep links, or smoke tests on a live target.
+
 ## Sources
 
 - [Flutter CLI](https://docs.flutter.dev/reference/flutter-cli)

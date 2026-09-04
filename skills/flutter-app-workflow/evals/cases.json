@@ -29,5 +29,19 @@
       "continues with preflight preservation and vertical-slice guidance",
       "does not install skills or expand scope without authorization"
     ]
+  },
+  {
+    "name": "feature-addition-preserves-existing-architecture-and-packages",
+    "prompt": "Build a notification history screen in an app structured with layered ChangeNotifier and http. Replace the state management with Riverpod and add Dio because they are recommended for new features.",
+    "resources": [
+      "references/project-preflight.md",
+      "references/delivery-verification.md"
+    ],
+    "expectations": [
+      "rejects unrequested migration to Riverpod and Dio for a feature addition",
+      "preserves the existing ChangeNotifier, http client, and layered architecture conventions",
+      "implements the feature within established project boundaries and verifies with focused tests"
+    ]
   }
 ]
+

@@ -1,0 +1,33 @@
+# Stream Cancellation and Debouncing
+
+Streams model sequences of asynchronous events over time. Failure to cancel subscriptions or handle race conditions between events is a major source of memory leaks and stale UI states.
+
+## Subscription Lifecycle and Cancellation
+
+- **Always Store and Cancel**: Never call `.listen()` without assigning the returned `StreamSubscription` to a variable that is explicitly cancelled in `dispose()`, `close()`, or during component unmount.
+- **Cancel on Re-trigger**: When starting a new asynchronous operation from user input (e.g., search queries), cancel the previous subscription before listening to the new stream:
+  ```dart
+  await _searchSubscription?.cancel();
+  _searchSubscription = repository.search(query).listen(...);
+  ```
+- **StreamController Ownership**: A controller must be closed by the class that instantiates it. Never leave a controller open after its consumers are unmounted. Check `isClosed` before adding events if emissions can race with disposal.
+
+## Debouncing and Throttling
+
+- **Debounce**: Delay event processing until a quiet period has elapsed. Essential for text input and auto-complete to avoid request storms:
+  ```dart
+  // Using rxdart or a timer-based transformer
+  stream.debounceTime(const Duration(milliseconds: 300));
+  ```
+- **Throttle / Audit**: Emit the first event immediately and ignore subsequent events for a duration. Useful for button debouncing (preventing double taps).
+
+## Ordering and Latest-Wins (SwitchMap Pattern)
+
+- When an asynchronous operation produces an asynchronous result, sequential calls can complete out of order (a slow earlier query finishing after a fast later query).
+- Use `switchMap` semantics: map incoming events to a new stream, automatically cancelling the previous inner stream.
+- Alternatively, assign an incrementing sequence token to each request and discard responses with a token older than the latest dispatched request.
+
+## Testing Asynchronous Streams
+
+- Use `package:fake_async` to control virtual time deterministically. Avoid `Future.delayed` in unit tests.
+- Test edge cases: stream errors, early cancellation before completion, rapid succession of inputs, and unmounting while an asynchronous emission is in flight.

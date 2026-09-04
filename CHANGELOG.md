@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0 - 2026-09-04
+
+- Achieve 100% reference document coverage across the full catalog by adding 10 technical reference guides for `dart-concurrency`, `dart-language`, `flutter-accessibility`, `flutter-build-release`, and `flutter-device-testing`.
+- Deepen `dart-concurrency` with isolate communication, worker pools, and stream cancellation/debouncing references.
+- Deepen `dart-language` with Dart 3 patterns/records migration and sealed class hierarchies references.
+- Deepen `flutter-accessibility` with semantics/screen-reader annotations and touch-target/contrast guidelines.
+- Deepen `flutter-build-release` with flavor/scheme alignment and obfuscation/symbol preservation guides.
+- Deepen `flutter-device-testing` with device discovery and integration test workflow references.
+- Establish catalog-wide evaluation parity (minimum 4 behavior cases per skill) by expanding `flutter-app-workflow`, `flutter-ci-cd`, `flutter-notifications`, and `flutter-observability` from 3 to 4 cases (158 to 162 total evals).
+- Expand cross-catalog routing cases from 54 to 57 to cleanly separate local flavor configuration from CI pipelines, OS periodic sync from notifications, and semantics accessibility audits from visual redesigns.
+
 ## 0.4.0 - 2026-09-02
 
 - Constrain `flutter-openapi-client` external references and redirects by network, filesystem, credential-origin, and bounded-traversal trust policies so an untrusted contract cannot silently expand acquisition authority.

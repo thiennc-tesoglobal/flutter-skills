@@ -16,5 +16,16 @@
     "prompt": "Our Flutter app already uses OneSignal. Add notification categories and reliable tap handling; use the best package.",
     "expectations": ["inspects and preserves the established OneSignal integration unless a concrete gap requires change", "does not introduce Firebase or replace packages by default", "defines stable category action and payload identifiers", "verifies platform lifecycle and permission behavior"],
     "resources": ["references/remote-push-notifications.md", "references/platform-delivery.md"]
+  },
+  {
+    "name": "background-action-category-without-payload-leakage",
+    "prompt": "Handle interactive notification action buttons when the app is in the background or terminated. The user taps 'Approve' or 'Deny' on an expense alert; route the action through our background callback, avoid putting full transaction details or tokens in the notification payload, and ensure duplicate clicks are ignored.",
+    "resources": ["references/local-notifications.md", "references/platform-delivery.md"],
+    "expectations": [
+      "registers notification action categories and interactive button identifiers explicitly",
+      "handles background or terminated action invocation without launching unnecessary UI",
+      "uses opaque identifiers instead of putting sensitive transaction data or credentials in the payload",
+      "implements idempotent deduplication for repeated or replayed action intents"
+    ]
   }
 ]

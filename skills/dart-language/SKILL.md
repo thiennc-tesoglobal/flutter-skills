@@ -29,6 +29,11 @@ Use Dart MCP semantic lookup and analysis when the current environment exposes t
 - Flutter widget composition or state ownership: use the relevant Flutter skill.
 - JSON and persistence schema behavior belongs to the corresponding data skill.
 
+## References
+
+- Read [patterns and records migration](references/patterns-and-records-migration.md) when adopting pattern matching, destructuring, switch expressions, or multiple returns.
+- Read [sealed class hierarchies](references/sealed-class-hierarchies.md) when designing algebraic data types, closed result models, or exhaustively verified state families.
+
 ## Sources
 
 - [Dart language](https://dart.dev/language)
