@@ -5,58 +5,37 @@ description: Coordinate end-to-end delivery of a complete Flutter app or feature
 
 # Flutter App Workflow
 
-Deliver a runnable, maintainable result with evidence. Preserve the user's product choices and the project's existing conventions unless a migration is explicitly requested.
+Deliver a runnable, maintainable result with evidence. Preserve the user's product choices and existing conventions unless migration is explicitly requested.
 
-## Start with preflight
+## Preflight
 
-Read [project preflight](references/project-preflight.md) before planning. Establish the SDK constraints, enabled platforms, architecture, state management, navigation, data packages, code generation, flavors, tests, and available devices.
-
-When the request already supplies project facts, treat them as preflight evidence and carry material constraints such as the SDK and established packages into the plan. Do not ask for the same facts again; inspect the repository later only for details that were not supplied.
-
-Do not add a package merely because it is familiar. Reuse an existing solution when it is adequate and compatible.
+Read [project preflight](references/project-preflight.md) before planning. Treat supplied project facts as preflight evidence; inspect repository constraints (SDK, platforms, packages, architecture, tests, flavors, devices) instead of re-asking. Reuse adequate existing solutions; do not add packages merely for familiarity.
 
 ## Route specialists
 
-First identify which specialist skills are discoverable in the current environment. Load only the available skills required by the task:
+Load only the available specialists needed for the vertical slice:
+- Architecture & state: `flutter-architecture`, `flutter-state-management`
+- UI & visual: `flutter-ui-design`, `flutter-visual-effects`, or matching UI specialist
+- Data, AI & product: `flutter-networking`, `flutter-persistence`, `flutter-authentication`, `flutter-in-app-purchases`, `flutter-product-analytics`, `flutter-ai-integration`
+- Platform & ops: `flutter-package-development`, `flutter-notifications`, `flutter-background-execution`, `flutter-dependency-upgrades`, `flutter-observability`, `flutter-runtime-debugging`
+- Language & security: `dart-language`, `dart-concurrency`, `flutter-security`, `flutter-code-review`
+- Quality & delivery: testing, accessibility, performance, CI/CD, release, device specialists
 
-- Architecture or state boundaries: `flutter-architecture`, `flutter-state-management`
-- Visual direction or polish: `flutter-ui-design`
-- Advanced glass, blur, refraction, shaders, or custom optical rendering: `flutter-visual-effects`
-- Widget composition, layout mechanics, motion, or routing: the matching Flutter UI specialist
-- APIs or storage: `flutter-networking`, `flutter-persistence`
-- Sign-in, session, or passkey behavior: `flutter-authentication`
-- Store purchases, subscriptions, or entitlement restoration: `flutter-in-app-purchases`
-- Product events, funnels, attribution, or experiments: `flutter-product-analytics`
-- Model-backed product behavior: `flutter-ai-integration`
-- Reusable Dart packages or Flutter plugins: `flutter-package-development`
-- Local or remote notification delivery: `flutter-notifications`
-- OS-scheduled, foreground-service, or headless background work: `flutter-background-execution`
-- Flutter/Dart SDK, dependency graph, lockfile, or native toolchain upgrades: `flutter-dependency-upgrades`
-- Production diagnostics, crash context, logs, or traces: `flutter-observability`
-- Reproducing and diagnosing a failure in a running app: `flutter-runtime-debugging`
-- Language or async behavior: `dart-language`, `dart-concurrency`
-- Security or privacy hardening: `flutter-security`
-- Explicit review or audit findings: `flutter-code-review`
-- Quality and delivery: testing, accessibility, performance, platform, CI/CD, release, or device specialists
-
-If a named specialist is unavailable, continue with this workflow's preflight, preservation, vertical-slice, and verification rules. Do not claim that a missing skill was loaded, silently install it, or block straightforward work merely because the optional specialist is absent. Report the limitation only when its missing domain guidance prevents reliable delivery.
-
-Use this workflow only when the request needs end-to-end coordination across UI, state or business logic, data, tests, and runtime delivery. A task is still focused when it touches multiple files or two specialist domains, such as API plus persistence or an asynchronously validated form. Hand focused ownership to the matching specialists instead of running this workflow.
+If a specialist is unavailable, continue with this workflow's preflight and vertical-slice rules; do not claim it was loaded or silently install skills. Hand focused work (e.g. form validation, API cache) to dedicated specialists rather than running this workflow.
 
 ## Deliver in vertical slices
 
 1. Define user-visible behavior and acceptance evidence.
-2. Choose the smallest architectural change that fits the existing project.
+2. Choose the smallest architectural change fitting the existing project.
 3. Implement one coherent path through model, data, state, and UI.
 4. Add focused tests with the behavior, not after an unrelated rewrite.
-5. Run the narrowest useful checks after each slice.
-6. Complete the final delivery checklist in [delivery verification](references/delivery-verification.md).
+5. Run narrow checks after each slice and follow [delivery verification](references/delivery-verification.md).
 
-Keep files cohesive and names domain-oriented. Split a file when it owns multiple responsibilities or its independent testing/reuse becomes valuable; do not split merely to satisfy a line-count rule.
+Keep files cohesive and domain-oriented. Do not split files solely for line counts.
 
 ## Stop conditions
 
-Do not claim completion while required build, analysis, test, or runtime evidence is failing. If an unavailable SDK, credential, signing identity, backend, or device blocks verification, report exactly what was verified and what remains blocked.
+Do not claim completion while required checks fail. If credentials, devices, or backends block verification, report what was verified and what remains blocked.
 
 ## Sources
 
