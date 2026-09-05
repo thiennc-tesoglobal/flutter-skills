@@ -43,10 +43,13 @@ To notify screen reader users of asynchronous events (e.g., "Item added to cart"
 ```dart
 SemanticsService.announce(
   'Changes saved successfully',
-  TextDirection.ltr,
+  Directionality.of(context),
+  assertiveness: Assertiveness.polite, // or Assertiveness.assertive for critical alerts
 );
 ```
-- Avoid rapid, continuous announcements that interrupt user navigation.
+- Obtain text direction from `Directionality.of(context)` instead of hardcoding LTR to preserve RTL locale support.
+- Check the project's SDK constraint before passing `assertiveness` (introduced in Flutter 3.19+; older SDKs accept only message and textDirection).
+- Avoid rapid, continuous announcements that interrupt assistive technology navigation.
 
 ## Automated Verification
 
