@@ -74,7 +74,7 @@ For broader work, start with `$flutter-app-workflow`. Agents load only the selec
 
 ## Quality
 
-The catalog contains **36 skills**, **162 behavior-focused evaluation cases**, and **57 cross-catalog routing cases**. See [benchmarks](benchmarks/README.md) for measured examples and [CONTRIBUTING.md](CONTRIBUTING.md) for validation and contribution rules.
+The catalog contains **36 skills**, **165 behavior-focused evaluation cases**, and **57 cross-catalog routing cases**. See [benchmarks](benchmarks/README.md) for measured examples and [CONTRIBUTING.md](CONTRIBUTING.md) for validation and contribution rules.
 
 ## License
 

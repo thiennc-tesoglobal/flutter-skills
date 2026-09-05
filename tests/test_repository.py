@@ -25,7 +25,7 @@ class RepositoryTests(unittest.TestCase):
         errors, _, counts = VALIDATOR.validate_repository()
         self.assertEqual(errors, [])
         self.assertEqual(counts["skills"], 36)
-        self.assertEqual(counts["evals"], 162)
+        self.assertEqual(counts["evals"], 165)
         self.assertEqual(counts["routing_evals"], 57)
 
     def test_codex_plugin_and_marketplace_resolve_the_full_catalog(self):

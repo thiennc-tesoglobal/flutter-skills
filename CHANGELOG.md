@@ -1,5 +1,14 @@
 # Changelog
 
+- Deliver Phase 1 defect corrections and responsive layout guidance across the catalog.
+- Add geometry, hit-test, SDK-compatible bounded viewport-matrix, and deterministic fixture guidance to `flutter-responsive-layout`, with focused overlap and automated-matrix regressions.
+- Correct device-cleanup guidance in `flutter-device-testing` so uninstalling applications or clearing data requires an explicit data-preservation and authorization decision; prefer disposable test targets.
+- Correct Dart 3 switch guard syntax in `dart-language` for switch expressions (`when`) and switch statements (`case ... when ...:`).
+- Clarify isolate guidance in `dart-concurrency` to recommend background isolates for synchronous SQLite/FFI database calls and clarify `TransferableTypedData` construction copy cost versus $O(1)$ zero-copy isolate transfer.
+- Document Hero tag scoping hazards for persistent tab shells in `flutter-animation` and distinguish in-memory tab preservation from OS process-death restoration in `flutter-navigation`.
+- Update dynamic accessibility announcements in `flutter-accessibility` to resolve text direction from `Directionality.of(context)` and support modern `assertiveness` options.
+- Separate preservation from authorized-migration cases in `flutter-app-workflow`, expanding the catalog to 165 behavior-focused evaluation cases.
+
 ## 0.5.0 - 2026-09-04
 
 - Achieve 100% reference document coverage across the full catalog by adding 10 technical reference guides for `dart-concurrency`, `dart-language`, `flutter-accessibility`, `flutter-build-release`, and `flutter-device-testing`.

@@ -32,15 +32,28 @@
   },
   {
     "name": "feature-addition-preserves-existing-architecture-and-packages",
-    "prompt": "Build a notification history screen in an app structured with layered ChangeNotifier and http. Replace the state management with Riverpod and add Dio because they are recommended for new features.",
+    "prompt": "Build a notification history screen in an app structured with layered ChangeNotifier and http.",
     "resources": [
       "references/project-preflight.md",
       "references/delivery-verification.md"
     ],
     "expectations": [
-      "rejects unrequested migration to Riverpod and Dio for a feature addition",
-      "preserves the existing ChangeNotifier, http client, and layered architecture conventions",
-      "implements the feature within established project boundaries and verifies with focused tests"
+      "preserves the existing ChangeNotifier, http client, and layered architecture conventions without introducing unrequested packages",
+      "implements the feature within established project boundaries and verifies with focused tests",
+      "does not rewrite state management or network layer for an ordinary feature addition"
+    ]
+  },
+  {
+    "name": "authorized-migration-executes-with-preflight-and-tests",
+    "prompt": "The team has authorized migrating the notification feature from ChangeNotifier and http to Riverpod and Dio. Plan and implement the migration while preserving the surrounding layered architecture and existing test coverage.",
+    "resources": [
+      "references/project-preflight.md",
+      "references/delivery-verification.md"
+    ],
+    "expectations": [
+      "accepts the authorized migration to Riverpod and Dio without rejecting explicit user direction",
+      "preserves the surrounding project structure, domain models, and unaffected features",
+      "updates state ownership and networking with focused tests and preflight verification"
     ]
   }
 ]
