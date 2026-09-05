@@ -1,0 +1,53 @@
+{
+  "created_at": "2026-09-05T05:50:11.116245+00:00",
+  "agent": "codex",
+  "agent_version": "codex-cli 0.153.1",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.153.1",
+  "judge_model": null,
+  "catalog_version": "0.5.0",
+  "profile": null,
+  "behavior": [
+    {
+      "skill": "flutter-responsive-layout",
+      "case": "automates-bounded-viewport-and-fixture-matrix",
+      "with_skill": {
+        "response": "Use named cases: exercise ordinary content across widths, then concentrate stress cases at the smallest viewport. I\u2019m applying the supplied Flutter responsive-layout skill\u2019s viewport and spatial-contract approach.\n\nThe example assumes a **600 logical-pixel breakpoint** and a **320 logical-pixel minimum width**. Replace those with the form\u2019s actual constraints.\n\n| Case | Logical viewport | Content and environment |\n|---|---|---|\n| Compact | 320 \u00d7 720 | Typical |\n| Below breakpoint | 599 \u00d7 800 | Typical |\n| Above breakpoint | 601 \u00d7 800 | Typical |\n| Wide | 1200 \u00d7 900 | Typical |\n| Enlarged text | 320 \u00d7 720 | Long localized content, 2\u00d7 text |\n| RTL errors | 320 \u00d7 720 | Long Arabic content, RTL, validation errors |\n| Keyboard | 320 \u00d7 720 | Validation errors, focused final field, 300px bottom inset |\n| Combined stress | 320 \u00d7 720 | Long Arabic content, RTL, errors, 2\u00d7 text, keyboard |\n\nThis keeps failures easy to isolate while adding one deliberate interaction case.\n\n```dart\nenum ProfileFixture {\n  typical,\n  longLocalized,\n  longArabicErrors,\n  validationErrors,\n}\n\nclass ProfileCase {\n  const ProfileCase(\n    this.name,\n    this.size, {\n    this.fixture = ProfileFixture.typical,\n    this.textScale = 1,\n    this.locale = const Locale('en'),\n    this.direction = TextDirection.ltr,\n    this.keyboardInset = 0,\n  });\n\n  final String name;\n  final Size size;\n  final ProfileFixture fixture;\n  final double textScale;\n  final Locale locale;\n  final TextDirection direction;\n  final double keyboardInset;\n}\n\nconst breakpoint = 600.0;\n\nconst cases = <ProfileCase>[\n  ProfileCase('compact', Size(320, 720)),\n  ProfileCase('below breakpoint', Size(breakpoint - 1, 800)),\n  ProfileCase('above breakpoint', Size(breakpoint + 1, 800)),\n  ProfileCase('wide', Size(1200, 900)),\n  ProfileCase(\n    'long content with enlarged text',\n    Size(320, 720),\n    fixture: ProfileFixture.longLocalized,\n    locale: Locale('de'),\n    textScale: 2,\n  ),\n  ProfileCase(\n    'RTL validation errors',\n    Size(320, 720),\n    fixture: ProfileFixture.longArabicErrors,\n    locale: Locale('ar'),\n    direction: TextDirection.rtl,\n  ),\n  ProfileCase(\n    'validation errors with keyboard',\n    Size(320, 720),\n    fixture: ProfileFixture.validationErrors,\n    keyboardInset: 300,\n  ),\n  ProfileCase(\n    'RTL enlarged errors with keyboard',\n    Size(320, 720),\n    fixture: ProfileFixture.longArabicErrors,\n    locale: Locale('ar'),\n    direction: TextDirection.rtl,\n    textScale: 2,\n    keyboardInset: 300,\n  ),\n];\n```\n\nConnect the matrix through one project-specific harness. Have it supply deterministic fixtures through existing dependencies, real localization delegates, a final-field focus node, and an observable submit-attempt callback. Error fixtures should start with validation messages already visible; their submit attempts need not save successfully.\n\n```dart\nconst visibleBodyKey = ValueKey('profile-visible-body');\nconst lastFieldKey = ValueKey('profile-last-field');\nconst saveKey = ValueKey('profile-save');\n\nvoid expectContained(Rect outer, Rect inner) {\n  const tolerance = 0.5;\n  expect(inner.left, greaterThanOrEqualTo(outer.left - tolerance));\n  expect(inner.top, greaterThanOrEqualTo(outer.top - tolerance));\n  expect(inner.right, lessThanOrEqualTo(outer.right + tolerance));\n  expect(inner.bottom, lessThanOrEqualTo(outer.bottom + tolerance));\n}\n\nvoid main() {\n  for (final scenario in cases) {\n    testWidgets('profile: ${scenario.name}', (tester) async {\n      final view = tester.view;\n      addTearDown(view.reset);\n      view.devicePixelRatio = 1;\n      view.physicalSize = scenario.size;\n\n      final lastFieldFocus = FocusNode();\n      addTearDown(lastFieldFocus.dispose);\n\n      var submitAttempts = 0;\n\n      await tester.pumpWidget(\n        MaterialApp(\n          locale: scenario.locale,\n          // Use the application's actual localization configuration.\n          supportedLocales: AppLocalizations.supportedLocales,\n          localizationsDelegates:\n              AppLocalizations.localizationsDelegates,\n          builder: (context, child) => MediaQuery(\n            data: MediaQuery.of(context).copyWith(\n              textScaler: TextScaler.linear(scenario.textScale),\n            ),\n            child: Directionality(\n              textDirection: scenario.direction,\n              child: child!,\n            ),\n          ),\n          home: ProfileTestHarness(\n            fixture: scenario.fixture,\n            lastFieldFocus: lastFieldFocus,\n            onSubmitAttempt: () => submitAttempts++,\n          ),\n        ),\n      );\n      await tester.pumpAndSettle();\n      expect(tester.takeException(), isNull);\n\n      if (scenario.keyboardInset > 0) {\n        lastFieldFocus.requestFocus();\n        await tester.pump();\n\n        // DPR is 1, so this is also the logical keyboard height.\n        view.viewInsets = FakeViewPadding(\n          bottom: scenario.keyboardInset,\n        );\n        await tester.pumpAndSettle();\n        expect(lastFieldFocus.hasFocus, isTrue);\n        expect(tester.takeException(), isNull);\n      }\n\n      final lastField = find.byKey(lastFieldKey);\n      final save = find.byKey(saveKey);\n      final visibleBody = find.byKey(visibleBodyKey);\n\n      await tester.ensureVisible(lastField);\n      await tester.pumpAndSettle();\n\n      expectContained(\n        tester.getRect(visibleBody),\n        tester.getRect(lastField),\n      );\n      expect(\n        tester.getRect(lastField).overlaps(tester.getRect(save)),\n        isFalse,\n        reason: 'Save must not cover the final field.',\n      );\n\n      await tester.ensureVisible(save);\n      await tester.pumpAndSettle();\n\n      expectContained(\n        tester.getRect(visibleBody),\n        tester.getRect(save),\n      );\n      expect(save.hitTestable(), findsOneWidget);\n\n      await tester.tap(save);\n      await tester.pumpAndSettle();\n      expect(submitAttempts, 1);\n      expect(tester.takeException(), isNull);\n    });\n  }\n}\n```\n\nPlace `profile-visible-body` on the actual safe, keyboard-resized body containing the form and action. Key the final field\u2019s complete region, including its error text. If Save intentionally floats over the scroll area, retain the explicit field/action disjoint assertion after scrolling the field into view.\n\nAdd fixture-specific assertions that localized strings and validation messages are present, plus a compact/wide composition assertion at the breakpoint cases. Include one resize test if unsaved values and focus must survive switching compositions. Avoid scanning every render box for intersections.\n\nThese are widget-level geometry and interaction checks; the keyboard is simulated. A device test is still needed to verify real OS keyboard behavior. The template above needs your application\u2019s harness and localization imports before it can run.",
+        "judgment": {
+          "score": 67,
+          "expectations": [
+            {
+              "criterion": "sets and restores explicit logical viewport and pixel-ratio test state using APIs compatible with the project SDK",
+              "met": false,
+              "evidence": "Explicitly sets devicePixelRatio to 1 and physicalSize to the logical case size, and registers view.reset for teardown. However, it does not verify project SDK compatibility for tester.view, FakeViewPadding, or TextScaler."
+            },
+            {
+              "criterion": "uses deterministic named fixtures and a bounded risk-based combination matrix rather than device names or a full Cartesian product",
+              "met": true,
+              "evidence": "Defines named fixture enums and eight explicit cases, distributing typical content across widths and concentrating stress combinations at compact width, with one deliberate combined-stress case. Explicitly requires deterministic harness fixtures."
+            },
+            {
+              "criterion": "checks relevant overflow geometry containment scrolling and hit-test behavior and separates widget-test evidence from golden or real-device evidence",
+              "met": true,
+              "evidence": "Checks framework exceptions, field and Save containment, field/action non-overlap, scrolling with ensureVisible, Save hit-testability, and a submit callback after tapping. Explicitly identifies these as widget-level checks with simulated keyboard insets and reserves real OS keyboard verification for device tests."
+            }
+          ],
+          "summary": "Provides a bounded, maintainable matrix with concrete geometry and interaction assertions, but does not explicitly establish compatibility with the project SDK."
+        }
+      },
+      "delta": null,
+      "passed": false
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 0,
+    "baseline_average": null,
+    "with_skill_average": 67.0,
+    "average_delta": null,
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

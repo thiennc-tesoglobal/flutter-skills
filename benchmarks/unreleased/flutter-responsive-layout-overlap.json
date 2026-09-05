@@ -1,0 +1,53 @@
+{
+  "created_at": "2026-09-05T05:48:47.145427+00:00",
+  "agent": "codex",
+  "agent_version": "codex-cli 0.153.1",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.153.1",
+  "judge_model": null,
+  "catalog_version": "0.5.0",
+  "profile": null,
+  "behavior": [
+    {
+      "skill": "flutter-responsive-layout",
+      "case": "silent-overlap-uses-explicit-geometry-contract",
+      "with_skill": {
+        "response": "This is a paint geometry failure; a clean console does not prove the field is usable. Apply the responsive-layout skill by testing the specific contract: **the final address field can scroll fully above the sticky checkout action, and checkout remains tappable.** Leave intentional `Stack` overlaps out of the assertions.\n\nAdapt this test to your fixture and existing scrollable keys:\n\n```dart\ntestWidgets('checkout does not cover the final address field at 320',\n    (tester) async {\n  tester.view.devicePixelRatio = 1;\n  tester.view.physicalSize = const Size(320, 640);\n  addTearDown(tester.view.reset);\n\n  var submitted = false;\n\n  await tester.pumpWidget(\n    MaterialApp(\n      builder: (context, child) => MediaQuery(\n        data: MediaQuery.of(context).copyWith(\n          textScaler: TextScaler.linear(2),\n        ),\n        child: child!,\n      ),\n      home: CheckoutFixture.longAddress(\n        onCheckout: () => submitted = true,\n      ),\n    ),\n  );\n  await tester.pumpAndSettle();\n\n  expect(tester.takeException(), isNull);\n\n  final field = find.byKey(const ValueKey('last-address-field'));\n  final action = find.byKey(const ValueKey('checkout-action'));\n  final viewport = find.byKey(const ValueKey('address-viewport'));\n\n  // Reveal the end using the screen's actual scrolling behavior.\n  await tester.drag(\n    find.byKey(const ValueKey('address-scroll')),\n    const Offset(0, -2000),\n  );\n  await tester.pumpAndSettle();\n\n  final fieldRect = tester.getRect(field);\n  final actionRect = tester.getRect(action);\n  final viewportRect = tester.getRect(viewport);\n\n  expect(fieldRect.overlaps(actionRect), isFalse);\n  expect(fieldRect.bottom, lessThanOrEqualTo(actionRect.top - 16));\n  expect(fieldRect.top, greaterThanOrEqualTo(viewportRect.top));\n  expect(fieldRect.bottom, lessThanOrEqualTo(viewportRect.bottom));\n\n  expect(action.hitTestable(), findsOneWidget);\n  await tester.tap(action);\n  await tester.pumpAndSettle();\n  expect(submitted, isTrue);\n  expect(tester.takeException(), isNull);\n});\n```\n\nUse a deterministic, valid long-address fixture so checkout can complete. Key the field\u2019s full region, including any validation message, and the sticky action\u2019s full surface.\n\nFor the fix, prefer allocating space for the action instead of positioning it over the form:\n\n```dart\nScaffold(\n  resizeToAvoidBottomInset: true,\n  body: SafeArea(\n    child: Column(\n      children: [\n        Expanded(\n          child: ListView(\n            key: const ValueKey('address-viewport'),\n            padding: const EdgeInsets.all(16),\n            children: addressFields,\n          ),\n        ),\n        Padding(\n          padding: const EdgeInsets.all(16),\n          child: checkoutAction,\n        ),\n      ],\n    ),\n  ),\n)\n```\n\nAlign the test\u2019s scroll finder with this `ListView`. Let the action grow with wrapped text. If the overlay is required, reserve its actual laid-out height plus the required gap in the scroll content; avoid a fixed-height patch.\n\nRun the focused contract at 320 with normal and enlarged text, long content, and keyboard insets, plus either side of any relevant breakpoint. The example is a proposed test, not an executed verification.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "distinguishes silent paint or hit-test overlap from framework overflow and identifies the specific components involved",
+              "met": true,
+              "evidence": "Identifies a paint geometry failure despite a clean console, specifically between the final address field and sticky checkout action. Tests their geometry separately from framework exceptions."
+            },
+            {
+              "criterion": "defines an explicit disjoint or intentional-overlay geometry contract instead of treating every intersecting render box as a defect",
+              "met": true,
+              "evidence": "Requires the revealed final field to be disjoint from the checkout action with a 16-pixel gap, excludes intentional Stack overlaps, and proposes reserving the action\u2019s actual height if an overlay is required."
+            },
+            {
+              "criterion": "verifies that the final field remains revealable and the checkout action remains hit-testable and completes its observable behavior",
+              "met": true,
+              "evidence": "The proposed test scrolls the form, asserts the full field lies inside the viewport and above the action, checks action.hitTestable(), taps checkout, and asserts the submission callback ran. Explicitly states the test has not been executed."
+            }
+          ],
+          "summary": "Meets all criteria through a targeted geometry regression test and concrete layout fix direction, while accurately disclosing that verification is proposed rather than executed."
+        }
+      },
+      "delta": null,
+      "passed": true
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 1,
+    "baseline_average": null,
+    "with_skill_average": 100.0,
+    "average_delta": null,
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

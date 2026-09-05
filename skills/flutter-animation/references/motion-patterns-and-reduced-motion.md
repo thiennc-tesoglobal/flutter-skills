@@ -15,6 +15,7 @@ When implementing complex motion or addressing accessibility in Flutter, apply t
 ## Hero Transitions
 - Ensure `Hero.tag` is unique across the entire navigation stack per visual instance, not just by product ID.
 - When an item appears in multiple contexts (e.g., different tabs), combine the ID with a context identifier (e.g., `'$tabName-$productId'`) to avoid tag collisions.
+- **Tab shell collisions**: Persistent tab structures (e.g., `IndexedStack` or `StatefulShellRoute.indexedStack`) keep inactive tab subtrees mounted. If an inactive tab contains a Hero with the same tag as an active route, Flutter throws a subtree collision exception. Scope tags to the tab branch, or conditionally disable Hero widgets on offstage branches.
 
 ## Reduced Motion
 - Read platform preferences via `MediaQuery.disableAnimationsOf(context)` or `MediaQuery.accessibleNavigationOf(context)`.

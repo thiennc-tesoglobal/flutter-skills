@@ -1,6 +1,6 @@
 ---
 name: flutter-responsive-layout
-description: Build or repair adaptive Flutter layouts across devices, constraints, breakpoints, overflow, orientation, and input modes. Use with flutter-accessibility when text scaling causes reflow, clipping, or disappearing controls; not for general widget state architecture.
+description: Build or repair adaptive Flutter layouts across devices, constraints, breakpoints, overlap, clipping, orientation, and input modes. Use with flutter-accessibility when text scaling causes reflow, clipping, or disappearing controls; not for general widget state architecture.
 ---
 
 # Flutter Responsive Layout
@@ -9,7 +9,7 @@ Design from the constraints supplied by the parent, not from a guessed device mo
 
 ## Diagnose
 
-Reproduce the layout on the failing viewport with text scaling and the relevant platform chrome. Read the first meaningful constraint or overflow failure and identify which widget imposed the incompatible size.
+Reproduce the layout on the failing viewport with text scaling and the relevant platform chrome. Read the first meaningful constraint or overflow failure and identify which widget imposed the incompatible size. When no framework exception occurs, inspect the geometry and hit-test behavior of the affected components instead of assuming that a clean console proves the layout is usable.
 
 ## Rules
 
@@ -24,6 +24,8 @@ Reproduce the layout on the failing viewport with text scaling and the relevant 
 ## Verification
 
 Exercise boundary widths just below and above each breakpoint, long localized strings, large text, landscape, and the intended desktop/web window sizes. Add a focused widget or golden test for regressions that visual assertions can represent reliably.
+
+When components overlap, become clipped, or cover an action, follow the [geometry, viewport, and fixture testing reference](references/geometry-viewport-and-fixture-testing.md). Define explicit spatial relationships for important components rather than treating every intersecting render box as a defect.
 
 ## References
 

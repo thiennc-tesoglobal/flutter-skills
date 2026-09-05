@@ -26,5 +26,29 @@
       "uses the extra space productively for supporting content or whitespace",
       "does not merely scale up the phone layout"
     ]
+  },
+  {
+    "name": "silent-overlap-uses-explicit-geometry-contract",
+    "prompt": "The sticky checkout action visually covers the final address field at 320 logical pixels, but Flutter reports no RenderFlex overflow. Add a regression test and fix direction without flagging every intentional Stack overlap in the screen.",
+    "resources": [
+      "references/geometry-viewport-and-fixture-testing.md"
+    ],
+    "expectations": [
+      "distinguishes silent paint or hit-test overlap from framework overflow and identifies the specific components involved",
+      "defines an explicit disjoint or intentional-overlay geometry contract instead of treating every intersecting render box as a defect",
+      "verifies that the final field remains revealable and the checkout action remains hit-testable and completes its observable behavior"
+    ]
+  },
+  {
+    "name": "automates-bounded-viewport-and-fixture-matrix",
+    "prompt": "Create a maintainable widget-test matrix for a responsive profile form at compact, breakpoint-boundary, and wide sizes. It must cover enlarged text, long localized content, RTL, validation errors, and an open keyboard without running every possible Cartesian combination. Repository inspection has already confirmed that its pinned Flutter SDK and existing tests support tester.view physicalSize, devicePixelRatio, and viewInsets overrides, TextScaler.linear, FakeViewPadding, and tester.view.reset; use those established APIs rather than inventing another harness.",
+    "resources": [
+      "references/geometry-viewport-and-fixture-testing.md"
+    ],
+    "expectations": [
+      "sets and restores explicit logical viewport, pixel-ratio, and inset test state using the supplied project-compatible APIs",
+      "uses deterministic named fixtures and a bounded risk-based combination matrix rather than device names or a full Cartesian product",
+      "checks relevant overflow geometry containment scrolling and hit-test behavior and separates widget-test evidence from golden or real-device evidence"
+    ]
   }
 ]

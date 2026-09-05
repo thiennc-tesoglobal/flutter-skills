@@ -16,6 +16,10 @@ python3 .github/scripts/run_behavior_evals.py \
 
 Raw results are intentionally committed without removing responses, judgments, selections, or failed cases. Case identifiers resolve to the versioned prompts and rubrics under `skills/*/evals` and `.github/evals`. The current profile is a six-case behavior and seven-case routing sample on one agent configuration; it is useful regression evidence, not proof of quality across every model, app, or skill.
 
+## Unreleased focused result
+
+The new `flutter-responsive-layout` overlap and bounded viewport-matrix cases each scored 100 with `codex-cli 0.153.1`. The focused runs skipped baselines and prove response behavior only; see the [overlap result](unreleased/flutter-responsive-layout-overlap.json) and [matrix result](unreleased/flutter-responsive-layout-matrix.json). The matrix's two 67-point runs are retained as [the initial result](unreleased/flutter-responsive-layout-matrix-initial.json) and [the compatibility-gate result](unreleased/flutter-responsive-layout-matrix-compatibility-gate-initial.json); they showed that a tool-free prompt must supply inspected SDK capabilities before requiring concrete compatible APIs.
+
 ## v0.3.0 result
 
 Run on 2026-08-30 with `codex-cli 0.151.0-alpha.7.2`, its default model, the same agent as solver and judge, and an 80-point behavior threshold.

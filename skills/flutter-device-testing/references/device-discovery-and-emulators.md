@@ -10,11 +10,14 @@ Testing on physical devices, simulators, and emulators proves real platform runt
   flutter devices
   flutter run -d emulator-5554 --flavor staging
   ```
-- **Do NOT Reset User Devices**: Never issue factory reset, erase, or wipe commands on a developer's connected physical device or primary emulator without explicit necessity and user authorization. If clean state is required, uninstall only the target application:
-  ```sh
-  adb -s <id> uninstall com.example.app.staging
-  xcrun simctl uninstall <id> com.example.app.staging
-  ```
+- **Do NOT Reset User Devices or Casually Uninstall Applications**:
+  - Never issue factory reset, wipe, or erase commands on a developer's connected physical device or primary emulator. Prefer disposable test targets or ephemeral emulators.
+  - Uninstalling an application (`adb uninstall`, `xcrun simctl uninstall`) or clearing application data (`pm clear`) destroys local databases, caches, preferences, and user-owned test data. Treat uninstallation as a destructive action requiring an explicit data-preservation and authorization decision rather than routine cleanup.
+  - When clean state is authorized and verified to be safe:
+    ```sh
+    adb -s <id> uninstall com.example.app.staging
+    xcrun simctl uninstall <id> com.example.app.staging
+    ```
 
 ## Capturing Platform Logs and Crashes
 

@@ -1,0 +1,53 @@
+{
+  "created_at": "2026-09-05T05:53:52.523376+00:00",
+  "agent": "codex",
+  "agent_version": "codex-cli 0.153.1",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.153.1",
+  "judge_model": null,
+  "catalog_version": "0.5.0",
+  "profile": null,
+  "behavior": [
+    {
+      "skill": "flutter-responsive-layout",
+      "case": "automates-bounded-viewport-and-fixture-matrix",
+      "with_skill": {
+        "response": "Use typical content at each size boundary, then concentrate the expensive content states into two compact cases. This applies the supplied responsive-layout skill without a Cartesian explosion.\n\n| Case | Width | Text scale | Content/state |\n|---|---:|---:|---|\n| Compact | 320 | 1 | Typical |\n| Below breakpoint | breakpoint \u2212 1 | 1 | Typical |\n| Above breakpoint | breakpoint + 1 | 1 | Typical |\n| Wide | 1280 | 1 | Typical |\n| Compact accessibility | 320 | 2 | Long localized content, RTL, validation errors |\n| Compact keyboard | 320 | 2 | Long localized content, RTL, validation errors, keyboard |\n\nUse the form\u2019s actual content breakpoint. If it has multiple breakpoints, add a boundary pair for each.\n\nThe following registration helper uses the confirmed SDK APIs. Connect `buildFixture` to your existing deterministic fixture builder and `verifyActionResult` to its observable submission or validation result.\n\n```dart\nimport 'package:flutter/material.dart';\nimport 'package:flutter_test/flutter_test.dart';\n\nclass ProfileCase {\n  const ProfileCase(\n    this.name,\n    this.size, {\n    this.textScale = 1,\n    this.longLocalizedContent = false,\n    this.rtl = false,\n    this.validationErrors = false,\n    this.keyboardInset = 0,\n  });\n\n  final String name;\n  final Size size;\n  final double textScale;\n  final bool longLocalizedContent;\n  final bool rtl;\n  final bool validationErrors;\n  final double keyboardInset;\n}\n\n// Attach these keys to actual rendered components in the fixture/form.\nconst profileScrollKey = ValueKey('profile-scroll');\nconst lastFieldKey = ValueKey('profile-last-field');\nconst primaryActionKey = ValueKey('profile-primary-action');\nconst validationErrorKey = ValueKey('profile-validation-error');\n\nvoid registerProfileLayoutTests({\n  required double breakpoint,\n  required Widget Function(ProfileCase scenario) buildFixture,\n  required Future<void> Function(\n    WidgetTester tester,\n    ProfileCase scenario,\n  ) verifyActionResult,\n}) {\n  final cases = <ProfileCase>[\n    const ProfileCase('compact', Size(320, 640)),\n    ProfileCase('below breakpoint', Size(breakpoint - 1, 800)),\n    ProfileCase('above breakpoint', Size(breakpoint + 1, 800)),\n    const ProfileCase('wide', Size(1280, 900)),\n    const ProfileCase(\n      'compact: large text, long RTL content, errors',\n      Size(320, 640),\n      textScale: 2,\n      longLocalizedContent: true,\n      rtl: true,\n      validationErrors: true,\n    ),\n    const ProfileCase(\n      'compact: large text, long RTL content, errors, keyboard',\n      Size(320, 640),\n      textScale: 2,\n      longLocalizedContent: true,\n      rtl: true,\n      validationErrors: true,\n      keyboardInset: 280,\n    ),\n  ];\n\n  void expectContained(Rect outer, Rect inner) {\n    const tolerance = 0.5;\n    expect(inner.left, greaterThanOrEqualTo(outer.left - tolerance));\n    expect(inner.top, greaterThanOrEqualTo(outer.top - tolerance));\n    expect(inner.right, lessThanOrEqualTo(outer.right + tolerance));\n    expect(inner.bottom, lessThanOrEqualTo(outer.bottom + tolerance));\n  }\n\n  for (final scenario in cases) {\n    testWidgets('profile / ${scenario.name}', (tester) async {\n      final view = tester.view;\n      addTearDown(view.reset);\n\n      // DPR 1 keeps physical and logical test dimensions identical.\n      view.devicePixelRatio = 1;\n      view.physicalSize = scenario.size;\n      view.viewInsets = FakeViewPadding(\n        bottom: scenario.keyboardInset,\n      );\n\n      await tester.pumpWidget(\n        MaterialApp(\n          builder: (context, child) => MediaQuery(\n            data: MediaQuery.of(context).copyWith(\n              textScaler: TextScaler.linear(scenario.textScale),\n            ),\n            child: Directionality(\n              textDirection:\n                  scenario.rtl ? TextDirection.rtl : TextDirection.ltr,\n              child: child!,\n            ),\n          ),\n          home: buildFixture(scenario),\n        ),\n      );\n      await tester.pumpAndSettle();\n\n      expect(tester.takeException(), isNull);\n\n      final visibleRegion = Rect.fromLTWH(\n        0,\n        0,\n        scenario.size.width,\n        scenario.size.height - scenario.keyboardInset,\n      );\n      final scrollable = find.descendant(\n        of: find.byKey(profileScrollKey),\n        matching: find.byType(Scrollable),\n      ).first;\n\n      Future<void> reveal(Finder target) async {\n        await tester.scrollUntilVisible(\n          target,\n          100,\n          scrollable: scrollable,\n        );\n        await tester.ensureVisible(target);\n        await tester.pumpAndSettle();\n        expect(tester.takeException(), isNull);\n        expectContained(visibleRegion, tester.getRect(target));\n      }\n\n      if (scenario.validationErrors) {\n        await reveal(find.byKey(validationErrorKey));\n      }\n\n      final lastField = find.byKey(lastFieldKey);\n      final action = find.byKey(primaryActionKey);\n\n      await reveal(lastField);\n\n      // Product contract: the primary action must not cover the last field.\n      // Parent/child and decorative intersections are intentionally ignored.\n      expect(\n        tester.getRect(lastField).overlaps(tester.getRect(action)),\n        isFalse,\n        reason: 'The primary action must not cover the final field.',\n      );\n\n      await reveal(action);\n      expect(action.hitTestable(), findsOneWidget);\n      await tester.tap(action);\n      await tester.pumpAndSettle();\n\n      await verifyActionResult(tester, scenario);\n      expect(tester.takeException(), isNull);\n    });\n  }\n}\n```\n\nKeep fixture data explicit: fixed translated labels and error messages, seeded validation state, and a fake submission dependency. `Directionality` exercises RTL layout; the fixture must also supply the intended locale and localization delegates when testing actual translations.\n\nThe geometry contract assumes the last field and primary action must be disjoint. For a sticky action, also assert that the revealed field lies above the action with the required gap. Add a layout-specific assertion at the boundary cases\u2014for example, whether the form uses one or two columns.\n\nThese tests exercise widget geometry, scrolling, and taps with a simulated keyboard inset. They do not exercise the system keyboard itself. The code has not been run against your repository.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Sets and restores explicit logical viewport, pixel-ratio, and inset test state using the supplied project-compatible APIs.",
+              "met": true,
+              "evidence": "Sets tester.view.devicePixelRatio to 1, physicalSize to each explicit logical size, and viewInsets using FakeViewPadding; registers tester.view.reset with addTearDown. Uses TextScaler.linear for enlarged text."
+            },
+            {
+              "criterion": "Uses deterministic named fixtures and a bounded risk-based combination matrix rather than device names or a full Cartesian product.",
+              "met": true,
+              "evidence": "Defines six named scenarios with baseline size coverage and concentrated compact stress cases. Requires fixed translated content, seeded validation state, and a fake submission dependency."
+            },
+            {
+              "criterion": "Checks relevant overflow, geometry containment, scrolling, and hit-test behavior and separates widget-test evidence from golden or real-device evidence.",
+              "met": true,
+              "evidence": "Checks framework exceptions, visible-region containment, field/action overlap, scrolling to errors and controls, action hit-testability, and observable tap results. Explicitly distinguishes simulated keyboard insets from the system keyboard and states the code has not been run against the repository."
+            }
+          ],
+          "summary": "All supplied criteria are explicitly addressed through a bounded matrix, compatible state overrides and cleanup, and concrete geometry and interaction checks with clear evidence limitations."
+        }
+      },
+      "delta": null,
+      "passed": true
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 1,
+    "baseline_average": null,
+    "with_skill_average": 100.0,
+    "average_delta": null,
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

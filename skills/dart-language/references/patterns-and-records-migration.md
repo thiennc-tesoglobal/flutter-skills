@@ -31,9 +31,24 @@ final statusColor = switch (order.status) {
 - Switch expressions require exhaustiveness. The compiler guarantees all possible values are handled.
 
 ### 3. Guard Clauses
-Refine pattern matching with logical guards (`when`):
+Refine pattern matching with logical guards (`when`) in switch expressions and statements:
+
 ```dart
-case [final first, ...] when first.isValid => process(first),
+// Switch expression (evaluates to a value; no 'case' keyword)
+final label = switch (items) {
+  [final first, ...] when first.isValid => 'Valid: ${first.name}',
+  [_, ...] => 'Invalid leading item',
+  [] => 'Empty',
+};
+
+// Switch statement (imperative control flow; uses 'case ... when ...:')
+switch (items) {
+  case [final first, ...] when first.isValid:
+    process(first);
+    break;
+  default:
+    fallback();
+}
 ```
 
 ## Migration Rules
