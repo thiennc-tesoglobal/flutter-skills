@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.5.1 - 2026-09-05
+
 - Deliver Phase 1 defect corrections and responsive layout guidance across the catalog.
 - Add geometry, hit-test, SDK-compatible bounded viewport-matrix, and deterministic fixture guidance to `flutter-responsive-layout`, with focused overlap and automated-matrix regressions.
 - Correct device-cleanup guidance in `flutter-device-testing` so uninstalling applications or clearing data requires an explicit data-preservation and authorization decision; prefer disposable test targets.
