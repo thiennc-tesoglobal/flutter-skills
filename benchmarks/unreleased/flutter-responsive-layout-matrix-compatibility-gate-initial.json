@@ -1,0 +1,53 @@
+{
+  "created_at": "2026-09-05T05:52:04.552972+00:00",
+  "agent": "codex",
+  "agent_version": "codex-cli 0.153.1",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.153.1",
+  "judge_model": null,
+  "catalog_version": "0.5.0",
+  "profile": null,
+  "behavior": [
+    {
+      "skill": "flutter-responsive-layout",
+      "case": "automates-bounded-viewport-and-fixture-matrix",
+      "with_skill": {
+        "response": "Use named, deterministic fixtures and a small list of explicit cases. Apply the supplied `flutter-responsive-layout` skill by testing the form\u2019s available constraints and its important spatial relationships.\n\nThe dimensions below are illustrative: replace `600` with the form\u2019s actual content breakpoint and `320 \u00d7 640` with its minimum supported viewport.\n\n| Case | Logical viewport | Fixture and conditions |\n|---|---|---|\n| Compact baseline | 320 \u00d7 640 | Typical content, normal text |\n| Below breakpoint | 599 \u00d7 800 | Typical content |\n| Above breakpoint | 601 \u00d7 800 | Typical content |\n| Wide baseline | 1200 \u00d7 900 | Typical content; assert readable maximum form width |\n| Compact text stress | 320 \u00d7 640 | Long localized content, 2\u00d7 text |\n| Compact RTL errors | 320 \u00d7 640 | Long RTL localized content, 2\u00d7 text, validation errors |\n| Compact keyboard | 320 \u00d7 640 | Validation errors, 2\u00d7 text, focused final field, bottom keyboard inset |\n| Wide RTL stress | 1200 \u00d7 900 | Long RTL localized content, 2\u00d7 text, validation errors |\n| Landscape keyboard | 800 \u00d7 400 | Typical content, focused final field, keyboard inset |\n\nThis covers every width with baseline content, then concentrates interacting stressors in constrained layouts. For additional breakpoints, add baseline cases immediately below and above each one.\n\nKeep the test structure simple:\n\n```text\nProfileCase\n  name\n  logicalSize\n  fixture\n  textScale = 1\n  keyboardInset = 0\n  expectedComposition\n\nProfileFixture\n  typical\n  longLocalized\n  longRtlWithErrors\n  validationErrors\n```\n\nFixtures should supply fixed field values, actual localized labels and error messages, locale/direction, and fake submission behavior. Avoid network, clock, randomness, and shared mutable state. RTL should use appropriate localized content as well as RTL direction.\n\nUse one existing project-compatible pump helper for all cases. It should:\n\n- Set the test viewport and device-pixel ratio explicitly, registering teardown immediately.\n- Preserve the application\u2019s theme, localization delegates, and supported locales.\n- Apply text scaling through `MaterialApp.builder`.\n- Supply keyboard insets consistently and focus the intended field in keyboard cases.\n- Pump until the known layout or validation transition completes.\n\nBefore implementing that helper, inspect the pinned Flutter SDK, Dart constraint, and existing test utilities. APIs such as `tester.view`, `TextScaler`, inset setters, and reset methods require compatibility confirmation; no target SDK was supplied here.\n\nFor each case, assert these contracts using stable keys or semantic finders:\n\n- **Layout:** no framework exception after layout and relevant interactions.\n- **Composition:** the expected compact or wide arrangement is selected.\n- **Containment:** visible controls stay inside their allowed surface; the wide form respects its maximum content width.\n- **Scrolling:** the final field and submission action can be revealed above the keyboard.\n- **Separation:** after revealing the final field, it does not overlap a sticky submission action, if present.\n- **Interaction:** tap the submission action and verify an observable result, such as validation feedback or a fake submission callback.\n\nDo not assert that every field is visible simultaneously. Scrollable forms should instead prove that required content is reachable. Do not scan all render boxes for intersections: parent-child overlap and intentional overlays are expected. A center-point hit-test check should supplement geometry and actual interaction, not replace them.\n\nAdd one separate resize test that enters values, crosses the breakpoint, and verifies that values, validation state, and submission behavior survive. Use a focused golden only if visual appearance needs coverage beyond these geometry contracts.\n\nThese widget tests exercise simulated viewport, text, direction, and keyboard geometry. Actual system keyboard and platform chrome behavior need device testing. The matrix above is a proposed design; no tests have been run.",
+        "judgment": {
+          "score": 67,
+          "expectations": [
+            {
+              "criterion": "sets and restores explicit logical viewport and pixel-ratio test state using APIs compatible with the project SDK",
+              "met": false,
+              "evidence": "The response instructs a future helper to set viewport and pixel ratio and register teardown, but supplies no concrete setup or restoration APIs. SDK compatibility inspection is deferred rather than verified."
+            },
+            {
+              "criterion": "uses deterministic named fixtures and a bounded risk-based combination matrix rather than device names or a full Cartesian product",
+              "met": true,
+              "evidence": "Provides nine explicit cases with logical dimensions and named, fixed fixtures. Concentrates combined stressors in constrained layouts and excludes network, clock, randomness, and shared mutable state."
+            },
+            {
+              "criterion": "checks relevant overflow geometry containment scrolling and hit-test behavior and separates widget-test evidence from golden or real-device evidence",
+              "met": true,
+              "evidence": "Explicitly specifies framework-exception, containment, maximum-width, scrolling, overlap, center-point hit-test, and observable interaction assertions. Distinguishes simulated widget geometry from optional visual goldens and device-only keyboard/platform behavior, and states that no tests were run."
+            }
+          ],
+          "summary": "Meets the matrix-design and verification-contract criteria. Does not meet the viewport-state criterion because concrete restoration and SDK-compatible APIs remain unimplemented and unverified."
+        }
+      },
+      "delta": null,
+      "passed": false
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 0,
+    "baseline_average": null,
+    "with_skill_average": 67.0,
+    "average_delta": null,
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}
