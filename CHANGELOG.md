@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.6.0 - 2026-09-06
 
 - Deliver Milestone 2A: Trustworthy Evaluation Engine & Coverage.
 - Support structured and mandatory expectation criteria (`{"text": "...", "mandatory": true}`) in `run_behavior_evals.py` and repository validation.
