@@ -2,7 +2,14 @@
   {
     "name": "preserves-existing-go-router",
     "prompt": "Add a protected order details deep link to an app already using go_router.",
-    "expectations": ["extends existing router", "handles auth redirect and invalid order IDs", "tests cold link and back behavior"]
+    "resources": [
+      "references/deep-link-and-restoration.md"
+    ],
+    "expectations": [
+      "extends existing router",
+      {"text": "handles auth redirect and invalid order IDs", "mandatory": true},
+      "tests cold link and back behavior"
+    ]
   },
   {
     "name": "simple-modal-needs-no-router-package",
@@ -12,8 +19,11 @@
   {
     "name": "tab-shell-preserves-independent-history",
     "prompt": "Add bottom navigation with three tabs. Each tab should keep its own navigation stack when switching between tabs.",
+    "resources": [
+      "references/nested-shell-navigation.md"
+    ],
     "expectations": [
-      "uses nested navigators or equivalent shell routing to isolate tab histories",
+      {"text": "uses nested navigators or equivalent shell routing to isolate tab histories", "mandatory": true},
       "preserves each tab's back stack when switching between tabs",
       "tests forward and back navigation within and across tabs"
     ]

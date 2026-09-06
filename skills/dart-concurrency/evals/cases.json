@@ -2,7 +2,14 @@
   {
     "name": "latest-request-wins",
     "prompt": "Search results sometimes show the response for an older query after the newest query finishes.",
-    "expectations": ["identifies out-of-order completion", "adds explicit stale-result or cancellation policy", "tests reversed completion order"]
+    "resources": [
+      "references/stream-cancellation-and-debouncing.md"
+    ],
+    "expectations": [
+      "identifies out-of-order completion",
+      {"text": "adds explicit stale-result or cancellation policy", "mandatory": true},
+      "tests reversed completion order"
+    ]
   },
   {
     "name": "no-isolate-for-network-wait",
@@ -21,8 +28,11 @@
   {
     "name": "isolate-error-reaches-caller",
     "prompt": "Run CPU-heavy image compression in an isolate and crash it with an invalid codec. The UI should show an error, not hang.",
+    "resources": [
+      "references/isolate-communication-and-worker-pools.md"
+    ],
     "expectations": [
-      "propagates isolate errors back to the caller instead of silently failing",
+      {"text": "propagates isolate errors back to the caller instead of silently failing", "mandatory": true},
       "preserves or wraps the original stack trace",
       "tests error and cancellation paths in addition to success"
     ]

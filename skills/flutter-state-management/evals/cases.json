@@ -12,8 +12,11 @@
   {
     "name": "state-disposed-with-lifecycle-owner",
     "prompt": "A stream controller in a ChangeNotifier leaks because nothing closes it. Fix the leak.",
+    "resources": [
+      "references/lifecycle-and-disposal.md"
+    ],
     "expectations": [
-      "implements dispose to close controllers and cancel subscriptions owned by the notifier",
+      {"text": "implements dispose to close controllers and cancel subscriptions owned by the notifier", "mandatory": true},
       "tests that disposal is called and resources are released when the owner is removed",
       "does not introduce global or static lifetime to avoid disposal"
     ]
@@ -21,8 +24,11 @@
   {
     "name": "async-state-models-all-outcomes",
     "prompt": "Add a product detail fetch. Use a boolean isLoading flag and a nullable error string.",
+    "resources": [
+      "references/async-state-patterns.md"
+    ],
     "expectations": [
-      "models loading, success, error, and empty states distinctly rather than overlapping booleans",
+      {"text": "models loading, success, error, and empty states distinctly rather than overlapping booleans", "mandatory": true},
       "prevents impossible combinations like both loading and error being true",
       "tests transitions through each state including retry after error"
     ]

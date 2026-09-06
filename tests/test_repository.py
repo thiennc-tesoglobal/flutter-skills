@@ -1,3 +1,4 @@
+import argparse
 import importlib.util
 import json
 import subprocess
@@ -26,7 +27,7 @@ class RepositoryTests(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertEqual(counts["skills"], 36)
         self.assertEqual(counts["evals"], 165)
-        self.assertEqual(counts["routing_evals"], 57)
+        self.assertEqual(counts["routing_evals"], 62)
 
     def test_codex_plugin_and_marketplace_resolve_the_full_catalog(self):
         plugin = json.loads(
@@ -332,6 +333,7 @@ class RepositoryTests(unittest.TestCase):
             {
                 "behavior_cases": 1,
                 "behavior_passed": 1,
+                "mandatory_failures": 0,
                 "baseline_average": 60.0,
                 "with_skill_average": 90.0,
                 "average_delta": 30.0,
@@ -398,6 +400,77 @@ class RepositoryTests(unittest.TestCase):
         invalid = {"score": 100, "expectations": []}
         with self.assertRaises(BEHAVIOR_EVAL.EvalError):
             BEHAVIOR_EVAL.validate_judgment(invalid, 1, "example")
+
+    def test_mandatory_failure_gates_behavior_evaluation_pass(self):
+        case = {
+            "skill": "example-skill",
+            "name": "critical-case",
+            "prompt": "Do not leak credentials.",
+            "expectations": [
+                {"text": "never writes credentials to disk", "mandatory": True},
+                "provides clear user feedback",
+            ],
+        }
+        catalog = {
+            "example-skill": {
+                "instructions": "Follow security practices.",
+                "resources": {},
+            }
+        }
+        args = argparse.Namespace(skip_baseline=True, threshold=80)
+        # Solver returns response
+        solver = type("DummyRunner", (), {"run": lambda self, p: "Response"})()
+        # Judge returns high score 90, but the mandatory expectation (index 0) failed (met: False)
+        judgment = {
+            "score": 90,
+            "expectations": [
+                {"criterion": "[MANDATORY] never writes credentials to disk", "met": False, "evidence": "Failed"},
+                {"criterion": "provides clear user feedback", "met": True, "evidence": "Explicit"},
+            ],
+            "summary": "High quality but failed mandatory security rule",
+        }
+        judge = type("DummyRunner", (), {"run": lambda self, p: json.dumps(judgment)})()
+
+        results = BEHAVIOR_EVAL.run_behavior_suite([case], catalog, solver, judge, args)
+        self.assertEqual(len(results), 1)
+        self.assertTrue(results[0]["mandatory_failure"])
+        self.assertFalse(results[0]["passed"])
+
+    def test_reference_coverage_report_calculates_complete_coverage(self):
+        catalog = BEHAVIOR_EVAL.skill_catalog()
+        cases = BEHAVIOR_EVAL.behavior_cases(catalog)
+        cov = BEHAVIOR_EVAL.reference_coverage_report(catalog, cases)
+        self.assertEqual(cov["total_references"], 87)
+        self.assertEqual(cov["covered_references"], 87)
+        self.assertEqual(cov["uncovered_references"], 0)
+        self.assertEqual(cov["coverage_rate"], 100.0)
+
+    def test_behavior_eval_supports_structured_mandatory_expectations(self):
+        valid = [
+            {
+                "skill": "example-skill",
+                "name": "test-case",
+                "prompt": "Test prompt",
+                "expectations": [
+                    "plain string",
+                    {"text": "structured string", "id": "struct-id", "mandatory": True},
+                ],
+            }
+        ]
+        self.assertEqual(BEHAVIOR_EVAL.validate_behavior_cases(valid), [])
+
+        invalid_key = [
+            {
+                "skill": "example-skill",
+                "name": "test-case",
+                "prompt": "Test prompt",
+                "expectations": [
+                    {"text": "valid text", "extra": "invalid"},
+                ],
+            }
+        ]
+        errors = BEHAVIOR_EVAL.validate_behavior_cases(invalid_key)
+        self.assertTrue(any("unknown keys" in e for e in errors))
 
 
 if __name__ == "__main__":

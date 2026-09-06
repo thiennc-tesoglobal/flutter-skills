@@ -2,7 +2,14 @@
   {
     "name": "verifies-deep-link-on-device",
     "prompt": "Confirm a product deep link launches the correct screen on an Android emulator.",
-    "expectations": ["discovers and selects a target explicitly", "launches the actual link and verifies destination behavior", "captures focused runtime evidence"]
+    "resources": [
+      "references/device-discovery-and-emulators.md"
+    ],
+    "expectations": [
+      {"text": "discovers and selects a target explicitly", "mandatory": true},
+      "launches the actual link and verifies destination behavior",
+      "captures focused runtime evidence"
+    ]
   },
   {
     "name": "does-not-reset-user-device",
@@ -21,8 +28,11 @@
   {
     "name": "integration-test-targets-correct-flavor",
     "prompt": "Run integration tests for the staging flavor on a connected iOS simulator.",
+    "resources": [
+      "references/integration-test-workflows.md"
+    ],
     "expectations": [
-      "passes the correct flavor and dart-define arguments to the integration test command",
+      {"text": "passes the correct flavor and dart-define arguments to the integration test command", "mandatory": true},
       "uses a stable device identifier when multiple simulators are available",
       "reports which device target and flavor were actually exercised"
     ]

@@ -409,5 +409,40 @@
     "required": ["flutter-accessibility"],
     "optional": ["flutter-testing"],
     "forbidden": ["flutter-app-workflow", "flutter-ui-design", "flutter-visual-effects"]
+  },
+  {
+    "name": "vietnamese-layout-overflow",
+    "prompt": "Màn hình đặt hàng bị lỗi RenderFlex overflowed khi người dùng bật cỡ chữ lớn (text scale 200%) trên điện thoại hẹp. Hãy sửa bố cục co giãn hợp lý và kiểm tra khả năng tiếp cận.",
+    "required": ["flutter-accessibility", "flutter-responsive-layout"],
+    "optional": ["flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-ui-design"]
+  },
+  {
+    "name": "vietnamese-parse-json-isolate",
+    "prompt": "Ứng dụng bị giật khung hình (jank) khi parse mảng JSON dữ liệu lớn 5MB trả về từ API. Hãy chuyển việc giải mã JSON nặng sang Isolate hoặc compute để giải phóng main thread.",
+    "required": ["dart-concurrency"],
+    "optional": ["flutter-networking", "flutter-performance", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-background-execution"]
+  },
+  {
+    "name": "vietnamese-deep-link-navigation",
+    "prompt": "Cấu hình deep link điều hướng người dùng trực tiếp vào màn hình chi tiết sản phẩm và kiểm tra khởi chạy link thực tế trên máy ảo Android.",
+    "required": ["flutter-device-testing", "flutter-navigation"],
+    "optional": ["flutter-testing"],
+    "forbidden": ["flutter-app-workflow"]
+  },
+  {
+    "name": "vietnamese-secure-storage",
+    "prompt": "Lưu trữ access token và refresh token một cách an toàn bằng Keychain trên iOS và EncryptedSharedPreferences trên Android thay vì lưu plain text trong SharedPreferences.",
+    "required": ["flutter-security"],
+    "optional": ["flutter-authentication", "flutter-persistence", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow"]
+  },
+  {
+    "name": "vietnamese-form-validation",
+    "prompt": "Xây dựng form đăng ký tài khoản có xác thực email, mật khẩu mạnh và số điện thoại Việt Nam với thông báo lỗi rõ ràng khi submit.",
+    "required": ["flutter-ui-patterns"],
+    "optional": ["flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-authentication"]
   }
 ]

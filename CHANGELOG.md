@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Deliver Milestone 2A: Trustworthy Evaluation Engine & Coverage.
+- Support structured and mandatory expectation criteria (`{"text": "...", "mandatory": true}`) in `run_behavior_evals.py` and repository validation.
+- Enforce strict gating in the behavior evaluation engine: any failed mandatory expectation fails the case and increments `mandatory_failures` regardless of the overall score.
+- Add `--coverage` flag and `reference_coverage_report()` to `run_behavior_evals.py` to measure and report evaluation coverage of skill reference documents across the catalog.
+- Connect all 17 previously uncovered reference documents into evaluation cases across 10 skills (`dart-concurrency`, `dart-language`, `flutter-accessibility`, `flutter-animation`, `flutter-build-release`, `flutter-device-testing`, `flutter-localization`, `flutter-navigation`, `flutter-responsive-layout`, `flutter-state-management`), achieving 100% reference document coverage (87/87 references).
+- Add 5 realistic Vietnamese routing test cases (`vietnamese-layout-overflow`, `vietnamese-parse-json-isolate`, `vietnamese-deep-link-navigation`, `vietnamese-secure-storage`, `vietnamese-form-validation`), expanding the cross-catalog routing evaluation suite from 57 to 62 cases.
+- Record execution run metadata including git commit SHA, branch, working tree dirty state, timestamp, and runner version (`1.1.0`).
+
 ## 0.5.1 - 2026-09-05
 
 - Deliver Phase 1 defect corrections and responsive layout guidance across the catalog.
