@@ -14,6 +14,64 @@ Before creating or substantially revising a skill:
 4. Preserve existing project architecture and package choices unless the user's task explicitly requests migration.
 5. Add or update behavior-focused evaluation cases.
 
+## Git, branching, and pull request workflow
+
+When implementing any feature, bug fix, refactor, evaluation, or documentation update:
+
+1. **Always work in a separate branch (Never commit directly to `main`)**:
+   - Before starting, ensure `main` is up to date:
+     ```sh
+     git checkout main && git pull origin main
+     ```
+   - Create and checkout a descriptive topic branch with an appropriate prefix:
+     - `feature/<name>` for new capabilities, skills, or tooling (e.g. `feature/eval-coverage-gate`)
+     - `fix/<name>` for bug fixes, corrections, or broken links (e.g. `fix/device-cleanup-guidance`)
+     - `refactor/<name>` for restructuring without functional changes
+     - `docs/<name>` for documentation-only updates
+     - Or `<username>/<topic>` (e.g. `thiennc/phase2-eval-engine`)
+     ```sh
+     git checkout -b feature/<feature-name>
+     # or
+     git checkout -b fix/<fix-name>
+     ```
+
+2. **Validate locally before committing**:
+   - Run the required validation commands:
+     ```sh
+     python3 .github/scripts/validate_repository.py
+     python3 .github/scripts/run_behavior_evals.py --coverage
+     python3 -m unittest discover -s tests -v
+     npm test
+     npm run pack:check
+     ```
+
+3. **Commit with semantic and atomic messages**:
+   - Use conventional commit messages: `feat(...)`, `fix(...)`, `docs(...)`, `test(...)`, `refactor(...)`.
+
+4. **Push and create a Pull Request**:
+   - Push the branch to origin:
+     ```sh
+     git push -u origin <branch-name>
+     ```
+   - Create a Pull Request with a clear summary and verification plan:
+     ```sh
+     gh pr create --title "..." --body "..."
+     ```
+
+5. **Verify CI and merge**:
+   - Monitor GitHub Actions status:
+     ```sh
+     gh pr checks <pr-number> --watch
+     ```
+   - Only merge after all CI checks pass:
+     ```sh
+     gh pr merge <pr-number> --squash --delete-branch
+     ```
+   - Switch back to `main` and pull the latest merge commit:
+     ```sh
+     git checkout main && git pull origin main
+     ```
+
 ## Skill rules
 
 - Keep `SKILL.md` concise and place conditional detail in directly linked references.
@@ -23,6 +81,8 @@ Before creating or substantially revising a skill:
 - Read `pubspec.yaml` and SDK constraints before recommending syntax or packages.
 - Prefer current official Flutter and Dart documentation; use package-publisher documentation for package-specific behavior.
 - Require evidence proportionate to the claim: formatting, analysis, tests, profile-mode measurements, or device behavior.
+- Ensure all reference documents in `references/` are covered in `evals/cases.json` (`python3 .github/scripts/run_behavior_evals.py --coverage` must report 100%).
+- Designate critical correctness, security, or constraint expectations with `mandatory: true` to enforce strict evaluation gating.
 - Keep maintainer-only workflows outside `skills/` so they do not enter the public catalog.
 
 ## Surfaces that must stay synchronized
@@ -44,7 +104,7 @@ Run before committing:
 
 ```sh
 python3 .github/scripts/validate_repository.py
-python3 .github/scripts/run_behavior_evals.py
+python3 .github/scripts/run_behavior_evals.py --coverage
 python3 -m unittest discover -s tests -v
 npm ci
 npm test
