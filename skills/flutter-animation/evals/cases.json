@@ -2,7 +2,14 @@
   {
     "name": "chooses-implicit-animation",
     "prompt": "Animate a card's color and elevation when it becomes selected.",
-    "expectations": ["uses a proportionate implicit mechanism", "keeps state as source of truth", "supports reduced motion"]
+    "resources": [
+      "references/motion-patterns-and-reduced-motion.md"
+    ],
+    "expectations": [
+      "uses a proportionate implicit mechanism",
+      {"text": "keeps state as source of truth", "mandatory": true},
+      {"text": "supports reduced motion", "mandatory": true}
+    ]
   },
   {
     "name": "interruptible-controller-lifecycle",

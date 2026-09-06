@@ -31,7 +31,7 @@ IGNORED_LINK_DIRECTORIES = {
 EXPECTED_VERSION = "0.5.1"
 EXPECTED_SKILL_COUNT = 36
 EXPECTED_EVAL_COUNT = 165
-EXPECTED_ROUTING_EVAL_COUNT = 57
+EXPECTED_ROUTING_EVAL_COUNT = 62
 EXPECTED_BUNDLES = {
     "all-flutter-skills": {
         "dart-concurrency",
@@ -241,8 +241,26 @@ def validate_skill(skill_dir: Path) -> tuple[list[str], list[str], int, int]:
         if not isinstance(case.get("prompt"), str) or not case["prompt"].strip():
             errors.append(f"{label}: missing prompt")
         expectations = case.get("expectations")
-        if not isinstance(expectations, list) or not expectations or not all(isinstance(item, str) and item.strip() for item in expectations):
-            errors.append(f"{label}: expectations must be non-empty strings")
+        if not isinstance(expectations, list) or not expectations:
+            errors.append(f"{label}: expectations must be a non-empty list")
+        else:
+            for exp_idx, item in enumerate(expectations):
+                if isinstance(item, str):
+                    if not item.strip():
+                        errors.append(f"{label} expectation {exp_idx + 1}: must not be empty string")
+                elif isinstance(item, dict):
+                    text = item.get("text")
+                    if not isinstance(text, str) or not text.strip():
+                        errors.append(f"{label} expectation {exp_idx + 1}: must have non-empty 'text'")
+                    if "mandatory" in item and not isinstance(item["mandatory"], bool):
+                        errors.append(f"{label} expectation {exp_idx + 1}: 'mandatory' must be boolean")
+                    if "id" in item and (not isinstance(item["id"], str) or not item["id"].strip()):
+                        errors.append(f"{label} expectation {exp_idx + 1}: 'id' must be non-empty string")
+                    unknown_keys = set(item) - {"text", "id", "mandatory"}
+                    if unknown_keys:
+                        errors.append(f"{label} expectation {exp_idx + 1}: unknown keys {sorted(unknown_keys)}")
+                else:
+                    errors.append(f"{label} expectation {exp_idx + 1}: must be a string or object")
 
     return errors, warnings, len(description), len(cases)
 

@@ -12,8 +12,11 @@
   {
     "name": "navigation-adapts-to-window-width",
     "prompt": "Our app uses a bottom navigation bar. On wide screens it should switch to a NavigationRail or a persistent drawer.",
+    "resources": [
+      "references/adaptive-navigation-patterns.md"
+    ],
     "expectations": [
-      "selects the navigation pattern from available width constraints not device type",
+      {"text": "selects the navigation pattern from available width constraints not device type", "mandatory": true},
       "shares route and selection state across the compact and expanded layouts",
       "tests boundary widths just below and above the breakpoint"
     ]

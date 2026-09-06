@@ -7,13 +7,22 @@
   {
     "name": "records-not-for-domain-identity",
     "prompt": "Replace every model in the app with Dart records.",
-    "expectations": ["does not apply records universally", "keeps named domain types where evolution or validation matters"]
+    "resources": [
+      "references/patterns-and-records-migration.md"
+    ],
+    "expectations": [
+      {"text": "does not apply records universally", "mandatory": true},
+      "keeps named domain types where evolution or validation matters"
+    ]
   },
   {
     "name": "sealed-hierarchy-exhaustive-switch",
     "prompt": "Refactor a payment result enum with status string and optional error message into a sealed class hierarchy so the compiler prevents missing cases.",
+    "resources": [
+      "references/sealed-class-hierarchies.md"
+    ],
     "expectations": [
-      "creates a sealed hierarchy that makes switch exhaustive",
+      {"text": "creates a sealed hierarchy that makes switch exhaustive", "mandatory": true},
       "checks SDK constraint supports sealed classes before using them",
       "preserves the public API or documents the breaking change"
     ]

@@ -26,6 +26,55 @@ ROUTING_CASES_PATH = ROOT / ".github" / "evals" / "routing-cases.json"
 DEFAULT_PROFILE_PATH = ROOT / ".github" / "evals" / "public-benchmark.json"
 NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 LOCAL_REFERENCE_PATTERN = re.compile(r"\[[^\]]+\]\((references/[^)#]+\.md)(?:#[^)]+)?\)")
+RUNNER_VERSION = "1.1.0"
+
+
+def expectation_text(item: str | dict[str, Any]) -> str:
+    if isinstance(item, str):
+        return item.strip()
+    if isinstance(item, dict):
+        return str(item.get("text", "")).strip()
+    return ""
+
+
+def is_mandatory_expectation(item: str | dict[str, Any]) -> bool:
+    if isinstance(item, dict):
+        return bool(item.get("mandatory", False))
+    return False
+
+
+def git_metadata() -> dict[str, Any]:
+    try:
+        commit = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        ).stdout.strip()
+        status = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        ).stdout.strip()
+        dirty = bool(status)
+        branch = subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        ).stdout.strip()
+        return {
+            "commit": commit or None,
+            "dirty": dirty,
+            "branch": branch or None,
+        }
+    except Exception:
+        return {"commit": None, "dirty": None, "branch": None}
+
 
 
 class EvalError(RuntimeError):
@@ -157,8 +206,24 @@ def validate_behavior_cases(
         expectations = case.get("expectations")
         if not isinstance(expectations, list) or not expectations:
             errors.append(f"{identity}: missing expectations")
-        elif not all(isinstance(item, str) and item.strip() for item in expectations):
-            errors.append(f"{identity}: expectations must be non-empty strings")
+        else:
+            for index, item in enumerate(expectations):
+                if isinstance(item, str):
+                    if not item.strip():
+                        errors.append(f"{identity}: expectation {index + 1} must not be empty")
+                elif isinstance(item, dict):
+                    text = item.get("text")
+                    if not isinstance(text, str) or not text.strip():
+                        errors.append(f"{identity}: expectation {index + 1} must have a non-empty text")
+                    if "mandatory" in item and not isinstance(item["mandatory"], bool):
+                        errors.append(f"{identity}: expectation {index + 1} mandatory must be boolean")
+                    if "id" in item and (not isinstance(item["id"], str) or not item["id"].strip()):
+                        errors.append(f"{identity}: expectation {index + 1} id must be a non-empty string")
+                    unknown_keys = set(item) - {"text", "id", "mandatory"}
+                    if unknown_keys:
+                        errors.append(f"{identity}: expectation {index + 1} has unknown keys {sorted(unknown_keys)}")
+                else:
+                    errors.append(f"{identity}: expectation {index + 1} must be a string or object")
         resources = case.get("resources", [])
         if not isinstance(resources, list) or not all(
             isinstance(item, str) and item.strip() for item in resources
@@ -261,7 +326,7 @@ def build_behavior_prompt(
 
 def build_judge_prompt(case: dict[str, Any], response: str) -> str:
     criteria = "\n".join(
-        f"{index + 1}. {expectation}"
+        f"{index + 1}. {'[MANDATORY] ' if is_mandatory_expectation(expectation) else ''}{expectation_text(expectation)}"
         for index, expectation in enumerate(case["expectations"])
     )
     return (
@@ -516,11 +581,28 @@ def run_behavior_suite(
             if isinstance(skill_score, int) and isinstance(baseline_score, int)
             else None
         )
-        result["passed"] = isinstance(skill_score, int) and skill_score >= args.threshold
+        mandatory_failure = False
+        judgment_expectations = skill_judgment.get("expectations", [])
+        for index, expectation in enumerate(case["expectations"]):
+            if is_mandatory_expectation(expectation):
+                if index < len(judgment_expectations):
+                    if not judgment_expectations[index].get("met", False):
+                        mandatory_failure = True
+                        break
+                else:
+                    mandatory_failure = True
+                    break
+        result["mandatory_failure"] = mandatory_failure
+        result["passed"] = (
+            isinstance(skill_score, int)
+            and skill_score >= args.threshold
+            and not mandatory_failure
+        )
         results.append(result)
         print(
             f"behavior {case['skill']}:{case['name']} "
-            f"score={skill_score} delta={result['delta']} passed={result['passed']}",
+            f"score={skill_score} delta={result['delta']} "
+            f"mandatory_failure={mandatory_failure} passed={result['passed']}",
             flush=True,
         )
     return results
@@ -571,6 +653,7 @@ def result_summary(results: dict[str, Any]) -> dict[str, Any]:
     return {
         "behavior_cases": len(behavior),
         "behavior_passed": sum(bool(item["passed"]) for item in behavior),
+        "mandatory_failures": sum(bool(item.get("mandatory_failure")) for item in behavior),
         "baseline_average": average(baseline_scores),
         "with_skill_average": average(skill_scores),
         "average_delta": (
@@ -580,6 +663,44 @@ def result_summary(results: dict[str, Any]) -> dict[str, Any]:
         ),
         "routing_cases": len(routing),
         "routing_passed": sum(bool(item["passed"]) for item in routing),
+    }
+
+
+def reference_coverage_report(
+    catalog: dict[str, dict[str, Any]], cases: list[dict[str, Any]]
+) -> dict[str, Any]:
+    used_resources_by_skill: dict[str, set[str]] = {skill: set() for skill in catalog}
+    for case in cases:
+        skill = case.get("skill", "")
+        if skill in used_resources_by_skill:
+            for resource in case.get("resources", []):
+                used_resources_by_skill[skill].add(resource)
+
+    total_refs = 0
+    total_covered = 0
+    by_skill: dict[str, dict[str, Any]] = {}
+
+    for skill_name, details in sorted(catalog.items()):
+        available = set(details.get("resources", {}))
+        covered = available & used_resources_by_skill.get(skill_name, set())
+        uncovered = available - covered
+        total_refs += len(available)
+        total_covered += len(covered)
+        rate = round(len(covered) / len(available) * 100, 1) if available else 100.0
+        by_skill[skill_name] = {
+            "total": len(available),
+            "covered": len(covered),
+            "uncovered": sorted(uncovered),
+            "coverage_rate": rate,
+        }
+
+    overall_rate = round(total_covered / total_refs * 100, 1) if total_refs else 100.0
+    return {
+        "total_references": total_refs,
+        "covered_references": total_covered,
+        "uncovered_references": total_refs - total_covered,
+        "coverage_rate": overall_rate,
+        "by_skill": by_skill,
     }
 
 
@@ -607,6 +728,9 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--skip-baseline", action="store_true")
     parser.add_argument("--threshold", type=int, default=80)
+    parser.add_argument(
+        "--coverage", action="store_true", help="report reference document evaluation coverage"
+    )
     parser.add_argument("--output", type=Path)
     parser.add_argument(
         "--profile",
@@ -646,7 +770,23 @@ def main() -> int:
         f"Validated {len(all_behavior)} behavior cases and "
         f"{len(all_routing)} routing cases."
     )
+    coverage_data: dict[str, Any] | None = None
+    if args.coverage:
+        coverage_data = reference_coverage_report(catalog, all_behavior)
+        print("Reference Coverage Report:")
+        for skill_name, data in coverage_data["by_skill"].items():
+            if data["total"] > 0:
+                status = f"{data['covered']}/{data['total']} ({data['coverage_rate']}%)"
+                uncovered_note = f" - missing: {', '.join(data['uncovered'])}" if data["uncovered"] else ""
+                print(f"  {skill_name}: {status}{uncovered_note}")
+        print(
+            f"Total references: {coverage_data['total_references']}, "
+            f"Covered: {coverage_data['covered_references']} ({coverage_data['coverage_rate']}%), "
+            f"Uncovered: {coverage_data['uncovered_references']}"
+        )
     if not args.execute:
+        if args.coverage:
+            return 0 if coverage_data and coverage_data["uncovered_references"] == 0 else 1
         print("Validation-only mode; pass --execute to invoke an external agent.")
         return 0
 
@@ -672,6 +812,8 @@ def main() -> int:
     )
     results: dict[str, Any] = {
         "created_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+        "runner_version": RUNNER_VERSION,
+        "git": git_metadata(),
         "agent": args.agent,
         "agent_version": solver.version(),
         "model": args.model,
@@ -680,6 +822,7 @@ def main() -> int:
         "judge_model": args.judge_model,
         "catalog_version": load_json(ROOT / "package.json")["version"],
         "profile": profile,
+        "reference_coverage": coverage_data if args.coverage else None,
         "behavior": [],
         "routing": [],
     }
