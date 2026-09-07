@@ -444,5 +444,26 @@
     "required": ["flutter-ui-patterns"],
     "optional": ["flutter-testing"],
     "forbidden": ["flutter-app-workflow", "flutter-authentication"]
+  },
+  {
+    "name": "vietnamese-text-orphan-and-overflow",
+    "prompt": "Text trên màn hình bị lỗi rớt dòng dư một từ đơn lẻ nhìn rất xấu (orphaned word), và trong một số Row thì text dài quá bị lỗi RenderFlex overflowed. Cần giải pháp xử lý hiển thị text đúng cách bằng non-breaking space và Expanded.",
+    "required": ["flutter-text-rendering"],
+    "optional": ["flutter-responsive-layout"],
+    "forbidden": ["flutter-app-workflow", "flutter-networking", "flutter-security"]
+  },
+  {
+    "name": "orphaned-words-and-text-wrapping",
+    "prompt": "Headings on our product page are wrapping with single words dangling on the next line (widows/orphans), and card descriptions are clipping without ellipsis. Help me format and wrap Flutter text properly.",
+    "required": ["flutter-text-rendering"],
+    "optional": ["flutter-ui-patterns"],
+    "forbidden": ["flutter-app-workflow", "flutter-architecture", "flutter-security"]
+  },
+  {
+    "name": "inline-rich-text-spans-and-overflow",
+    "prompt": "We need to render a paragraph with bold terms, inline tag badges, and ellipsis truncation at 3 lines, plus measure its rendered size with TextPainter.",
+    "required": ["flutter-text-rendering"],
+    "optional": ["flutter-ui-patterns"],
+    "forbidden": ["flutter-app-workflow", "flutter-animation", "flutter-persistence"]
   }
 ]

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Add `flutter-text-rendering` skill to diagnose and fix Flutter text display defects, including orphaned words (widows), text overflow in flex layouts, multi-style inline spans, pre-layout `TextPainter` measurement, and accessibility under enlarged text scaling.
+- Add technical reference `references/text-overflow-and-wrapping.md` covering non-breaking spaces (`\u00A0`), flex layout constraints, and text measurement.
+- Add 5 behavior-focused evaluation cases and 3 cross-catalog routing cases.
+
 ## 0.6.0 - 2026-09-06
 
 - Deliver Milestone 2A: Trustworthy Evaluation Engine & Coverage.
