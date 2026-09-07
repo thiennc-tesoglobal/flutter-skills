@@ -1,10 +1,10 @@
 # Flutter Skills
 
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-36-2ea44f)](skills/)
+[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-37-2ea44f)](skills/)
 [![Validation](https://github.com/thiennc-tesoglobal/flutter-skills/actions/workflows/validate-repository.yml/badge.svg)](https://github.com/thiennc-tesoglobal/flutter-skills/actions/workflows/validate-repository.yml)
 [![License](https://img.shields.io/badge/License-BSD--3--Clause-blue)](LICENSE)
 
-36 package-neutral Agent Skills for building, reviewing, testing, and shipping Flutter and Dart projects.
+37 package-neutral Agent Skills for building, reviewing, testing, and shipping Flutter and Dart projects.
 
 The skills help coding agents choose the right workflow, preserve the project's existing architecture and packages, and verify changes with evidence.
 
@@ -66,7 +66,7 @@ For broader work, start with `$flutter-app-workflow`. Agents load only the selec
 | Workflow | `flutter-app-workflow`, `flutter-dependency-upgrades`, `flutter-build-release`, `flutter-ci-cd`, `flutter-device-testing` |
 | Dart | `dart-language`, `dart-concurrency` |
 | Architecture | `flutter-architecture`, `flutter-state-management` |
-| UI | `flutter-ui-design`, `flutter-figma-workflow`, `flutter-visual-effects`, `flutter-ui-patterns`, `flutter-responsive-layout`, `flutter-animation`, `flutter-navigation` |
+| UI | `flutter-ui-design`, `flutter-figma-workflow`, `flutter-visual-effects`, `flutter-ui-patterns`, `flutter-responsive-layout`, `flutter-text-rendering`, `flutter-animation`, `flutter-navigation` |
 | Data & AI | `flutter-networking`, `flutter-openapi-client`, `flutter-persistence`, `flutter-ai-integration` |
 | Identity & product | `flutter-authentication`, `flutter-in-app-purchases`, `flutter-product-analytics` |
 | Quality | `flutter-code-review`, `flutter-security`, `flutter-testing`, `flutter-runtime-debugging`, `flutter-performance`, `flutter-observability`, `flutter-accessibility`, `flutter-localization` |
@@ -74,7 +74,7 @@ For broader work, start with `$flutter-app-workflow`. Agents load only the selec
 
 ## Quality
 
-The catalog contains **36 skills**, **165 behavior-focused evaluation cases**, and **62 cross-catalog routing cases**. See [benchmarks](benchmarks/README.md) for measured examples and [CONTRIBUTING.md](CONTRIBUTING.md) for validation and contribution rules.
+The catalog contains **37 skills**, **170 behavior-focused evaluation cases**, and **65 cross-catalog routing cases**. See [benchmarks](benchmarks/README.md) for measured examples and [CONTRIBUTING.md](CONTRIBUTING.md) for validation and contribution rules.
 
 ## License
 

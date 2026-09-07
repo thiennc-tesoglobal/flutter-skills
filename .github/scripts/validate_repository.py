@@ -29,9 +29,9 @@ IGNORED_LINK_DIRECTORIES = {
     "node_modules",
 }
 EXPECTED_VERSION = "0.6.0"
-EXPECTED_SKILL_COUNT = 36
-EXPECTED_EVAL_COUNT = 165
-EXPECTED_ROUTING_EVAL_COUNT = 62
+EXPECTED_SKILL_COUNT = 37
+EXPECTED_EVAL_COUNT = 170
+EXPECTED_ROUTING_EVAL_COUNT = 65
 EXPECTED_BUNDLES = {
     "all-flutter-skills": {
         "dart-concurrency",
@@ -66,6 +66,7 @@ EXPECTED_BUNDLES = {
         "flutter-security",
         "flutter-state-management",
         "flutter-testing",
+        "flutter-text-rendering",
         "flutter-ui-design",
         "flutter-ui-patterns",
         "flutter-visual-effects",
@@ -91,6 +92,7 @@ EXPECTED_BUNDLES = {
         "flutter-localization",
         "flutter-navigation",
         "flutter-responsive-layout",
+        "flutter-text-rendering",
         "flutter-ui-design",
         "flutter-ui-patterns",
         "flutter-visual-effects",

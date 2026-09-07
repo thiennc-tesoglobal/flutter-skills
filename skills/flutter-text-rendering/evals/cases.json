@@ -1,0 +1,83 @@
+[
+  {
+    "name": "prevents-orphaned-words-in-headings",
+    "prompt": "Headings on our product landing page have an awkward single word wrapping onto a new line (orphaned words / widows). How should we handle this in Flutter so that the final word never wraps alone, without hardcoding newlines that break on different screen widths?",
+    "resources": [
+      "references/text-overflow-and-wrapping.md"
+    ],
+    "expectations": [
+      {
+        "text": "uses a non-breaking space (\\u00A0) between the final two words to glue them into an unbreakable wrap unit",
+        "mandatory": true
+      },
+      "preserves natural responsive wrapping for the preceding words rather than forcing hardcoded newlines",
+      "explains that ICU line breaking treats the non-breaking space as an unbreakable sequence"
+    ]
+  },
+  {
+    "name": "fixes-unconstrained-text-overflow-in-row",
+    "prompt": "A user profile tile placed inside a Row displays an avatar icon, a username Text widget, and a timestamp. When the username is long, Flutter throws a RenderFlex overflowed exception. How do we fix this cleanly?",
+    "resources": [
+      "references/text-overflow-and-wrapping.md"
+    ],
+    "expectations": [
+      {
+        "text": "wraps the Text widget in an Expanded or Flexible with loose fit to constrain its maximum available width",
+        "mandatory": true
+      },
+      {
+        "text": "configures overflow behavior with TextOverflow.ellipsis and an explicit maxLines",
+        "mandatory": true
+      },
+      "identifies that Row provides unbounded horizontal constraints to its children by default"
+    ]
+  },
+  {
+    "name": "composes-inline-mixed-styles-and-badges",
+    "prompt": "We need to render a single paragraph containing a bold username, regular descriptive text, a clickable link, and a small inline 'PRO' status badge aligned with the text baseline, wrapping naturally across multiple lines. How should this be built?",
+    "resources": [
+      "references/text-overflow-and-wrapping.md"
+    ],
+    "expectations": [
+      {
+        "text": "uses Text.rich or RichText with TextSpan rather than adjacent Text widgets in a Row",
+        "mandatory": true
+      },
+      "uses WidgetSpan with baseline or middle PlaceholderAlignment to embed the inline status badge",
+      "prefers Text.rich to inherit ambient DefaultTextStyle and TextScaler automatically"
+    ]
+  },
+  {
+    "name": "measures-dynamic-text-dimensions",
+    "prompt": "We are building an expandable comment widget that needs to detect whether dynamic localized copy exceeds 3 lines before layout, in order to conditionally show a 'Show more' button. How should we measure the text dimensions in Flutter?",
+    "resources": [
+      "references/text-overflow-and-wrapping.md"
+    ],
+    "expectations": [
+      {
+        "text": "uses TextPainter with layout(maxWidth) to measure whether copy exceeds maxLines",
+        "mandatory": true
+      },
+      {
+        "text": "disposes the TextPainter instance to avoid resource leaks",
+        "mandatory": true
+      },
+      "passes Directionality and ambient TextScaler into TextPainter for accurate layout simulation"
+    ]
+  },
+  {
+    "name": "preserves-readability-under-large-text-scaling",
+    "prompt": "A pricing card containing a title, price tag, billing cycle, and a discount badge breaks and clips text when a user enables 200% system font scaling (TextScaler). Provide a resilient text rendering strategy.",
+    "resources": [
+      "references/text-overflow-and-wrapping.md"
+    ],
+    "expectations": [
+      {
+        "text": "avoids hardcoded container heights around text widgets so containers can grow with enlarged font scales",
+        "mandatory": true
+      },
+      "uses flexible wrapping or scrollable containers rather than aggressively forcing FittedBox down to unreadable sizes",
+      "verifies text behavior under TextScaler.linear(2.0) with an automated widget test fixture"
+    ]
+  }
+]
