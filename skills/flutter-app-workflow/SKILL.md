@@ -9,7 +9,7 @@ Deliver a runnable, maintainable result with evidence. Preserve the user's produ
 
 ## Preflight
 
-Read [project preflight](references/project-preflight.md) before planning. Treat supplied project facts as preflight evidence; inspect repository constraints (SDK, platforms, packages, architecture, tests, flavors, devices) instead of re-asking. Reuse adequate existing solutions; do not add packages merely for familiarity.
+Read [project preflight](references/project-preflight.md) before planning. When the task includes a ticket, read it through the available GitHub integration or CLI, reconcile it with the current code, and state the agreed implementation scope before editing. Treat supplied project facts as preflight evidence; inspect repository constraints (SDK, platforms, packages, architecture, tests, flavors, devices) instead of re-asking. Reuse adequate existing solutions; do not add packages merely for familiarity.
 
 ## Route specialists
 
@@ -29,7 +29,7 @@ If a specialist is unavailable, continue with this workflow's preflight and vert
 2. Choose the smallest architectural change fitting the existing project.
 3. Implement one coherent path through model, data, state, and UI.
 4. Add focused tests with the behavior, not after an unrelated rewrite.
-5. Run narrow checks after each slice and follow [delivery verification](references/delivery-verification.md).
+5. Run narrow checks after each slice and follow [delivery verification](references/delivery-verification.md), including evidence labels and scoped Git handoff.
 
 Keep files cohesive and domain-oriented. Do not split files solely for line counts.
 

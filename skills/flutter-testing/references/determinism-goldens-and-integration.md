@@ -22,7 +22,18 @@ Operating systems use different text rasterization engines (macOS CoreText, Linu
 
 Seed independent data, reset durable state, and avoid ordering dependencies. Assert meaningful user milestones instead of implementation timing. Run the smallest supported device matrix that covers platform-specific behavior and report skipped targets explicitly.
 
+## Disposable source and runtime artifacts
+
+Separate two cleanup lifecycles:
+
+- Source lifecycle: an AI-created one-off `*_test.dart` probe is removed by the host workflow after its exact path, prior existence, and tracked state have been recorded. Arrange cleanup immediately, retain the test command's exit status and relevant output, and run cleanup on both pass and failure. Do not use recursive directory deletion or wildcard cleanup under `test/` or `integration_test/`.
+- Test runtime lifecycle: files, databases, servers, view overrides, bindings, and subscriptions created while a test runs are released with the narrowest framework teardown. Register `addTearDown` as soon as a resource exists; use a uniquely created temporary directory when filesystem isolation is appropriate.
+
+After host cleanup, verify every recorded disposable path is absent and inspect scoped Git status or diff against the baseline. This final check catches interrupted cleanup and untracked generated artifacts. Preserve existing test files and keep any test that now serves as a useful regression contract.
+
 ## Sources
 
 - [Flutter widget testing](https://docs.flutter.dev/cookbook/testing/widget/introduction)
 - [Flutter integration testing](https://docs.flutter.dev/testing/integration-tests)
+- [Flutter `addTearDown`](https://api.flutter.dev/flutter/flutter_test/addTearDown.html)
+- [Dart `Directory.createTemp`](https://api.dart.dev/dart-io/Directory/createTemp.html)

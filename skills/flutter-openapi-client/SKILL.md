@@ -24,6 +24,7 @@ Inspect `pubspec.yaml`, lockfile, clients, DTOs, generator setup, auth owners, a
 3. **Scoped Generation**: Separate full contract inventory from scoped implementation (requested tags/paths).
 4. **Preserve Stack**: Reuse project's existing client/generator. Keep generated code separate from handwritten domain/repository code.
 5. **Safe Verification**: Use local fixtures or mocks; never call live mutating endpoints (POST/PUT/DELETE) without authorization. Test serialization, required/nullable fields, enums, polymorphism, and auth hooks.
+6. **Separate Evidence**: Record contract fields and examples independently from mock fixtures and observed server responses. For a live observation, identify the environment, operation, status, media type, time or build, and redacted response shape; one payload does not establish the complete contract.
 
 ## Boundaries
 

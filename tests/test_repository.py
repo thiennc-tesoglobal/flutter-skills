@@ -26,7 +26,7 @@ class RepositoryTests(unittest.TestCase):
         errors, _, counts = VALIDATOR.validate_repository()
         self.assertEqual(errors, [])
         self.assertEqual(counts["skills"], 37)
-        self.assertEqual(counts["evals"], 170)
+        self.assertEqual(counts["evals"], 175)
         self.assertEqual(counts["routing_evals"], 65)
 
     def test_codex_plugin_and_marketplace_resolve_the_full_catalog(self):
@@ -440,8 +440,8 @@ class RepositoryTests(unittest.TestCase):
         catalog = BEHAVIOR_EVAL.skill_catalog()
         cases = BEHAVIOR_EVAL.behavior_cases(catalog)
         cov = BEHAVIOR_EVAL.reference_coverage_report(catalog, cases)
-        self.assertEqual(cov["total_references"], 88)
-        self.assertEqual(cov["covered_references"], 88)
+        self.assertEqual(cov["total_references"], 89)
+        self.assertEqual(cov["covered_references"], 89)
         self.assertEqual(cov["uncovered_references"], 0)
         self.assertEqual(cov["coverage_rate"], 100.0)
 

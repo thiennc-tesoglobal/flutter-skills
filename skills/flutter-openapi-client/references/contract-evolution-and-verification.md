@@ -14,6 +14,10 @@ Regenerate only the intended tag, operation, or module when the tool supports st
 
 Never “fix” a confirmed backend deviation by silently falsifying the canonical spec unless the contract owner approves the correction. A local compatibility adapter can be appropriate, but document the deviation, environment, evidence, and removal condition.
 
+Track each disputed field across distinct columns: declared schema and requiredness, documentation example, generated Dart type, controlled fixture, and observed environment response. Preserve absent, explicit `null`, wrong JSON type, unknown enum value, and alternate envelope as different facts. Record the source document version or hash and enough redacted request context to reproduce an observation.
+
+One response is a sample, not an inventory of every possible field or variant. When the deployed response and contract disagree, classify whether the likely cause is contract drift, partial rollout, environment difference, authorization or data-dependent shape, or client decoding. Escalate the canonical-spec correction to its owner; use a bounded compatibility adapter only when current consumers need it and its removal condition is recorded.
+
 ## Verification layers
 
 1. Validate the complete document set and resolve all selected references.
