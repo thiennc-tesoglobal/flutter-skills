@@ -20,5 +20,34 @@
     "prompt": "The profile-card golden failed after a dependency update. Regenerate every golden and commit the new files.",
     "resources": ["references/determinism-goldens-and-integration.md"],
     "expectations": ["stabilizes fonts locale theme surface and fixtures before accepting change", "renders and reviews the focused visual diff", "updates only intentional golden changes", "reports unrelated or environment-driven pixel differences"]
+  },
+  {
+    "name": "cleans-only-ai-created-disposable-test-probe",
+    "prompt": "Create a one-off Flutter test under test/ to check a rendering hypothesis, run it, then automatically clean up the temporary test so it cannot be pushed by mistake. This repository already contains tracked regression tests, and the test command may fail. Describe and execute the safe lifecycle without deleting useful project tests.",
+    "resources": ["references/determinism-goldens-and-integration.md"],
+    "expectations": [
+      {
+        "id": "preserve-project-tests",
+        "text": "preserves pre-existing and tracked tests and never uses recursive directory or broad wildcard cleanup",
+        "mandatory": true
+      },
+      {
+        "id": "prove-artifact-ownership",
+        "text": "records the disposable path and its prior existence or tracked state, refuses to overwrite it, and deletes only the artifact created by the current run",
+        "mandatory": true
+      },
+      {
+        "id": "cleanup-on-failure",
+        "text": "arranges cleanup when the probe is created, retains the test exit status and useful output, and performs cleanup after both pass and failure",
+        "mandatory": true
+      },
+      {
+        "id": "verify-clean-worktree",
+        "text": "verifies the recorded path is absent and compares scoped Git status or diff with the pre-run state before claiming cleanup",
+        "mandatory": true
+      },
+      "distinguishes host removal of the ephemeral Dart source from addTearDown cleanup of runtime resources",
+      "keeps or converts the probe when it provides durable regression value unless transient evidence was explicitly requested"
+    ]
   }
 ]

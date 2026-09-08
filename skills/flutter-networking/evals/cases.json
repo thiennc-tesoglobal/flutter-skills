@@ -69,5 +69,26 @@
     "resources": [
       "references/realtime-transports.md"
     ]
+  },
+  {
+    "name": "runtime-response-does-not-become-the-whole-contract",
+    "prompt": "Debug a Flutter decoder failure for GET /profile. The OpenAPI schema says nickname is a required string, its example contains a value, our mock fixture also contains a value, but staging returned nickname: null once. Capture what the API really returned, fix the client safely, and report what was actually verified.",
+    "resources": [
+      "references/http-response-evidence.md"
+    ],
+    "expectations": [
+      {
+        "id": "separates-evidence-sources",
+        "text": "distinguishes the declared required string, illustrative example, controlled mock fixture, and one observed staging response instead of treating them as interchangeable proof",
+        "mandatory": true
+      },
+      {
+        "id": "captures-redacted-context",
+        "text": "captures status media type environment request context time or build and a bounded redacted response shape without exposing credentials or personal data",
+        "mandatory": true
+      },
+      "handles the null defensively at the wire boundary while recording contract drift and ownership for the canonical fix",
+      "adds a sanitized regression fixture and accurately labels mock versus staging verification"
+    ]
   }
 ]

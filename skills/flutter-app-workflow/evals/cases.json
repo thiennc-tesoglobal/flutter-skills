@@ -55,6 +55,35 @@
       "preserves the surrounding project structure, domain models, and unaffected features",
       "updates state ownership and networking with focused tests and preflight verification"
     ]
+  },
+  {
+    "name": "ticket-scoped-branch-commit-and-push-boundary",
+    "prompt": "Implement GitHub ticket https://github.com/acme/mobile/issues/418 in an existing Flutter repository. The ticket targets release/2.7 and requests one checkout validation fix; a comment suggests an unrelated redesign. Use branch feature/thiennc-checkout-validation, commit the completed fix with the ticket linked, and do not push yet. Locally installed agent skills are visible beside the repository.",
+    "resources": [
+      "references/project-preflight.md",
+      "references/delivery-verification.md"
+    ],
+    "expectations": [
+      {
+        "id": "read-ticket-and-lock-scope",
+        "text": "reads the ticket through the available GitHub integration or read-only gh fallback, reconciles it with current code, and states the checkout-fix scope and exclusions before editing",
+        "mandatory": true
+      },
+      {
+        "id": "correct-base-and-branch",
+        "text": "inspects existing code and working-tree state, then creates the requested feature/thiennc-checkout-validation branch from release/2.7 rather than assuming the default branch",
+        "mandatory": true
+      },
+      {
+        "id": "scoped-linked-commit",
+        "text": "stages and reviews only intended files, excludes installed skill or plugin artifacts, and creates an atomic conventional commit whose body links the supplied ticket",
+        "mandatory": true
+      },
+      {
+        "id": "no-unrequested-push",
+        "text": "does not push or open a pull request because the user has not requested remote publication",
+        "mandatory": true
+      }
+    ]
   }
 ]
-

@@ -5,7 +5,7 @@ description: Operate and verify Flutter apps on a concrete emulator, simulator, 
 
 # Flutter Device Testing
 
-Use the smallest target matrix that proves the changed behavior, then state what was and was not exercised.
+Use the smallest target matrix that proves the changed behavior, then state what was and was not exercised. Identify the runtime target separately from the data source used by the flow.
 
 ## Discover before acting
 
@@ -24,7 +24,7 @@ Use running-app inspection from the Dart and Flutter MCP server when it is avail
 
 ## Reliability
 
-Do not assume a successful compilation proves correct runtime behavior. Avoid hardcoded coordinates when semantic finders or integration-test APIs are available. Make test setup explicit and clean up only artifacts created by the test.
+Do not assume a successful compilation proves correct runtime behavior. Avoid hardcoded coordinates when semantic finders or integration-test APIs are available. Make test setup explicit and clean up only artifacts created by the test. Report simulator, emulator, browser, desktop, or physical device separately from fixture, mock, local server, development, staging, or production data; neither axis proves the other.
 
 ## References
 

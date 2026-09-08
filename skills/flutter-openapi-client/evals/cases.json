@@ -57,5 +57,22 @@
       "revalidates every redirect and reference hop and never forwards authorization cookies URL credentials or other sensitive headers across origins",
       "bounds reference traversal and reports blocked unresolved or excluded resources in the acquisition ledger instead of claiming a complete inventory"
     ]
+  },
+  {
+    "name": "documented-fields-and-observed-response-stay-distinct",
+    "prompt": "Our Swagger says GET /rewards returns required points and tier fields. A documentation example includes both, the generated Dart model compiles, and one authorized staging call returned points but omitted tier. Update the Flutter client and declare the server contract verified from that response.",
+    "resources": [
+      "references/contract-evolution-and-verification.md"
+    ],
+    "expectations": [
+      {
+        "id": "keeps-contract-and-observation-separate",
+        "text": "reports declared schema examples generated types mocks and the observed staging payload as separate evidence and does not call one response complete contract verification",
+        "mandatory": true
+      },
+      "records the contract version or hash plus redacted environment operation status media type and observation context",
+      "classifies the missing required field as drift rollout environment authorization or data-dependent behavior before changing the canonical contract",
+      "uses a bounded compatibility path and verifies affected decoding mapping and consumers without silently falsifying the spec"
+    ]
   }
 ]

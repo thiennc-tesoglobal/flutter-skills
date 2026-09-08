@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add ticket-first scope locking, correct branch-base selection, scoped ticket-linked commits, explicit push authorization, and protection against committing installed skill artifacts to `flutter-app-workflow`.
+- Separate documented API contracts and examples from mock fixtures and observed server responses across `flutter-networking` and `flutter-openapi-client`, including redacted drift evidence and bounded compatibility handling.
+- Require verification reports to identify both the execution surface and data source so simulator, physical-device, mock, and real-service claims remain precise.
+- Harden `flutter-testing` with an ownership-aware disposable-test lifecycle that removes only AI-created temporary probes after pass or failure, preserves durable regressions, and verifies scoped Git cleanliness before commit.
 - Add `flutter-text-rendering` skill to diagnose and fix Flutter text display defects, including orphaned words (widows), text overflow in flex layouts, multi-style inline spans, pre-layout `TextPainter` measurement, and accessibility under enlarged text scaling.
 - Add technical reference `references/text-overflow-and-wrapping.md` covering non-breaking spaces (`\u00A0`), flex layout constraints, and text measurement.
 - Add 5 behavior-focused evaluation cases and 3 cross-catalog routing cases.

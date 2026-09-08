@@ -12,6 +12,7 @@ Keep transport concerns at the service boundary and expose domain-meaningful res
 - Handle ordinary HTTP request-response work with the rules below.
 - For GraphQL operations, generated models, normalized caches, optimistic writes, or subscriptions, read [GraphQL clients](references/graphql.md).
 - For WebSocket, SSE, Socket.IO, connection recovery, or live event delivery, read [Realtime transports](references/realtime-transports.md).
+- For REST or HTTP response debugging, undocumented fields, decoding drift, or comparing Swagger/OpenAPI with deployed behavior, read [HTTP response evidence](references/http-response-evidence.md).
 - Read both references for GraphQL subscriptions. Route stream races or subscription leaks to `dart-concurrency`, durable offline queues to `flutter-persistence`, and terminated-app alerts to `flutter-notifications`.
 
 ## Inspect
@@ -28,10 +29,11 @@ Read current client, generated API code, interceptors, model generation, authent
 - Define pagination identity, ordering, duplicate handling, terminal conditions, and refresh behavior.
 - Apply cache policy deliberately; do not silently return stale data as fresh.
 - Avoid logging tokens, personal data, or full sensitive payloads.
+- Keep documented schema, documentation examples, controlled fixtures, and observed server responses as separate evidence. Do not present one observed payload as the complete contract or a mock as proof of deployed behavior.
 
 ## Verification
 
-Use deterministic fake servers or mock transports to cover success, malformed data, timeouts, cancellation, unauthorized refresh, retry exhaustion, pagination boundaries, reconnect and resume behavior, and offline behavior. Run integration tests against a real service only when credentials and environment are explicitly in scope.
+Use deterministic fake servers or mock transports to cover success, malformed data, timeouts, cancellation, unauthorized refresh, retry exhaustion, pagination boundaries, reconnect and resume behavior, and offline behavior. Run integration tests against a real service only when credentials and environment are explicitly in scope. Report the execution surface and data source separately.
 
 ## Sources
 
