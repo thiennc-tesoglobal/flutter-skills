@@ -4,33 +4,22 @@
 [![Validation](https://github.com/thiennc-tesoglobal/flutter-skills/actions/workflows/validate-repository.yml/badge.svg)](https://github.com/thiennc-tesoglobal/flutter-skills/actions/workflows/validate-repository.yml)
 [![License](https://img.shields.io/badge/License-BSD--3--Clause-blue)](LICENSE)
 
-37 package-neutral Agent Skills for building, reviewing, testing, and shipping Flutter and Dart projects.
+Agent Skills for building, reviewing, testing, and shipping Flutter and Dart apps, informed by real-world projects.
 
-The skills help coding agents choose the right workflow, preserve the project's existing architecture and packages, and verify changes with evidence.
+Give your coding agent focused guidance that respects your project's architecture and packages, checks API assumptions, and backs completion claims with verification evidence.
 
 ## Install
 
-Choose skills interactively:
+Choose your agent and skills interactively:
 
 ```sh
 npx @thiennc/flutter-skills
 ```
 
-Install a focused skill for Codex:
+Installs into the current project. Add `--global` to use across projects.
 
-```sh
-npx @thiennc/flutter-skills --agent codex --skill flutter-app-workflow
-```
-
-Project installation is the default. Add `--global` to install for all projects.
-
-You can also install directly from GitHub:
-
-```sh
-npx skills add thiennc-tesoglobal/flutter-skills
-```
-
-## Plugins
+<details>
+<summary>Install as a Codex or Claude Code plugin</summary>
 
 Codex:
 
@@ -48,18 +37,25 @@ Claude Code:
 
 Claude bundles: `all-flutter-skills`, `flutter-core-skills`, `flutter-ui-skills`, and `flutter-engineering-skills`.
 
+</details>
+
 ## Use
 
-Name a skill when the task is specific:
+Start with `flutter-app-workflow` for a feature, or name a specialist for a focused task:
 
 ```text
 Use $flutter-openapi-client to read this Swagger contract and generate
-only the Customer APIs using the project's existing networking stack.
+the Customer APIs using this project's existing networking stack.
 ```
 
-For broader work, start with `$flutter-app-workflow`. Agents load only the selected skill and relevant references, not the full catalog.
+Skills guide the agent through implementation and verification, with clear reporting of what was tested and what remains unverified.
 
 ## Catalog
+
+**37 skills** covering Dart, architecture, UI, APIs, testing, debugging, and release delivery.
+
+<details>
+<summary>Browse all skills</summary>
 
 | Area | Skills |
 |---|---|
@@ -72,10 +68,12 @@ For broader work, start with `$flutter-app-workflow`. Agents load only the selec
 | Quality | `flutter-code-review`, `flutter-security`, `flutter-testing`, `flutter-runtime-debugging`, `flutter-performance`, `flutter-observability`, `flutter-accessibility`, `flutter-localization` |
 | Platform & packages | `flutter-background-execution`, `flutter-platform-integration`, `flutter-package-development`, `flutter-notifications`, `flutter-webview` |
 
+</details>
+
 ## Quality
 
-The catalog contains **37 skills**, **175 behavior-focused evaluation cases**, and **65 cross-catalog routing cases**. See [benchmarks](benchmarks/README.md) for measured examples and [CONTRIBUTING.md](CONTRIBUTING.md) for validation and contribution rules.
+**175 behavior-focused evaluation cases** and **65 cross-catalog routing cases** define expected behavior and skill selection. See [measured results](benchmarks/README.md) and [contribution guidelines](CONTRIBUTING.md).
 
 ## License
 
-BSD 3-Clause. Flutter and Dart are trademarks of Google LLC. This project is independent and is not endorsed by Google or the Flutter team.
+[BSD 3-Clause](LICENSE). Independent project; not affiliated with or endorsed by Google or the Flutter team. Flutter and Dart are trademarks of Google LLC.
