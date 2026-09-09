@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.7.0 - 2026-09-09
 
 - Add ticket-first scope locking, correct branch-base selection, scoped ticket-linked commits, explicit push authorization, and protection against committing installed skill artifacts to `flutter-app-workflow`.
 - Separate documented API contracts and examples from mock fixtures and observed server responses across `flutter-networking` and `flutter-openapi-client`, including redacted drift evidence and bounded compatibility handling.
