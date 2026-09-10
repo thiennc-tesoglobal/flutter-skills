@@ -1,0 +1,62 @@
+{
+  "created_at": "2026-09-10T14:14:30.831076+00:00",
+  "runner_version": "1.1.0",
+  "git": {
+    "commit": "ac619189c5bafb521321311f6dfd15a5b90417fa",
+    "dirty": true,
+    "branch": "feature/thiennc-post-implementation-verification"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.153.4",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.153.4",
+  "judge_model": null,
+  "catalog_version": "0.7.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-accessibility",
+      "case": "semantics-cleanup-survives-failed-assertion",
+      "with_skill": {
+        "response": "Register cleanup immediately after creating the handle, so it runs even if an assertion fails:\n\n```dart\ntestWidgets('accessibility', (tester) async {\n  final handle = tester.ensureSemantics();\n  addTearDown(handle.dispose);\n\n  await tester.pumpWidget(const MyApp());\n  await expectLater(tester, meetsGuideline(textContrastGuideline));\n});\n```\n\nRemove the trailing `handle.dispose()`. If the extra handle isn\u2019t needed, remove it entirely: `testWidgets` enables semantics by default and cleans up its own handle.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Uses testWidgets default semantics when no additional handle is needed or registers addTearDown immediately for an explicitly created handle",
+              "met": true,
+              "evidence": "Registers addTearDown(handle.dispose) immediately after tester.ensureSemantics(), and explicitly offers default testWidgets semantics when the extra handle is unnecessary."
+            },
+            {
+              "criterion": "Does not rely on a final bare dispose call that a failed pump or assertion can skip",
+              "met": true,
+              "evidence": "Explicitly instructs removing the trailing handle.dispose() and registers cleanup before pumping or asserting."
+            },
+            {
+              "criterion": "Keeps the original accessibility assertion instead of weakening or removing it to avoid the failure",
+              "met": true,
+              "evidence": "Retains an accessibility guideline assertion using expectLater(tester, meetsGuideline(textContrastGuideline)); no assertion weakening or removal is proposed."
+            }
+          ],
+          "summary": "The response makes cleanup deterministic through immediate teardown registration while retaining the accessibility assertion."
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 1,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 100.0,
+    "average_delta": null,
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

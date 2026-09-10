@@ -79,5 +79,20 @@
       "uses flexible wrapping or scrollable containers rather than aggressively forcing FittedBox down to unreadable sizes",
       "verifies text behavior under TextScaler.linear(2.0) with an automated widget test fixture"
     ]
+  },
+  {
+    "name": "orphan-helper-respects-locale-boundaries",
+    "prompt": "Reuse preventOrphans for English, Japanese, and Thai localized headings so the final word never wraps by itself in any locale.",
+    "resources": [
+      "references/text-overflow-and-wrapping.md"
+    ],
+    "expectations": [
+      {
+        "text": "limits the U+0020 last-space helper to locales with compatible space-delimited word boundaries",
+        "mandatory": true
+      },
+      "does not force the Latin whitespace heuristic onto Japanese Thai or other differently segmented scripts",
+      "uses locale-aware copy line-breaking review or a project-specific strategy for unsupported locales"
+    ]
   }
 ]

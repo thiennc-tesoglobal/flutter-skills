@@ -40,3 +40,10 @@ Read only the sections touched by the change.
 
 - Tests should fail before the fix for the right reason and cover the changed behavior, not implementation trivia.
 - Check determinism, clocks, async settling, fake boundaries, cleanup, golden stability, platform assumptions, and whether skipped or weakened assertions hide regression.
+
+## Implementation hygiene
+
+- Follow repository formatting, analyzer, lint, naming, architecture, ownership, and generated-code conventions.
+- Remove temporary logs and probes, commented-out alternatives, change-created stale TODOs, unused imports or dependencies, dead helpers, accidental files, and unrelated generated churn.
+- Reject duplicate sources of truth, copy-pasted policy, unjustified abstractions, broad dynamic or Object escape hatches, swallowed errors, and diagnostics suppressed only to make checks pass.
+- Inspect the final changed-file list and diff after checks pass. Confirm every changed line belongs to the requested behavior or a necessary regression test.

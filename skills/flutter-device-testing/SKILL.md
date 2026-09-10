@@ -30,6 +30,7 @@ Do not assume a successful compilation proves correct runtime behavior. Avoid ha
 
 - Read [device discovery and emulators](references/device-discovery-and-emulators.md) when querying connected hardware, capturing platform crash logs, or exercising OS lifecycle states.
 - Read [integration test workflows](references/integration-test-workflows.md) when writing or running `package:integration_test` suites, deep links, or smoke tests on a live target.
+- Read [lifecycle entry matrix](references/lifecycle-entry-matrix.md) when deep links or notification taps must be replayed across cold/warm start, authentication, duplicate delivery, slow data, or account changes. Use the included runner only after reviewing its dry-run plan.
 
 ## Sources
 

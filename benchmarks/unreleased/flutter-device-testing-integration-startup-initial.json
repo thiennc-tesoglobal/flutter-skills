@@ -1,0 +1,62 @@
+{
+  "created_at": "2026-09-10T14:22:49.733836+00:00",
+  "runner_version": "1.1.0",
+  "git": {
+    "commit": "ac619189c5bafb521321311f6dfd15a5b90417fa",
+    "dirty": true,
+    "branch": "feature/thiennc-post-implementation-verification"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.153.4",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.153.4",
+  "judge_model": null,
+  "catalog_version": "0.7.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-device-testing",
+      "case": "integration-startup-matches-entrypoint-signature",
+      "with_skill": {
+        "response": "With `void main() async`, the test cannot await initialization. Expose startup as a `Future<void>` and await it before pumping.\n\nIf you can change the entrypoint signature, the smallest fix is:\n\n```dart\nFuture<void> main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  // Keep existing Firebase and database initialization here, awaited.\n  runApp(const MyApp());\n}\n```\n\nThen in the integration test:\n\n```dart\nIntegrationTestWidgetsFlutterBinding.ensureInitialized();\n\ntestWidgets('app flow', (tester) async {\n  await app.main();\n  await tester.pumpAndSettle();\n  // Existing assertions.\n});\n```\n\nIf `main` must retain its `void` signature, extract the existing initialization and `runApp` into a shared bootstrap:\n\n```dart\nFuture<void> bootstrap() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  // Existing awaited Firebase and database initialization.\n  runApp(const MyApp());\n}\n\nvoid main() async {\n  await bootstrap();\n}\n```\n\nThe test then calls `await app.bootstrap()` before pumping.\n\nPreserve the project\u2019s actual initialization order, Firebase options, and database configuration. Use `pumpAndSettle()` only if the UI settles; continuous loaders require bounded pumps and explicit readiness assertions. A synchronous `void main()` should still be called without `await`.\n\nNo files were changed or tests run; no runtime target or data source was exercised.",
+        "judgment": {
+          "score": 67,
+          "expectations": [
+            {
+              "criterion": "Inspects the actual entrypoint signature and exposes or uses an awaitable Future startup boundary before the first pump.",
+              "met": true,
+              "evidence": "Explicitly identifies the supplied `void main() async` signature and proposes either `Future<void> main()` or `Future<void> bootstrap()`, awaited before pumping."
+            },
+            {
+              "criterion": "Does not mechanically await a synchronous void main or leave asynchronous initialization unobserved.",
+              "met": true,
+              "evidence": "Requires existing Firebase and database initialization to be awaited within the startup boundary and explicitly says synchronous `void main()` should be called without `await`."
+            },
+            {
+              "criterion": "Prefers a shared testable bootstrap over duplicating production initialization and specifies regression coverage for startup failure as well as success.",
+              "met": false,
+              "evidence": "Offers a shared bootstrap without duplicating production initialization, but specifies no regression coverage for startup failure and no explicit startup-success verification beyond the illustrative app-flow test."
+            }
+          ],
+          "summary": "Provides a signature-aware, awaitable startup fix, but omits required success and failure regression coverage."
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": false
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 0,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 67.0,
+    "average_delta": null,
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

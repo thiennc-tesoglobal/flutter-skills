@@ -27,5 +27,23 @@
       "uses opaque identifiers instead of putting sensitive transaction data or credentials in the payload",
       "implements idempotent deduplication for repeated or replayed action intents"
     ]
+  },
+  {
+    "name": "notification-tap-matrix-is-repeatable-and-idempotent",
+    "prompt": "Create a repeatable test plan for an order notification tap. Cover terminated and warm app states, signed-out login continuation, Back, a dialog over the current screen, slow API data, account switching after receipt, and the same payload arriving through initial-message and live listeners.",
+    "resources": [
+      "references/remote-push-notifications.md",
+      "references/platform-delivery.md"
+    ],
+    "expectations": [
+      {
+        "id": "defines-replayable-notification-rows",
+        "text": "uses stable scenario payload and account fixture identities with explicit lifecycle setup destination assertions and cleanup",
+        "mandatory": true
+      },
+      "verifies signed-out continuation Back behavior obscured UI slow or failed destination data and account changes",
+      "deduplicates initial-message and live-listener delivery so one notification identity causes at most one navigation or domain effect",
+      "reports handler provider device presentation and navigation evidence as separate layers"
+    ]
   }
 ]

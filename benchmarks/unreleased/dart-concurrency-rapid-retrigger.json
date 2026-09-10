@@ -1,0 +1,62 @@
+{
+  "created_at": "2026-09-10T14:17:40.491504+00:00",
+  "runner_version": "1.1.0",
+  "git": {
+    "commit": "ac619189c5bafb521321311f6dfd15a5b90417fa",
+    "dirty": true,
+    "branch": "feature/thiennc-post-implementation-verification"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.153.4",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.153.4",
+  "judge_model": null,
+  "catalog_version": "0.7.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "dart-concurrency",
+      "case": "rapid-retrigger-preserves-latest-subscription",
+      "with_skill": {
+        "response": "The race occurs across `await cancel()`: an older search can resume after a newer search and overwrite its subscription. Invalidate older work **before awaiting**, detach the previous subscription, and check the generation before attaching or publishing.\n\n```dart\nStreamSubscription<SearchResult>? _searchSubscription;\nint _searchGeneration = 0;\nbool _closed = false;\n\nFuture<void> search(String query) async {\n  if (_closed) return;\n\n  final generation = ++_searchGeneration;\n  final previous = _searchSubscription;\n  _searchSubscription = null;\n\n  // Cancellation failures propagate to the caller.\n  await previous?.cancel();\n\n  bool isCurrent() =>\n      !_closed && generation == _searchGeneration;\n\n  if (!isCurrent()) return;\n\n  _searchSubscription = repository.search(query).listen(\n    (result) {\n      if (isCurrent()) emitResult(result);\n    },\n    onError: (Object error, StackTrace stackTrace) {\n      if (isCurrent()) emitError(error, stackTrace);\n    },\n  );\n}\n\nFuture<void> close() async {\n  if (_closed) return;\n\n  _closed = true;\n  ++_searchGeneration;\n\n  final subscription = _searchSubscription;\n  _searchSubscription = null;\n  await subscription?.cancel();\n}\n```\n\nKeep these fields and methods on the object that owns the search lifecycle. Call `close()` at teardown; callers must await or explicitly handle failures from `search()` and `close()`. If this owner creates an output controller, it must also close it.\n\nVerify with controllable cancellation futures:\n\n- Pause query A during cancellation, start B, then release A: only B attaches.\n- Deliver obsolete results and errors: neither reaches consumers.\n- Close while cancellation is pending: no listener attaches afterward.\n- Check normal results, stream errors with stack traces, and cancellation failures.\n\nNo RxDart or debounce is needed to fix this ordering bug. I haven\u2019t run tests or static analysis here.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Makes the cancel-and-listen transition race-safe with a generation token or equivalent serialized latest-wins ownership.",
+              "met": true,
+              "evidence": "Increments the generation and detaches the previous subscription before awaiting cancellation, then checks ownership before attaching. Result and error callbacks also check the generation."
+            },
+            {
+              "criterion": "Does not treat debounce or a busy flag alone as an ordering guarantee.",
+              "met": true,
+              "evidence": "Uses generation-based ownership for ordering and explicitly states that neither RxDart nor debounce is needed."
+            },
+            {
+              "criterion": "Cancels the final owned subscription during teardown and specifies deterministic regression cases for rapid triggers with reversed cancellation or result timing.",
+              "met": true,
+              "evidence": "close() invalidates pending work and cancels the owned subscription. Regression cases use controllable cancellation futures to pause A, start B, then release A; they also cover obsolete results/errors and teardown during pending cancellation."
+            }
+          ],
+          "summary": "The response explicitly satisfies all criteria with latest-wins ownership, teardown cancellation, and deterministic regression scenarios. It states that tests were not run."
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 1,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 100.0,
+    "average_delta": null,
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

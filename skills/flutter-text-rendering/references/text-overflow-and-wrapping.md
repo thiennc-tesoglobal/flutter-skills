@@ -11,7 +11,10 @@ An orphan occurs when the final word of a headline, title, or label wraps onto i
 Flutter's underlying line-breaking engine (ICU) breaks text across lines at whitespace boundaries. Replacing the final space in a string with a Unicode non-breaking space (`\u00A0`) binds the last two words together into a single unbreakable unit. When space runs out, both words wrap to the next line together instead of leaving one lonely word:
 
 ```dart
-/// Glues the last two words of a string together using a non-breaking space.
+/// Glues the last two words of space-delimited copy together.
+///
+/// Use only for locales whose words are separated by U+0020 spaces. CJK, Thai,
+/// and other writing systems need locale-aware copy and line-breaking review.
 String preventOrphans(String text) {
   final trimmed = text.trim();
   final lastSpaceIndex = trimmed.lastIndexOf(' ');
@@ -19,6 +22,8 @@ String preventOrphans(String text) {
   return trimmed.replaceRange(lastSpaceIndex, lastSpaceIndex + 1, '\u00A0');
 }
 ```
+
+This helper intentionally does not reinterpret tabs, newlines, or scripts without ordinary spaces. Apply it only after checking the active locale and copy requirements; do not force a Latin word-boundary heuristic onto CJK, Thai, or other writing systems with different segmentation rules.
 
 ### Preserving semantic units
 

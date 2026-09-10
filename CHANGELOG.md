@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Add a bounded post-implementation review loop to `flutter-app-workflow` and allow `flutter-code-review` to assess completed delivery work before completion.
+- Require an evidence-based understanding gate before implementation, focused clarification for material ambiguity, and an impact map that keeps affected out-of-scope consumers visible without silently expanding the change.
+- Add a clean-implementation gate that removes temporary residue and unintended churn, preserves strong regression assertions, and inspects the final diff after formatter, analyzer, lint, and test checks pass.
+- Expand API evidence evaluations for absent, null, wrong-type, error-envelope, and environment-specific contract drift without weakening domain models or overstating live verification.
+- Add replayable deep-link and notification lifecycle matrices covering cold/warm entry, authentication, Back behavior, obscured destinations, delayed APIs, account changes, and duplicate listeners.
+- Add a shell-free lifecycle matrix runner with dry-run planning, bounded execution, cleanup, redacted JSON evidence, and Android/iOS trigger support.
+- Harden accessibility test cleanup, rapid stream re-trigger ownership, asynchronous integration-test startup, and locale-aware orphan handling.
+- Add 14 behavior-focused evaluation cases for understanding, impact, clean-code review, API, navigation, notification, device testing, accessibility, concurrency, and text rendering behavior.
+
 ## 0.7.0 - 2026-09-09
 
 - Add ticket-first scope locking, correct branch-base selection, scoped ticket-linked commits, explicit push authorization, and protection against committing installed skill artifacts to `flutter-app-workflow`.

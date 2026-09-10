@@ -5,11 +5,23 @@ Streams model sequences of asynchronous events over time. Failure to cancel subs
 ## Subscription Lifecycle and Cancellation
 
 - **Always Store and Cancel**: Never call `.listen()` without assigning the returned `StreamSubscription` to a variable that is explicitly cancelled in `dispose()`, `close()`, or during component unmount.
-- **Cancel on Re-trigger**: When starting a new asynchronous operation from user input (e.g., search queries), cancel the previous subscription before listening to the new stream:
+- **Cancel on Re-trigger**: When starting a new asynchronous operation from user input (e.g., search queries), define latest-wins behavior and prevent overlapping `cancel`/`listen` continuations. A generation token is one package-free option:
   ```dart
-  await _searchSubscription?.cancel();
-  _searchSubscription = repository.search(query).listen(...);
+  int _searchGeneration = 0;
+
+  Future<void> search(String query) async {
+    final generation = ++_searchGeneration;
+    final previous = _searchSubscription;
+    _searchSubscription = null;
+    await previous?.cancel();
+
+    if (generation != _searchGeneration) return;
+    _searchSubscription = repository.search(query).listen((result) {
+      if (generation == _searchGeneration) emit(result);
+    });
+  }
   ```
+  Increment the generation before final teardown and cancel the stored subscription. Alternatively, serialize the whole cancel-and-listen transition or use switch-latest semantics already present in the project's stream stack. A busy flag can lose the newest query, and debounce alone reduces request frequency but does not guarantee ordering or ownership.
 - **StreamController Ownership**: A controller must be closed by the class that instantiates it. Never leave a controller open after its consumers are unmounted. Check `isClosed` before adding events if emissions can race with disposal.
 
 ## Debouncing and Throttling

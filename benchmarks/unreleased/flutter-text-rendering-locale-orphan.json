@@ -1,0 +1,62 @@
+{
+  "created_at": "2026-09-10T14:27:19.230207+00:00",
+  "runner_version": "1.1.0",
+  "git": {
+    "commit": "ac619189c5bafb521321311f6dfd15a5b90417fa",
+    "dirty": true,
+    "branch": "feature/thiennc-post-implementation-verification"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.153.4",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.153.4",
+  "judge_model": null,
+  "catalog_version": "0.7.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-text-rendering",
+      "case": "orphan-helper-respects-locale-boundaries",
+      "with_skill": {
+        "response": "`preventOrphans` uses ordinary spaces to identify the final two words, so reuse it for English only. Japanese and Thai need locale-aware segmentation; this helper cannot guarantee that their final word won\u2019t wrap alone.\n\n```dart\nString formatHeading(String text, Locale locale) {\n  return locale.languageCode == 'en'\n      ? preventOrphans(text)\n      : text;\n}\n```\n\nFor Japanese and Thai, use translator-approved non-breaking groups or locale-aware line-breaking logic. Even English needs narrow-width checks when the final pair is wider than the container.\n\nVerify localized headings at narrow widths and 1.5\u00d7/2\u00d7 text scaling, including empty and long copy. Widget tests should check for overflow, intended line counts, and English non-breaking pairing.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Limits the U+0020 last-space helper to locales with compatible space-delimited word boundaries",
+              "met": true,
+              "evidence": "Explicitly restricts preventOrphans to English, and the code calls it only when locale.languageCode == 'en'."
+            },
+            {
+              "criterion": "Does not force the Latin whitespace heuristic onto Japanese, Thai, or other differently segmented scripts",
+              "met": true,
+              "evidence": "Returns text unchanged for non-English locales and explicitly states that the helper cannot guarantee orphan prevention for Japanese and Thai."
+            },
+            {
+              "criterion": "Uses locale-aware copy line-breaking review or a project-specific strategy for unsupported locales",
+              "met": true,
+              "evidence": "Specifies translator-approved non-breaking groups or locale-aware line-breaking logic for Japanese and Thai, plus localized heading verification at narrow widths and increased text scaling."
+            }
+          ],
+          "summary": "The response explicitly satisfies all three criteria through an English-only guard and locale-appropriate strategies and review for unsupported locales."
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 1,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 100.0,
+    "average_delta": null,
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

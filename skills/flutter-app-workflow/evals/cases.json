@@ -85,5 +85,67 @@
         "mandatory": true
       }
     ]
+  },
+  {
+    "name": "implementation-closes-with-bounded-risk-review",
+    "prompt": "Describe the concrete completion plan for a checkout confirmation implementation in an existing Flutter app. The supplied implementation context says its focused success test passes, but the new async submit handler navigates after await, the button can be tapped twice, and no repository or runtime tools are available in this request. Explain the corrections, bounded post-implementation review, tests, and honest evidence required before reporting the feature complete.",
+    "resources": [
+      "references/project-preflight.md",
+      "references/post-implementation-review.md",
+      "references/delivery-verification.md"
+    ],
+    "expectations": [
+      {
+        "id": "runs-distinct-bounded-review",
+        "text": "requires a distinct review of the completed task diff and directly affected checkout lifecycle before claiming completion without expanding into unrelated legacy code",
+        "mandatory": true
+      },
+      {
+        "id": "resolves-reachable-findings",
+        "text": "identifies duplicate submission and navigation after disposal or stale ownership and specifies that both must be resolved within the authorized implementation scope before completion",
+        "mandatory": true
+      },
+      "requires focused regression coverage and rerunning affected checks after the corrections",
+      "reports supplied evidence separately from checks that remain unexecuted and does not claim files or runtime behavior were verified"
+    ]
+  },
+  {
+    "name": "material-ambiguity-blocks-dependent-edit",
+    "prompt": "Implement a points-expiry banner from this ticket: 'Hide expired points and show the next expiry date.' The existing code contains two plausible policies: one expires points at an exact UTC instant and another at the end of the member's local calendar day. There is no acceptance test or product rule choosing between them. Pick whichever policy is easier and start coding immediately.",
+    "resources": [
+      "references/project-preflight.md"
+    ],
+    "expectations": [
+      {
+        "id": "separates-evidence-from-hypothesis",
+        "text": "states the known current and intended behavior, identifies the two supported policy interpretations, and does not present either as the confirmed requirement",
+        "mandatory": true
+      },
+      {
+        "id": "asks-before-dependent-edit",
+        "text": "asks one focused question about UTC instant versus member-local calendar-day expiry and does not implement policy-dependent code before the answer",
+        "mandatory": true
+      },
+      "maps balance expiry display localization tests and backend contract boundaries from supplied context or as exact required inspections without pretending unavailable file or tool access occurred",
+      "does not re-ask facts already supplied or expand into an unrelated points-system rewrite"
+    ]
+  },
+  {
+    "name": "outside-scope-impact-is-mapped-without-expansion",
+    "prompt": "Fix checkout currency rounding only. The failing path uses a shared MoneyFormatter that is also consumed by receipts, CSV exports, refunds, and analytics. The ticket does not authorize changing those outputs. Determine the implementation scope and verification impact before editing.",
+    "resources": [
+      "references/project-preflight.md",
+      "references/post-implementation-review.md"
+    ],
+    "expectations": [
+      {
+        "id": "maps-shared-consumer-impact",
+        "text": "identifies receipts exports refunds and analytics as directly affected consumers of a shared formatter even though they are outside the requested checkout edit scope",
+        "mandatory": true
+      },
+      "determines from code contracts and tests whether the defect belongs in the shared formatter or a checkout-specific boundary before choosing the change",
+      "does not silently change outside-scope output contracts and asks when the required rounding policy remains materially ambiguous",
+      "selects regression checks for affected consumers and reports any unverified or intentionally unchanged impact"
+    ]
   }
 ]

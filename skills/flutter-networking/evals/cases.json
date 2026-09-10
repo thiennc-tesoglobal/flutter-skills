@@ -90,5 +90,22 @@
       "handles the null defensively at the wire boundary while recording contract drift and ownership for the canonical fix",
       "adds a sanitized regression fixture and accurately labels mock versus staging verification"
     ]
+  },
+  {
+    "name": "runtime-success-and-error-shapes-are-compared-by-environment",
+    "prompt": "Investigate GET /orders/42. The OpenAPI schema declares a non-null integer total and one JSON error envelope. Development returned total as a string, staging returned total: null for one account, and a staging 422 used a different error body. Log the full responses and change the domain model to Object so every case decodes.",
+    "resources": [
+      "references/http-response-evidence.md"
+    ],
+    "expectations": [
+      {
+        "id": "compares-bounded-runtime-evidence",
+        "text": "records redacted request context status media type environment time or build and response shape for each observation while keeping them separate from the declared contract",
+        "mandatory": true
+      },
+      "distinguishes missing null wrong JSON type and alternate error envelope across development and staging rather than merging them into one payload truth",
+      "keeps unsafe wire variation at the transport or wire-model boundary instead of weakening the domain model to Object",
+      "adds sanitized fixtures for observed success and error variants and labels fixture tests separately from live-service observations"
+    ]
   }
 ]
