@@ -1,0 +1,62 @@
+{
+  "created_at": "2026-09-10T14:24:36.682057+00:00",
+  "runner_version": "1.1.0",
+  "git": {
+    "commit": "ac619189c5bafb521321311f6dfd15a5b90417fa",
+    "dirty": true,
+    "branch": "feature/thiennc-post-implementation-verification"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.153.4",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.153.4",
+  "judge_model": null,
+  "catalog_version": "0.7.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-device-testing",
+      "case": "integration-startup-matches-entrypoint-signature",
+      "with_skill": {
+        "response": "Because this entrypoint is `void main() async`, the test cannot await its initialization. Using the supplied Flutter testing guidance, expose an awaitable startup boundary and await it before pumping.\n\nIf you can change the entrypoint signature, the smallest fix is:\n\n```dart\nFuture<void> main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  await Firebase.initializeApp();\n  await initializeDatabase(); // Keep your existing initialization.\n  runApp(const MyApp());\n}\n```\n\nThen in the integration test:\n\n```dart\nIntegrationTestWidgetsFlutterBinding.ensureInitialized();\n\ntestWidgets('startup reaches the first screen', (tester) async {\n  await app.main();\n  await tester.pumpAndSettle();\n\n  // Assert the expected first screen using your app's semantic finder.\n});\n```\n\nPreserve the project\u2019s existing Firebase options, dependency setup, flavor, and initialization order. If `main` must retain its current signature, extract that same startup body into `Future<void> bootstrap()`; production calls it from `main`, and the test awaits `app.bootstrap()`.\n\nAdd focused regression coverage proving initialization completes before mounting and that initialization failures propagate without mounting the app. Fake the initialization boundary for failure coverage. If the first screen has a continuous loader, use bounded pumps and an explicit readiness assertion instead of `pumpAndSettle()`.\n\nNo files were changed or tests run here; no runtime target or Firebase/database data source was exercised.",
+        "judgment": {
+          "score": 65,
+          "expectations": [
+            {
+              "criterion": "Inspects the actual entrypoint signature and exposes or uses an awaitable Future startup boundary before the first pump.",
+              "met": false,
+              "evidence": "Provides Future<void> main() and awaits app.main() before pumping, but relies on the task's stated signature without explicitly inspecting the project's actual entrypoint."
+            },
+            {
+              "criterion": "Does not mechanically await a synchronous void main or leave asynchronous initialization unobserved.",
+              "met": true,
+              "evidence": "Changes the asynchronous entrypoint to Future<void>, awaits Firebase and database initialization, and then awaits startup in the test."
+            },
+            {
+              "criterion": "Prefers a shared testable bootstrap over duplicating production initialization and specifies regression coverage for startup failure as well as success.",
+              "met": true,
+              "evidence": "Reuses production startup through app.main() or an extracted shared bootstrap(). Specifies coverage for initialization completing before mounting and failures propagating without mounting."
+            }
+          ],
+          "summary": "The proposed startup fix and regression coverage satisfy the behavioral requirements, but the mandatory verification of the actual project entrypoint is missing."
+        }
+      },
+      "delta": null,
+      "mandatory_failure": true,
+      "passed": false
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 0,
+    "mandatory_failures": 1,
+    "baseline_average": null,
+    "with_skill_average": 65.0,
+    "average_delta": null,
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

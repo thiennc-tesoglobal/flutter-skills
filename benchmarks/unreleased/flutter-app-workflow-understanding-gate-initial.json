@@ -1,0 +1,67 @@
+{
+  "created_at": "2026-09-10T13:51:01.078151+00:00",
+  "runner_version": "1.1.0",
+  "git": {
+    "commit": "ac619189c5bafb521321311f6dfd15a5b90417fa",
+    "dirty": true,
+    "branch": "feature/thiennc-post-implementation-verification"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.153.4",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.153.4",
+  "judge_model": null,
+  "catalog_version": "0.7.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-app-workflow",
+      "case": "material-ambiguity-blocks-dependent-edit",
+      "with_skill": {
+        "response": "The two policies can hide points at different times and show different expiry dates, so implementation depends on a product decision. Should points expire at the exact UTC instant or at the end of the member\u2019s local calendar day?",
+        "judgment": {
+          "score": 65,
+          "expectations": [
+            {
+              "criterion": "States current and intended behavior, identifies both policy interpretations, and treats neither as confirmed.",
+              "met": false,
+              "evidence": "Identifies both interpretations and leaves the choice unresolved, but does not explicitly state the known current behavior or the intended behavior of hiding expired points and showing the next expiry date."
+            },
+            {
+              "criterion": "Asks one focused policy question and does not implement policy-dependent code before the answer.",
+              "met": true,
+              "evidence": "Asks whether expiry occurs at the exact UTC instant or the end of the member\u2019s local calendar day. Provides no implementation."
+            },
+            {
+              "criterion": "Continues non-prejudicial inspection and maps balance, expiry display, localization, tests, and backend contract boundaries.",
+              "met": false,
+              "evidence": "Provides no inspection or mapping of affected boundaries."
+            },
+            {
+              "criterion": "Does not re-ask supplied facts or expand into an unrelated points-system rewrite.",
+              "met": true,
+              "evidence": "The sole question targets the unresolved policy choice and stays within scope."
+            }
+          ],
+          "summary": "Correctly pauses for the missing policy decision, but omits an explicit current/intended behavior statement and the required independent inspection."
+        }
+      },
+      "delta": null,
+      "mandatory_failure": true,
+      "passed": false
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 0,
+    "mandatory_failures": 1,
+    "baseline_average": null,
+    "with_skill_average": 65.0,
+    "average_delta": null,
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

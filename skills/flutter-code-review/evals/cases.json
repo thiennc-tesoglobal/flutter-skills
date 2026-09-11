@@ -47,5 +47,41 @@
       "identifies the reachable untrusted WebView bridge path and its privileged impact",
       "orders findings by realistic impact and preconditions rather than security keywords"
     ]
+  },
+  {
+    "name": "delivery-workflow-review-stays-within-task-impact",
+    "prompt": "Act as the review pass for a completed Flutter profile-save implementation before its delivery workflow reports done. The diff adds an async save, shows a snackbar through the old BuildContext after await, and has only a success-path unit test. The surrounding feature contains unrelated legacy naming issues.",
+    "resources": [
+      "references/review-workflow.md",
+      "references/flutter-review-checklist.md"
+    ],
+    "expectations": [
+      {
+        "id": "reviews-delivery-diff",
+        "text": "accepts invocation from the active delivery workflow and reviews the completed implementation, acceptance behavior, tests, and directly affected lifecycle",
+        "mandatory": true
+      },
+      "reports the reachable post-await context or disposal risk and missing failure or teardown regression coverage with concrete locations and corrections",
+      "returns material findings and focused checks to the implementation workflow without independently expanding its authorization",
+      "does not report unrelated legacy naming or speculative architecture changes"
+    ]
+  },
+  {
+    "name": "clean-implementation-gate-rejects-residue-and-weakened-tests",
+    "prompt": "Review a completed Flutter bug fix before delivery. The behavior now works, but the diff leaves debugPrint calls, a commented-out old implementation, an unused dependency, an unrelated generated file, and changes an exact regression assertion to anyOf so the test passes. The author says format and analyze are green.",
+    "resources": [
+      "references/review-workflow.md",
+      "references/flutter-review-checklist.md"
+    ],
+    "expectations": [
+      {
+        "id": "rejects-false-clean-completion",
+        "text": "does not treat green format and analysis as clean completion while implementation residue unrelated generated churn and a weakened regression assertion remain",
+        "mandatory": true
+      },
+      "requires removal of temporary logging commented code unused dependency and accidental generated changes unless each is justified by the task",
+      "restores a behavior-specific regression assertion rather than accepting anyOf or deleting durable coverage",
+      "reviews the final changed-file list and diff and reruns focused tests without proposing unrelated style or architecture rewrites"
+    ]
   }
 ]

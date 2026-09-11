@@ -36,5 +36,20 @@
       "preserves or wraps the original stack trace",
       "tests error and cancellation paths in addition to success"
     ]
+  },
+  {
+    "name": "rapid-retrigger-preserves-latest-subscription",
+    "prompt": "A search callback awaits cancellation of the previous StreamSubscription and then assigns a new listener. Rapid queries sometimes leave an older continuation owning the field or overwrite the newest listener. Fix the lifecycle without adding RxDart to a project that does not use it.",
+    "resources": [
+      "references/stream-cancellation-and-debouncing.md"
+    ],
+    "expectations": [
+      {
+        "text": "makes the cancel-and-listen transition race-safe with a generation token or equivalent serialized latest-wins ownership",
+        "mandatory": true
+      },
+      "does not treat debounce or a busy flag alone as an ordering guarantee",
+      "cancels the final owned subscription during teardown and specifies deterministic regression cases for rapid triggers with reversed cancellation or result timing"
+    ]
   }
 ]

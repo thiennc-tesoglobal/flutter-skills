@@ -1,0 +1,62 @@
+{
+  "created_at": "2026-09-10T14:15:29.826578+00:00",
+  "runner_version": "1.1.0",
+  "git": {
+    "commit": "ac619189c5bafb521321311f6dfd15a5b90417fa",
+    "dirty": true,
+    "branch": "feature/thiennc-post-implementation-verification"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.153.4",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.153.4",
+  "judge_model": null,
+  "catalog_version": "0.7.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "dart-concurrency",
+      "case": "rapid-retrigger-preserves-latest-subscription",
+      "with_skill": {
+        "response": "Use a generation token to make the newest query the owner. Clear the subscription field **before** awaiting cancellation, then check ownership before assigning a listener. Disposal must invalidate pending continuations too.\n\nApplying the dart-concurrency skill, keep this state on the object that owns the search:\n\n```dart\nStreamSubscription<SearchResult>? _subscription;\nint _generation = 0;\nbool _disposed = false;\n\nFuture<void> search(String query) async {\n  if (_disposed) return;\n\n  final generation = ++_generation;\n  final previous = _subscription;\n  _subscription = null;\n\n  // Cancellation failures propagate to the caller.\n  await previous?.cancel();\n\n  if (_disposed || generation != _generation) return;\n\n  _subscription = repository.search(query).listen(\n    (result) {\n      if (!_disposed && generation == _generation) {\n        emit(result);\n      }\n    },\n    onError: (Object error, StackTrace stackTrace) {\n      if (!_disposed && generation == _generation) {\n        emitError(error, stackTrace);\n      }\n    },\n  );\n}\n\nFuture<void> close() async {\n  _disposed = true;\n  ++_generation;\n\n  final previous = _subscription;\n  _subscription = null;\n  await previous?.cancel();\n}\n```\n\nThe repository produces results; this object owns cancellation and forwards only current results to its consumer. Callers should await or explicitly handle failures from `search()` and `close()`. If this object owns an output controller, close it during teardown as well.\n\nVerify with controlled cancellation futures: start query A while cancellation is pending, start B, then release A\u2019s cancellation. Only B should install a listener. Also test normal results, stream and cancellation failures, stale emissions, and disposal during cancellation. Run static analysis; these checks haven\u2019t been run here.",
+        "judgment": {
+          "score": 75,
+          "expectations": [
+            {
+              "criterion": "Makes the cancel-and-listen transition race-safe with a generation token or equivalent serialized latest-wins ownership.",
+              "met": true,
+              "evidence": "Increments a generation token, clears the subscription field before awaiting cancellation, and checks generation and disposal before installing a listener. Result callbacks also check ownership."
+            },
+            {
+              "criterion": "Does not treat debounce or a busy flag alone as an ordering guarantee.",
+              "met": true,
+              "evidence": "Uses generation-based ownership to enforce ordering; neither debounce nor a busy flag supplies the guarantee."
+            },
+            {
+              "criterion": "Cancels the final owned subscription during teardown and tests rapid triggers with reversed cancellation or result timing.",
+              "met": false,
+              "evidence": "close() invalidates pending continuations and cancels the owned subscription. However, the response only proposes a controlled cancellation test and explicitly states that the checks have not been run; it supplies no implemented tests."
+            }
+          ],
+          "summary": "Provides an explicit latest-wins lifecycle fix without RxDart and handles teardown, but does not complete the required race testing."
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": false
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 0,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 75.0,
+    "average_delta": null,
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

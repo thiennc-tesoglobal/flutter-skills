@@ -36,5 +36,22 @@
       "handles edge cases like expired sessions and deep-link targets after login",
       "tests the redirect chain from an unauthenticated deep link through login to the target"
     ]
+  },
+  {
+    "name": "deep-link-lifecycle-matrix-catches-duplicate-navigation",
+    "prompt": "Verify an authenticated order deep link after implementation. It must work from cold and warm state, continue through login, preserve Back behavior, handle a slow order API, and not navigate twice when both initial-link and live-link listeners receive the same URI. A dialog may already cover the warm destination.",
+    "resources": [
+      "references/deep-link-and-restoration.md"
+    ],
+    "expectations": [
+      {
+        "id": "covers-reachable-entry-states",
+        "text": "defines replayable cold and warm rows including signed-out continuation, Back behavior, an obscuring dialog, slow or failed destination data, and duplicate delivery",
+        "mandatory": true
+      },
+      "asserts the final destination and one navigation or domain effect per link identity rather than treating OS launch success as route proof",
+      "checks account or authorization changes and prevents stale protected content after the login handoff",
+      "preserves the project's existing router and uses device testing only for lifecycle behavior that requires a concrete target"
+    ]
   }
 ]

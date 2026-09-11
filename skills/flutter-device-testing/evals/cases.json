@@ -49,5 +49,39 @@
       "states that staging conformance and physical iPhone behavior remain unverified",
       "identifies the additional staging call or physical-device run required only if those stronger claims are needed"
     ]
+  },
+  {
+    "name": "replays-lifecycle-entry-matrix-with-cleanup-and-evidence",
+    "prompt": "Run a reusable Android emulator matrix for cold and warm order deep links plus a duplicate notification tap. Project commands already exist to seed signed-in or signed-out users, delay the mock API, assert the semantic destination and Back behavior, and clear fixtures. Review the plan before execution and save a report.",
+    "resources": [
+      "references/device-discovery-and-emulators.md",
+      "references/integration-test-workflows.md",
+      "references/lifecycle-entry-matrix.md"
+    ],
+    "expectations": [
+      {
+        "id": "uses-safe-replayable-runner",
+        "text": "builds a stable matrix with explicit device app lifecycle setup trigger assertion cleanup timeout and report path, reviews the dry run, then executes shell-free argv commands",
+        "mandatory": true
+      },
+      "runs cleanup after pass or failure and does not embed credentials or sensitive payload data in the matrix or report",
+      "asserts semantic destination Back and one effect for duplicate delivery rather than relying only on adb launch success",
+      "reports Android emulator as the execution surface and the configured mock API and notification trigger as separate data or provider evidence"
+    ]
+  },
+  {
+    "name": "integration-startup-matches-entrypoint-signature",
+    "prompt": "Our Flutter integration test calls app.main() and immediately pumps. The app performs asynchronous Firebase and database initialization before runApp, but the entrypoint is declared void main() async. Fix the test startup without applying a generic snippet blindly to every project.",
+    "resources": [
+      "references/integration-test-workflows.md"
+    ],
+    "expectations": [
+      {
+        "text": "uses the supplied entrypoint signature or inspects it when repository access is available, then exposes or uses an awaitable Future startup boundary before the first pump",
+        "mandatory": true
+      },
+      "does not mechanically await a synchronous void main or leave asynchronous initialization unobserved",
+      "prefers a shared testable bootstrap over duplicating production initialization and specifies regression coverage for startup failure as well as success"
+    ]
   }
 ]

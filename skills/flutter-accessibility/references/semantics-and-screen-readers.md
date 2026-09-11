@@ -53,10 +53,19 @@ SemanticsService.announce(
 
 ## Automated Verification
 
-- In widget tests, enable semantics using `tester.binding.pipelineOwner.semanticsOwner`:
+- `testWidgets` enables semantics by default and disposes its framework-owned handle after the callback. Prefer that default instead of opening a second handle:
+  ```dart
+  testWidgets('favorite toggle exposes its state', (tester) async {
+    await tester.pumpWidget(const TestApp());
+    expect(
+      tester.getSemantics(find.byType(CustomCartButton)),
+      matchesSemantics(...),
+    );
+  });
+  ```
+- If a test deliberately manages an additional semantics handle, register cleanup immediately so assertion or pump failures cannot leak it into later tests:
   ```dart
   final handle = tester.ensureSemantics();
-  expect(tester.getSemantics(find.byType(CustomCartButton)), matchesSemantics(...));
-  handle.dispose();
+  addTearDown(handle.dispose);
   ```
 - Use `meetsGuideline(androidTapTargetGuideline)` and `meetsGuideline(iOSTapTargetGuideline)` in widget tests.

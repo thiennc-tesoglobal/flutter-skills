@@ -39,5 +39,21 @@
       "replaces nonessential motion with an instant or minimal transition when reduced motion is active",
       "preserves the task completion path regardless of motion setting"
     ]
+  },
+  {
+    "name": "semantics-cleanup-survives-failed-assertion",
+    "prompt": "Our accessibility widget test opens a SemanticsHandle and disposes it after the final expect. When that assertion fails, later tests report leaked semantics state. Make the test cleanup deterministic.",
+    "resources": [
+      "references/semantics-and-screen-readers.md",
+      "references/target-sizes-and-contrast.md"
+    ],
+    "expectations": [
+      {
+        "text": "uses testWidgets default semantics when no additional handle is needed or registers addTearDown immediately for an explicitly created handle",
+        "mandatory": true
+      },
+      "does not rely on a final bare dispose call that a failed pump or assertion can skip",
+      "keeps the original accessibility assertion instead of weakening or removing it to avoid the failure"
+    ]
   }
 ]

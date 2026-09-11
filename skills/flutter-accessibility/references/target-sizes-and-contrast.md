@@ -37,10 +37,10 @@ Accessible interfaces ensure that interactive elements are easy to tap and reada
 Run Flutter's built-in accessibility matchers in widget tests:
 ```dart
 testWidgets('A11y guidelines check', (tester) async {
-  final handle = tester.ensureSemantics();
   await tester.pumpWidget(const MyApp());
   await expectLater(tester, meetsGuideline(textContrastGuideline));
   await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
-  handle.dispose();
 });
 ```
+
+`testWidgets` enables and cleans up semantics by default. If a test explicitly creates another `SemanticsHandle`, call `addTearDown(handle.dispose)` immediately after creation rather than relying on a final statement that an earlier failed assertion can skip.

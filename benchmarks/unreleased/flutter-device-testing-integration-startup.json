@@ -1,0 +1,62 @@
+{
+  "created_at": "2026-09-10T14:26:09.210720+00:00",
+  "runner_version": "1.1.0",
+  "git": {
+    "commit": "ac619189c5bafb521321311f6dfd15a5b90417fa",
+    "dirty": true,
+    "branch": "feature/thiennc-post-implementation-verification"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.153.4",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.153.4",
+  "judge_model": null,
+  "catalog_version": "0.7.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-device-testing",
+      "case": "integration-startup-matches-entrypoint-signature",
+      "with_skill": {
+        "response": "The test cannot await startup reliably because `void main() async` hides its initialization `Future`. Expose an awaitable startup boundary, then await it before pumping.\n\nIf you can change the entrypoint signature, preserve the existing initialization order and change it to `Future<void>`:\n\n```dart\nFuture<void> main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  await Firebase.initializeApp();\n  await initializeDatabase(); // Your existing initialization.\n  runApp(const MyApp());\n}\n```\n\nThen update the integration test:\n\n```dart\nIntegrationTestWidgetsFlutterBinding.ensureInitialized();\n\ntestWidgets('startup reaches the first screen', (tester) async {\n  await app.main();\n  await tester.pumpAndSettle();\n\n  expect(find.byKey(const ValueKey('home_screen')), findsOneWidget);\n});\n```\n\nUse your actual initialization calls and first-screen finder. If the app must retain a `void` entrypoint, extract the initialization and `runApp` sequence into a shared `Future<void> bootstrap()` and have the test await that instead.\n\nDo not mechanically add `await` to every project: a synchronous `void main()` should still be called directly. If the first screen has continuous animations, use a bounded wait for the expected screen instead of `pumpAndSettle()`.\n\nCover initialization ordering and failure with injected or fake initializers: the app should mount only after initialization completes, and initialization errors should remain observable without mounting the app.\n\nNo files were changed or tests run here; neither a runtime target nor a Firebase/database data source was exercised.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Uses the supplied entrypoint signature and exposes or uses an awaitable startup boundary before the first pump.",
+              "met": true,
+              "evidence": "Identifies that `void main() async` hides the initialization Future, changes it to `Future<void>`, and explicitly awaits `app.main()` before pumping."
+            },
+            {
+              "criterion": "Does not mechanically await a synchronous void main or leave asynchronous initialization unobserved.",
+              "met": true,
+              "evidence": "Explicitly says synchronous `void main()` should be called directly. Both asynchronous initializers are awaited within the startup Future observed by the test."
+            },
+            {
+              "criterion": "Prefers a shared testable bootstrap over duplicating production initialization and specifies regression coverage for startup failure and success.",
+              "met": true,
+              "evidence": "Reuses the production entrypoint in the test and proposes a shared `Future<void> bootstrap()` if the void signature must remain. Specifies first-screen success, initialization ordering, and observable initialization failures without mounting the app."
+            }
+          ],
+          "summary": "Meets all criteria through signature-aware startup synchronization, shared production initialization, and explicit success and failure regression coverage."
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 1,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 100.0,
+    "average_delta": null,
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

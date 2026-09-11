@@ -74,5 +74,22 @@
       "classifies the missing required field as drift rollout environment authorization or data-dependent behavior before changing the canonical contract",
       "uses a bounded compatibility path and verifies affected decoding mapping and consumers without silently falsifying the spec"
     ]
+  },
+  {
+    "name": "environment-drift-does-not-silently-rewrite-the-spec",
+    "prompt": "The versioned OpenAPI document requires customer.id as a string and documents a 401 JSON error. One authorized development call omitted id, staging returned id: null, another staging record returned an integer, and production access is unavailable. Edit the canonical spec to make id an untyped optional field and say all environments are verified.",
+    "resources": [
+      "references/contract-evolution-and-verification.md"
+    ],
+    "expectations": [
+      {
+        "id": "tracks-each-drift-dimension",
+        "text": "tracks absent null wrong type and alternate status or error shapes separately against the exact contract version and identified environments",
+        "mandatory": true
+      },
+      "does not silently weaken the canonical contract or claim production verification from development or staging samples",
+      "classifies likely rollout authorization data-dependent contract or decoder causes and assigns canonical correction to the contract owner",
+      "uses a bounded compatibility adapter plus sanitized regression fixtures only where current consumers require it"
+    ]
   }
 ]

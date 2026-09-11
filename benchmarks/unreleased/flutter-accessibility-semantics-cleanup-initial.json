@@ -1,0 +1,62 @@
+{
+  "created_at": "2026-09-10T14:12:54.552030+00:00",
+  "runner_version": "1.1.0",
+  "git": {
+    "commit": "ac619189c5bafb521321311f6dfd15a5b90417fa",
+    "dirty": true,
+    "branch": "feature/thiennc-post-implementation-verification"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.153.4",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.153.4",
+  "judge_model": null,
+  "catalog_version": "0.7.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-accessibility",
+      "case": "semantics-cleanup-survives-failed-assertion",
+      "with_skill": {
+        "response": "Register cleanup immediately after creating the handle using `addTearDown`, so it runs even if an assertion fails:\n\n```dart\ntestWidgets('accessibility', (tester) async {\n  final handle = tester.ensureSemantics();\n  addTearDown(handle.dispose);\n\n  await tester.pumpWidget(const MyApp());\n  await expectLater(\n    tester,\n    meetsGuideline(androidTapTargetGuideline),\n  );\n});\n```\n\nRemove the trailing `handle.dispose()`. If the test doesn\u2019t need an additional handle, remove both handle-related lines: `testWidgets` enables semantics and cleans up its own handle automatically.",
+        "judgment": {
+          "score": 67,
+          "expectations": [
+            {
+              "criterion": "Uses testWidgets default semantics when no additional handle is needed or registers addTearDown immediately for an explicitly created handle",
+              "met": true,
+              "evidence": "Registers addTearDown(handle.dispose) immediately after tester.ensureSemantics(), and explicitly offers default semantics when an additional handle is unnecessary."
+            },
+            {
+              "criterion": "Does not rely on a final bare dispose call that a failed pump or assertion can skip",
+              "met": true,
+              "evidence": "Explicitly removes the trailing handle.dispose() and registers cleanup before pumping or asserting."
+            },
+            {
+              "criterion": "Keeps the accessibility assertion and verifies that a following widget test starts with clean semantics state",
+              "met": false,
+              "evidence": "Preserves the meetsGuideline accessibility assertion but provides no verification that a following widget test starts with clean semantics state."
+            }
+          ],
+          "summary": "Makes cleanup deterministic and retains the accessibility assertion, but omits the required following-test verification."
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": false
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 0,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 67.0,
+    "average_delta": null,
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}
