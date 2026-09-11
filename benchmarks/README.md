@@ -16,7 +16,28 @@ python3 .github/scripts/run_behavior_evals.py \
 
 Raw results are intentionally committed without removing responses, judgments, selections, or failed cases. Case identifiers resolve to the versioned prompts and rubrics under `skills/*/evals` and `.github/evals`. The current profile is a six-case behavior and seven-case routing sample on one agent configuration; it is useful regression evidence, not proof of quality across every model, app, or skill.
 
+The default evaluation matrix uses the existing Codex CLI session and does not require a second provider account:
+
+```sh
+python3 .github/scripts/run_eval_matrix.py \
+  --execute \
+  --output-dir benchmarks/matrix
+```
+
+This same-model score is regression screening, not independent evidence. Pair published results with compiler-backed checks and a 10–15% human sample. When another authenticated provider is available, use the optional cross-agent matrix; every judge must pass the threshold and mandatory criteria:
+
+```sh
+python3 .github/scripts/run_eval_matrix.py \
+  --execute \
+  --matrix .github/evals/cross-agent-matrix.json \
+  --output-dir benchmarks/matrix
+```
+
+Use [evaluation strategy](../.github/maintainer/evaluation-strategy.md) for PR, nightly, release, executable, cross-agent, and human-review workflows. External-agent execution remains explicit; ordinary CI validates inputs without spending model quota.
+
 ## Unreleased focused result
+
+The first compiler-backed fixture passed with `codex-cli 0.153.4`; see [the raw executable result](unreleased/dart-concurrency-latest-wins-executable.json). The agent changed only the allowed Dart library, while immutable verification passed `dart format`, `dart analyze`, and a deterministic reversed-completion runtime check. No cross-provider score is claimed; the default workflow is intentionally Codex-only and records independent human calibration separately.
 
 Four hardening cases now score 100 with `codex-cli 0.153.4`: [accessibility semantics cleanup](unreleased/flutter-accessibility-semantics-cleanup.json), [rapid stream re-trigger ownership](unreleased/dart-concurrency-rapid-retrigger.json), [signature-aware integration startup](unreleased/flutter-device-testing-integration-startup.json), and [locale-bounded orphan handling](unreleased/flutter-text-rendering-locale-orphan.json). Retained initial results document the measured gaps and rubric calibration: [semantics cleanup 67](unreleased/flutter-accessibility-semantics-cleanup-initial.json), [stream ownership 75](unreleased/dart-concurrency-rapid-retrigger-initial.json), and integration startup at [67](unreleased/flutter-device-testing-integration-startup-initial.json) then [65](unreleased/flutter-device-testing-integration-startup-signature-initial.json). These focused runs skip baselines and prove response behavior only.
 

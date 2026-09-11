@@ -1,0 +1,111 @@
+{
+  "created_at": "2026-09-11T04:08:01.449520+00:00",
+  "runner_version": "1.0.0",
+  "git": {
+    "commit": "b436a788d91dd4c3aab0f303ecdc87766836e1a6",
+    "dirty": true,
+    "branch": "feature/thiennc-eval-trustworthiness"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.153.4",
+  "model": null,
+  "cases": [
+    {
+      "name": "dart-concurrency-latest-wins",
+      "skill": "dart-concurrency",
+      "agent_response": "Updated `lib/latest_value.dart` with a generation guard to reject stale results. Public API and disposal protection remain unchanged; no packages added.\n\nExisting race/disposal verification passes. Static analysis reports no issues.",
+      "changed_paths": [
+        "lib/latest_value.dart"
+      ],
+      "forbidden_changes": [],
+      "patch": "--- a/lib/latest_value.dart\n+++ b/lib/latest_value.dart\n@@ -1,11 +1,13 @@\n class LatestValue<T> {\n   T? value;\n   bool _disposed = false;\n+  int _generation = 0;\n \n   Future<void> run(Future<T> Function() operation) async {\n     if (_disposed) return;\n+    final generation = ++_generation;\n     final result = await operation();\n-    if (!_disposed) value = result;\n+    if (!_disposed && generation == _generation) value = result;\n   }\n \n   void dispose() {\n",
+      "baseline_checks": [
+        {
+          "name": "format",
+          "command": [
+            "dart",
+            "format",
+            "--output=none",
+            "--set-exit-if-changed",
+            "lib"
+          ],
+          "exit_code": 0,
+          "stdout": "Formatted 1 file (0 changed) in 0.00 seconds.\n",
+          "stderr": "",
+          "passed": true
+        },
+        {
+          "name": "analyze",
+          "command": [
+            "dart",
+            "analyze",
+            "lib",
+            "bin"
+          ],
+          "exit_code": 0,
+          "stdout": "Analyzing lib, bin...\nNo issues found!\n",
+          "stderr": "",
+          "passed": true
+        },
+        {
+          "name": "runtime-verification",
+          "command": [
+            "dart",
+            "run",
+            "bin/verify.dart"
+          ],
+          "exit_code": 255,
+          "stdout": "",
+          "stderr": "Unhandled exception:\nBad state: An older result replaced the newest result.\n#0      main (file:///private/var/folders/04/qnk8k5q16dx32vxxvjnrxbdm0000gn/T/flutter-executable-eval-qo5vctxk/baseline/bin/verify.dart:17:5)\n<asynchronous suspension>\n",
+          "passed": false
+        }
+      ],
+      "checks": [
+        {
+          "name": "format",
+          "command": [
+            "dart",
+            "format",
+            "--output=none",
+            "--set-exit-if-changed",
+            "lib"
+          ],
+          "exit_code": 0,
+          "stdout": "Formatted 1 file (0 changed) in 0.00 seconds.\n",
+          "stderr": "",
+          "passed": true
+        },
+        {
+          "name": "analyze",
+          "command": [
+            "dart",
+            "analyze",
+            "lib",
+            "bin"
+          ],
+          "exit_code": 0,
+          "stdout": "Analyzing lib, bin...\nNo issues found!\n",
+          "stderr": "",
+          "passed": true
+        },
+        {
+          "name": "runtime-verification",
+          "command": [
+            "dart",
+            "run",
+            "bin/verify.dart"
+          ],
+          "exit_code": 0,
+          "stdout": "",
+          "stderr": "",
+          "passed": true
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "summary": {
+    "cases": 1,
+    "passed": 1
+  }
+}

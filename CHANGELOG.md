@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add multi-judge forward evaluation with strict mandatory gating, per-criterion agreement, score-range reporting, and backward-compatible primary judgment fields.
+- Add hash-bound human-review sampling and per-judge human agreement summaries.
+- Add a constrained executable-evaluation runner and a measured Dart concurrency fixture that verifies formatting, analysis, and runtime behavior without allowing test edits.
+- Add PR, nightly all-skill, and full-release benchmark profiles, a Codex-only default matrix, and an optional Codex/Claude cross-judge matrix.
 - Add a bounded post-implementation review loop to `flutter-app-workflow` and allow `flutter-code-review` to assess completed delivery work before completion.
 - Require an evidence-based understanding gate before implementation, focused clarification for material ambiguity, and an impact map that keeps affected out-of-scope consumers visible without silently expanding the change.
 - Add a clean-implementation gate that removes temporary residue and unintended churn, preserves strong regression assertions, and inspects the final diff after formatter, analyzer, lint, and test checks pass.

@@ -1,0 +1,29 @@
+{
+  "name": "dart-concurrency-latest-wins",
+  "skill": "dart-concurrency",
+  "prompt": "Fix LatestValue so a slower earlier operation cannot overwrite the newest completed operation. Preserve the public API, add no packages, and keep disposal from accepting later results.",
+  "resources": [
+    "references/stream-cancellation-and-debouncing.md"
+  ],
+  "fixture": "dart-concurrency-latest-wins",
+  "allowed_changes": [
+    "lib"
+  ],
+  "checks": [
+    {
+      "name": "format",
+      "command": ["dart", "format", "--output=none", "--set-exit-if-changed", "lib"],
+      "timeout": 60
+    },
+    {
+      "name": "analyze",
+      "command": ["dart", "analyze", "lib", "bin"],
+      "timeout": 120
+    },
+    {
+      "name": "runtime-verification",
+      "command": ["dart", "run", "bin/verify.dart"],
+      "timeout": 60
+    }
+  ]
+}

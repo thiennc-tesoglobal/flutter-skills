@@ -2,6 +2,7 @@ import argparse
 import importlib.util
 import json
 import subprocess
+import sys
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -72,6 +73,16 @@ class RepositoryTests(unittest.TestCase):
         self.assertNotIn("NODE_AUTH_TOKEN", workflow)
         self.assertLess(workflow.index("publish-npm:"), workflow.index("publish-tessl:"))
         self.assertGreaterEqual(workflow.count("if: github.ref_type == 'tag'"), 3)
+
+    def test_validation_workflow_checks_all_eval_layers_without_execution(self):
+        workflow = (ROOT / ".github" / "workflows" / "validate-repository.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("python3 .github/scripts/run_behavior_evals.py", workflow)
+        self.assertIn("python3 .github/scripts/run_executable_evals.py", workflow)
+        self.assertIn("python3 .github/scripts/run_eval_matrix.py", workflow)
+        self.assertNotIn("run_behavior_evals.py --execute", workflow)
+        self.assertNotIn("run_executable_evals.py --execute", workflow)
 
     def test_repository_markdown_excludes_generated_dependencies(self):
         paths = {
@@ -317,10 +328,35 @@ class RepositoryTests(unittest.TestCase):
             "production-crash-context-is-not-product-analytics",
         )
 
+    def test_tiered_benchmark_profiles_resolve_expected_coverage(self):
+        catalog = BEHAVIOR_EVAL.skill_catalog()
+        behavior = BEHAVIOR_EVAL.behavior_cases(catalog)
+        routing = BEHAVIOR_EVAL.routing_cases()
+        expectations = {
+            "pr-smoke.json": (6, 7),
+            "nightly-representative.json": (37, 65),
+            "release-full.json": (189, 65),
+        }
+        for filename, counts in expectations.items():
+            profile = BEHAVIOR_EVAL.load_json(BEHAVIOR_EVAL.PROFILES_DIR / filename)
+            self.assertEqual(
+                BEHAVIOR_EVAL.validate_benchmark_profile(profile, behavior, routing),
+                [],
+            )
+            selected = BEHAVIOR_EVAL.cases_for_profile(profile, behavior, routing)
+            self.assertEqual((len(selected[0]), len(selected[1])), counts)
+        nightly = BEHAVIOR_EVAL.load_json(
+            BEHAVIOR_EVAL.PROFILES_DIR / "nightly-representative.json"
+        )
+        self.assertEqual(
+            {item["skill"] for item in nightly["behavior"]}, set(catalog)
+        )
+
     def test_result_summary_reports_raw_score_aggregates(self):
         results = {
             "behavior": [
                 {
+                    "skill": "flutter-testing",
                     "passed": True,
                     "baseline": {"judgment": {"score": 60}},
                     "with_skill": {"judgment": {"score": 90}},
@@ -337,10 +373,51 @@ class RepositoryTests(unittest.TestCase):
                 "baseline_average": 60.0,
                 "with_skill_average": 90.0,
                 "average_delta": 30.0,
+                "judge_agreement_rate": None,
+                "judge_score_range_average": None,
+                "mandatory_judge_disagreements": 0,
+                "by_skill": {
+                    "flutter-testing": {
+                        "cases": 1,
+                        "passed": 1,
+                        "baseline_average": 60.0,
+                        "with_skill_average": 90.0,
+                        "average_delta": 30.0,
+                    }
+                },
                 "routing_cases": 2,
                 "routing_passed": 1,
             },
         )
+
+    def test_markdown_report_keeps_per_skill_failures_visible(self):
+        results = {
+            "agent": "codex",
+            "judges": [{"agent": "claude", "model": None}],
+            "profile": {"name": "release-full"},
+            "summary": {
+                "behavior_cases": 1,
+                "behavior_passed": 0,
+                "routing_cases": 0,
+                "routing_passed": 0,
+                "judge_agreement_rate": 100.0,
+                "by_skill": {
+                    "flutter-testing": {
+                        "cases": 1,
+                        "passed": 0,
+                        "baseline_average": 50.0,
+                        "with_skill_average": 75.0,
+                        "average_delta": 25.0,
+                    }
+                },
+            },
+        }
+        report = BEHAVIOR_EVAL.markdown_report(results)
+        self.assertIn("# release-full", report)
+        self.assertIn("Independent primary judge: no", report)
+        self.assertIn("Behavior: 0/1 passed", report)
+        self.assertIn("| `flutter-testing` | 1 | 0 | 50.0 | 75.0 | 25.0 |", report)
+        self.assertIn("Retain the source JSON", report)
 
     def test_agent_runner_reports_the_exact_cli_version(self):
         completed = type(
@@ -372,6 +449,21 @@ class RepositoryTests(unittest.TestCase):
                 "claude eval timed out after 12 seconds",
             ):
                 runner.run("prompt")
+
+    def test_independent_judge_gate_rejects_self_judging_primary(self):
+        argv = [
+            "run_behavior_evals.py",
+            "--agent",
+            "codex",
+            "--judge-agent",
+            "codex",
+            "--require-independent-judge",
+        ]
+        with patch.object(sys, "argv", argv):
+            with self.assertRaisesRegex(
+                BEHAVIOR_EVAL.EvalError, "primary judge must differ"
+            ):
+                BEHAVIOR_EVAL.main()
 
     def test_routing_score_rejects_overactivation(self):
         case = {
@@ -431,10 +523,66 @@ class RepositoryTests(unittest.TestCase):
         }
         judge = type("DummyRunner", (), {"run": lambda self, p: json.dumps(judgment)})()
 
-        results = BEHAVIOR_EVAL.run_behavior_suite([case], catalog, solver, judge, args)
+        results = BEHAVIOR_EVAL.run_behavior_suite([case], catalog, solver, [judge], args)
         self.assertEqual(len(results), 1)
         self.assertTrue(results[0]["mandatory_failure"])
         self.assertFalse(results[0]["passed"])
+
+    def test_multi_judge_agreement_reports_disagreement_and_strict_gate(self):
+        expectations = [
+            {"text": "preserves credentials", "id": "credentials", "mandatory": True},
+            "reports verification honestly",
+        ]
+        positive = {
+            "score": 90,
+            "expectations": [
+                {"criterion": "preserves credentials", "met": True, "evidence": "yes"},
+                {"criterion": "reports verification honestly", "met": True, "evidence": "yes"},
+            ],
+            "summary": "pass",
+        }
+        dissenting = {
+            "score": 75,
+            "expectations": [
+                {"criterion": "preserves credentials", "met": False, "evidence": "no"},
+                {"criterion": "reports verification honestly", "met": True, "evidence": "yes"},
+            ],
+            "summary": "mandatory failure",
+        }
+        agreement = BEHAVIOR_EVAL.aggregate_judgments(
+            [positive, dissenting], expectations
+        )
+        self.assertEqual(agreement["average_score"], 82.5)
+        self.assertEqual(agreement["score_range"], 15)
+        self.assertEqual(agreement["expectation_agreement_rate"], 50.0)
+        self.assertEqual(agreement["mandatory_disagreements"], ["credentials"])
+
+        case = {
+            "skill": "example-skill",
+            "name": "multi-judge-case",
+            "prompt": "Keep credentials safe.",
+            "expectations": expectations,
+        }
+        catalog = {
+            "example-skill": {
+                "instructions": "Keep credentials safe.",
+                "resources": {},
+            }
+        }
+        solver = type("DummySolver", (), {"run": lambda self, p: "Response"})()
+        judge_one = type(
+            "DummyJudgeOne", (), {"run": lambda self, p: json.dumps(positive)}
+        )()
+        judge_two = type(
+            "DummyJudgeTwo", (), {"run": lambda self, p: json.dumps(dissenting)}
+        )()
+        args = argparse.Namespace(skip_baseline=True, threshold=80)
+        results = BEHAVIOR_EVAL.run_behavior_suite(
+            [case], catalog, solver, [judge_one, judge_two], args
+        )
+        self.assertFalse(results[0]["passed"])
+        self.assertTrue(results[0]["mandatory_failure"])
+        self.assertEqual(len(results[0]["with_skill"]["judgments"]), 2)
 
     def test_reference_coverage_report_calculates_complete_coverage(self):
         catalog = BEHAVIOR_EVAL.skill_catalog()

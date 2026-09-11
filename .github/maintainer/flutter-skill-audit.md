@@ -38,11 +38,16 @@ Audit skills as operational instructions for coding agents, not as general Flutt
 - Expectations test observable decisions or evidence, not exact wording.
 - Each skill has a successful case and a boundary/preservation case.
 - Demonstrated regressions receive focused cases.
+- Use [evaluation strategy](evaluation-strategy.md) to choose focused, nightly, release, cross-judge, human-review, and compiler-backed evidence without overstating coverage.
 
 ## Collection validation
 
 ```sh
 python3 .github/scripts/validate_repository.py
+python3 .github/scripts/run_behavior_evals.py --coverage
+python3 .github/scripts/run_executable_evals.py
+python3 .github/scripts/run_eval_matrix.py
+python3 .github/scripts/run_eval_matrix.py --matrix .github/evals/cross-agent-matrix.json
 python3 -m unittest discover -s tests -v
 claude plugin validate .
 npx skills add . --list
