@@ -1,0 +1,13 @@
+{
+  "name": "codex-default",
+  "description": "Run the fixed PR profile with the authenticated Codex CLI and no external provider account.",
+  "runs": [
+    {
+      "id": "codex-solver",
+      "agent": "codex",
+      "judges": ["codex"],
+      "profile": "profiles/pr-smoke.json",
+      "skip_baseline": true
+    }
+  ]
+}

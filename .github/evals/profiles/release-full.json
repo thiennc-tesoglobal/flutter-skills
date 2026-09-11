@@ -1,0 +1,6 @@
+{
+  "name": "release-full",
+  "description": "Complete behavior and routing collection for an intentional release audit.",
+  "behavior": "all",
+  "routing": "all"
+}

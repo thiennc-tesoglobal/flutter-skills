@@ -1,0 +1,21 @@
+{
+  "name": "pr-smoke",
+  "description": "Low-cost fixed profile for pull requests that change shared evaluation behavior.",
+  "behavior": [
+    {"skill": "flutter-package-development", "case": "dry-run-does-not-authorize-publish"},
+    {"skill": "flutter-runtime-debugging", "case": "runtime-fix-repeats-original-flow"},
+    {"skill": "flutter-ai-integration", "case": "skill-install-needs-no-provider-key"},
+    {"skill": "flutter-authentication", "case": "native-client-secret-is-not-secret"},
+    {"skill": "flutter-in-app-purchases", "case": "sandbox-readiness-is-not-store-publication"},
+    {"skill": "flutter-product-analytics", "case": "sdk-log-is-not-end-to-end-proof"}
+  ],
+  "routing": [
+    "reusable-federated-plugin-release",
+    "attach-to-running-lifecycle-failure",
+    "human-support-chat-is-not-ai",
+    "verified-store-subscription-entitlement",
+    "authentication-threat-review-stays-security-led",
+    "existing-session-authenticated-http-transport",
+    "production-crash-context-is-not-product-analytics"
+  ]
+}

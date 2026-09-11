@@ -30,7 +30,11 @@ jobs:
         run: python3 .github/scripts/validate_repository.py
 
       - name: Validate forward-evaluation inputs
-        run: python3 .github/scripts/run_behavior_evals.py
+        run: |
+          python3 .github/scripts/run_behavior_evals.py
+          python3 .github/scripts/run_executable_evals.py
+          python3 .github/scripts/run_eval_matrix.py
+          python3 .github/scripts/run_eval_matrix.py --matrix .github/evals/cross-agent-matrix.json
 
       - name: Lint Agent Skills specification conformance
         run: bash .github/scripts/run_dart_skills_lint.sh

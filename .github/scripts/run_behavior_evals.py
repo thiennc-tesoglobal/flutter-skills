@@ -24,9 +24,10 @@ ROOT = Path(__file__).resolve().parents[2]
 SKILLS_DIR = ROOT / "skills"
 ROUTING_CASES_PATH = ROOT / ".github" / "evals" / "routing-cases.json"
 DEFAULT_PROFILE_PATH = ROOT / ".github" / "evals" / "public-benchmark.json"
+PROFILES_DIR = ROOT / ".github" / "evals" / "profiles"
 NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 LOCAL_REFERENCE_PATTERN = re.compile(r"\[[^\]]+\]\((references/[^)#]+\.md)(?:#[^)]+)?\)")
-RUNNER_VERSION = "1.1.0"
+RUNNER_VERSION = "2.0.0"
 
 
 def expectation_text(item: str | dict[str, Any]) -> str:
@@ -140,7 +141,9 @@ def validate_benchmark_profile(
         errors.append("benchmark profile requires a name")
     behavior_ids = {(case["skill"], case["name"]) for case in behavior}
     requested_behavior = profile.get("behavior")
-    if not isinstance(requested_behavior, list) or not requested_behavior:
+    if requested_behavior == "all":
+        pass
+    elif not isinstance(requested_behavior, list) or not requested_behavior:
         errors.append("benchmark profile requires behavior cases")
     else:
         seen_behavior: set[tuple[str, str]] = set()
@@ -160,7 +163,9 @@ def validate_benchmark_profile(
 
     routing_names = {case["name"] for case in routing}
     requested_routing = profile.get("routing")
-    if not isinstance(requested_routing, list) or not requested_routing:
+    if requested_routing == "all":
+        pass
+    elif not isinstance(requested_routing, list) or not requested_routing:
         errors.append("benchmark profile requires routing cases")
     elif not all(isinstance(name, str) for name in requested_routing):
         errors.append("benchmark routing cases must be strings")
@@ -180,11 +185,19 @@ def cases_for_profile(
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     behavior_by_id = {(case["skill"], case["name"]): case for case in behavior}
     routing_by_name = {case["name"]: case for case in routing}
-    selected_behavior = [
-        behavior_by_id[(item["skill"], item["case"])]
-        for item in profile["behavior"]
-    ]
-    selected_routing = [routing_by_name[name] for name in profile["routing"]]
+    selected_behavior = (
+        behavior
+        if profile["behavior"] == "all"
+        else [
+            behavior_by_id[(item["skill"], item["case"])]
+            for item in profile["behavior"]
+        ]
+    )
+    selected_routing = (
+        routing
+        if profile["routing"] == "all"
+        else [routing_by_name[name] for name in profile["routing"]]
+    )
     return selected_behavior, selected_routing
 
 
@@ -422,6 +435,79 @@ def validate_judgment(
             raise EvalError(f"{identity}: judgment expectation {index + 1} lacks evidence")
 
 
+def aggregate_judgments(
+    judgments: list[dict[str, Any]],
+    expectations: list[str | dict[str, Any]],
+) -> dict[str, Any]:
+    if not judgments:
+        raise EvalError("at least one judgment is required")
+
+    scores = [int(judgment["score"]) for judgment in judgments]
+    unanimous_expectations = 0
+    mandatory_disagreements: list[str] = []
+    for index, expectation in enumerate(expectations):
+        decisions = {
+            bool(judgment["expectations"][index]["met"])
+            for judgment in judgments
+        }
+        if len(decisions) == 1:
+            unanimous_expectations += 1
+        elif is_mandatory_expectation(expectation):
+            identifier = (
+                expectation.get("id", f"expectation-{index + 1}")
+                if isinstance(expectation, dict)
+                else f"expectation-{index + 1}"
+            )
+            mandatory_disagreements.append(str(identifier))
+
+    expectation_count = len(expectations)
+    return {
+        "judge_count": len(judgments),
+        "average_score": round(sum(scores) / len(scores), 2),
+        "minimum_score": min(scores),
+        "maximum_score": max(scores),
+        "score_range": max(scores) - min(scores),
+        "expectation_count": expectation_count,
+        "unanimous_expectations": unanimous_expectations,
+        "expectation_agreement_rate": round(
+            unanimous_expectations / expectation_count * 100, 2
+        ),
+        "mandatory_disagreements": mandatory_disagreements,
+    }
+
+
+def run_judgments(
+    judges: list["AgentRunner"],
+    prompt: str,
+    expectations: list[str | dict[str, Any]],
+    identity: str,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    judgments: list[dict[str, Any]] = []
+    for index, judge in enumerate(judges):
+        judgment = extract_json_object(judge.run(prompt))
+        validate_judgment(
+            judgment,
+            len(expectations),
+            f"{identity}:judge-{index + 1}",
+        )
+        judgments.append(judgment)
+    return judgments, aggregate_judgments(judgments, expectations)
+
+
+def judgment_block(
+    response: str,
+    judgments: list[dict[str, Any]],
+    agreement: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "response": response,
+        # Keep the first judgment for compatibility with existing raw results.
+        "judgment": judgments[0],
+        "judgments": judgments,
+        "agreement": agreement,
+    }
+
+
 class AgentRunner:
     def __init__(
         self, agent: str, model: str | None, timeout_seconds: float = 180.0
@@ -519,6 +605,54 @@ class AgentRunner:
                 raise EvalError("codex did not write a final response")
             return result_path.read_text(encoding="utf-8").strip()
 
+    def run_in_workspace(self, prompt: str, workspace: Path) -> str:
+        if self.agent != "codex":
+            raise EvalError(
+                "executable workspace evals currently support codex only; "
+                "add another CLI only after its non-interactive write and sandbox "
+                "contract is verified"
+            )
+        result_path = workspace / ".eval-response.txt"
+        command = [
+            self.executable,
+            "exec",
+            "--ephemeral",
+            "--skip-git-repo-check",
+            "--ignore-user-config",
+            "--ignore-rules",
+            "--sandbox",
+            "workspace-write",
+            "--cd",
+            str(workspace),
+            "--output-last-message",
+            str(result_path),
+        ]
+        if self.model:
+            command.extend(["--model", self.model])
+        command.append("-")
+        try:
+            completed = subprocess.run(
+                command,
+                input=prompt,
+                text=True,
+                capture_output=True,
+                check=False,
+                timeout=self.timeout_seconds,
+            )
+        except subprocess.TimeoutExpired as error:
+            raise EvalError(
+                f"{self.agent} executable eval timed out after "
+                f"{self.timeout_seconds:g} seconds"
+            ) from error
+        if completed.returncode:
+            detail = completed.stderr.strip() or completed.stdout.strip()
+            raise EvalError(detail or "codex executable eval failed")
+        if not result_path.is_file():
+            raise EvalError("codex did not write a final executable-eval response")
+        response = result_path.read_text(encoding="utf-8").strip()
+        result_path.unlink()
+        return response
+
 
 def select_cases(
     cases: list[dict[str, Any]], args: argparse.Namespace
@@ -539,7 +673,7 @@ def run_behavior_suite(
     cases: list[dict[str, Any]],
     catalog: dict[str, dict[str, Any]],
     solver: AgentRunner,
-    judge: AgentRunner,
+    judges: list[AgentRunner],
     args: argparse.Namespace,
 ) -> list[dict[str, Any]]:
     results: list[dict[str, Any]] = []
@@ -547,61 +681,58 @@ def run_behavior_suite(
         result: dict[str, Any] = {"skill": case["skill"], "case": case["name"]}
         if not args.skip_baseline:
             baseline_response = solver.run(build_behavior_prompt(case, None))
-            baseline_judgment = extract_json_object(
-                judge.run(build_judge_prompt(case, baseline_response))
-            )
-            validate_judgment(
-                baseline_judgment,
-                len(case["expectations"]),
+            baseline_judgments, baseline_agreement = run_judgments(
+                judges,
+                build_judge_prompt(case, baseline_response),
+                case["expectations"],
                 f"{case['skill']}:{case['name']}:baseline",
             )
-            result["baseline"] = {
-                "response": baseline_response,
-                "judgment": baseline_judgment,
-            }
+            result["baseline"] = judgment_block(
+                baseline_response,
+                baseline_judgments,
+                baseline_agreement,
+            )
         skill_response = solver.run(
             build_behavior_prompt(case, instructions_for_case(case, catalog))
         )
-        skill_judgment = extract_json_object(
-            judge.run(build_judge_prompt(case, skill_response))
-        )
-        validate_judgment(
-            skill_judgment,
-            len(case["expectations"]),
+        skill_judgments, skill_agreement = run_judgments(
+            judges,
+            build_judge_prompt(case, skill_response),
+            case["expectations"],
             f"{case['skill']}:{case['name']}:with-skill",
         )
-        result["with_skill"] = {
-            "response": skill_response,
-            "judgment": skill_judgment,
-        }
-        baseline_score = result.get("baseline", {}).get("judgment", {}).get("score")
-        skill_score = skill_judgment.get("score")
+        result["with_skill"] = judgment_block(
+            skill_response,
+            skill_judgments,
+            skill_agreement,
+        )
+        baseline_score = result.get("baseline", {}).get("agreement", {}).get(
+            "average_score"
+        )
+        skill_score = skill_agreement["average_score"]
         result["delta"] = (
             skill_score - baseline_score
-            if isinstance(skill_score, int) and isinstance(baseline_score, int)
+            if isinstance(skill_score, (int, float))
+            and isinstance(baseline_score, (int, float))
             else None
         )
-        mandatory_failure = False
-        judgment_expectations = skill_judgment.get("expectations", [])
-        for index, expectation in enumerate(case["expectations"]):
-            if is_mandatory_expectation(expectation):
-                if index < len(judgment_expectations):
-                    if not judgment_expectations[index].get("met", False):
-                        mandatory_failure = True
-                        break
-                else:
-                    mandatory_failure = True
-                    break
+        mandatory_failure = any(
+            not judgment["expectations"][index]["met"]
+            for judgment in skill_judgments
+            for index, expectation in enumerate(case["expectations"])
+            if is_mandatory_expectation(expectation)
+        )
         result["mandatory_failure"] = mandatory_failure
         result["passed"] = (
-            isinstance(skill_score, int)
-            and skill_score >= args.threshold
+            all(judgment["score"] >= args.threshold for judgment in skill_judgments)
             and not mandatory_failure
         )
         results.append(result)
         print(
             f"behavior {case['skill']}:{case['name']} "
-            f"score={skill_score} delta={result['delta']} "
+            f"score={skill_score} judges={len(judges)} "
+            f"agreement={skill_agreement['expectation_agreement_rate']}% "
+            f"delta={result['delta']} "
             f"mandatory_failure={mandatory_failure} passed={result['passed']}",
             flush=True,
         )
@@ -640,15 +771,58 @@ def run_routing_suite(
 def result_summary(results: dict[str, Any]) -> dict[str, Any]:
     behavior = results["behavior"]
     routing = results["routing"]
-    baseline_scores = [
-        item["baseline"]["judgment"]["score"]
-        for item in behavior
-        if "baseline" in item
-    ]
-    skill_scores = [item["with_skill"]["judgment"]["score"] for item in behavior]
+    def block_score(block: dict[str, Any]) -> float:
+        return float(
+            block.get("agreement", {}).get(
+                "average_score", block["judgment"]["score"]
+            )
+        )
 
-    def average(values: list[int]) -> float | None:
+    baseline_scores = [block_score(item["baseline"]) for item in behavior if "baseline" in item]
+    skill_scores = [block_score(item["with_skill"]) for item in behavior]
+    multi_judge_blocks = [
+        item[phase]
+        for item in behavior
+        for phase in ("baseline", "with_skill")
+        if phase in item and item[phase].get("agreement", {}).get("judge_count", 1) > 1
+    ]
+
+    def average(values: list[float]) -> float | None:
         return round(sum(values) / len(values), 2) if values else None
+
+    total_expectations = sum(
+        block["agreement"]["expectation_count"] for block in multi_judge_blocks
+    )
+    total_unanimous = sum(
+        block["agreement"]["unanimous_expectations"] for block in multi_judge_blocks
+    )
+    by_skill_values: dict[str, dict[str, Any]] = {}
+    for item in behavior:
+        values = by_skill_values.setdefault(
+            item["skill"],
+            {"cases": 0, "passed": 0, "baseline": [], "with_skill": []},
+        )
+        values["cases"] += 1
+        values["passed"] += int(bool(item["passed"]))
+        if "baseline" in item:
+            values["baseline"].append(block_score(item["baseline"]))
+        values["with_skill"].append(block_score(item["with_skill"]))
+    by_skill = {
+        skill: {
+            "cases": values["cases"],
+            "passed": values["passed"],
+            "baseline_average": average(values["baseline"]),
+            "with_skill_average": average(values["with_skill"]),
+            "average_delta": (
+                round(
+                    average(values["with_skill"]) - average(values["baseline"]), 2
+                )
+                if values["baseline"]
+                else None
+            ),
+        }
+        for skill, values in sorted(by_skill_values.items())
+    }
 
     return {
         "behavior_cases": len(behavior),
@@ -661,9 +835,68 @@ def result_summary(results: dict[str, Any]) -> dict[str, Any]:
             if skill_scores and baseline_scores
             else None
         ),
+        "judge_agreement_rate": (
+            round(total_unanimous / total_expectations * 100, 2)
+            if total_expectations
+            else None
+        ),
+        "judge_score_range_average": average(
+            [float(block["agreement"]["score_range"]) for block in multi_judge_blocks]
+        ),
+        "mandatory_judge_disagreements": sum(
+            len(block["agreement"]["mandatory_disagreements"])
+            for block in multi_judge_blocks
+        ),
+        "by_skill": by_skill,
         "routing_cases": len(routing),
         "routing_passed": sum(bool(item["passed"]) for item in routing),
     }
+
+
+def markdown_report(results: dict[str, Any]) -> str:
+    summary = results["summary"]
+
+    def display(value: Any) -> str:
+        return "—" if value is None else str(value)
+
+    judges = results.get("judges") or [
+        {
+            "agent": results.get("judge_agent"),
+            "model": results.get("judge_model"),
+        }
+    ]
+    judge_names = ", ".join(
+        f"{judge.get('agent')}" + (f"/{judge['model']}" if judge.get("model") else "")
+        for judge in judges
+    )
+    lines = [
+        f"# {results.get('profile', {}).get('name', 'Focused evaluation') if results.get('profile') else 'Focused evaluation'}",
+        "",
+        f"- Solver: `{results.get('agent')}`",
+        f"- Judges: `{judge_names}`",
+        f"- Independent primary judge: {'yes' if results.get('independent_primary_judge') else 'no'}",
+        f"- Behavior: {summary['behavior_passed']}/{summary['behavior_cases']} passed",
+        f"- Routing: {summary['routing_passed']}/{summary['routing_cases']} passed",
+        f"- Judge agreement: {display(summary.get('judge_agreement_rate'))}%",
+        "",
+        "| Skill | Cases | Passed | Baseline | With skill | Delta |",
+        "|---|---:|---:|---:|---:|---:|",
+    ]
+    for skill, values in summary.get("by_skill", {}).items():
+        lines.append(
+            f"| `{skill}` | {values['cases']} | {values['passed']} | "
+            f"{display(values['baseline_average'])} | "
+            f"{display(values['with_skill_average'])} | "
+            f"{display(values['average_delta'])} |"
+        )
+    lines.extend(
+        [
+            "",
+            "This table is a summary. Retain the source JSON for responses, individual judgments, disagreements, and failed cases.",
+            "",
+        ]
+    )
+    return "\n".join(lines)
 
 
 def reference_coverage_report(
@@ -710,10 +943,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--suite", choices=("all", "behavior", "routing"), default="all"
     )
-    parser.add_argument("--agent", choices=("claude", "codex"), default="claude")
-    parser.add_argument("--judge-agent", choices=("claude", "codex"))
+    parser.add_argument("--agent", choices=("claude", "codex"), default="codex")
+    parser.add_argument(
+        "--judge-agent",
+        action="append",
+        choices=("claude", "codex"),
+        help="judge CLI; repeat for independent judgments",
+    )
     parser.add_argument("--model")
-    parser.add_argument("--judge-model")
+    parser.add_argument(
+        "--judge-model",
+        action="append",
+        help="judge model in judge order; repeat to match --judge-agent",
+    )
+    parser.add_argument(
+        "--require-independent-judge",
+        action="store_true",
+        help="fail unless the primary judge CLI differs from the solver CLI",
+    )
     parser.add_argument(
         "--agent-timeout",
         type=float,
@@ -732,6 +979,7 @@ def parse_args() -> argparse.Namespace:
         "--coverage", action="store_true", help="report reference document evaluation coverage"
     )
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--markdown-output", type=Path)
     parser.add_argument(
         "--profile",
         type=Path,
@@ -748,19 +996,38 @@ def main() -> int:
         raise EvalError("--agent-timeout must be positive")
     if not 0 <= args.threshold <= 100:
         raise EvalError("--threshold must be between 0 and 100")
+    requested_judges = args.judge_agent or [args.agent]
+    requested_judge_models = args.judge_model or []
+    if len(requested_judge_models) > len(requested_judges):
+        raise EvalError("--judge-model cannot outnumber --judge-agent")
+    if args.judge_model and not args.judge_agent and len(args.judge_model) > 1:
+        raise EvalError("multiple --judge-model values require repeated --judge-agent")
+    judge_models = requested_judge_models + [None] * (
+        len(requested_judges) - len(requested_judge_models)
+    )
+    if args.require_independent_judge and requested_judges[0] == args.agent:
+        raise EvalError("the primary judge must differ from the solver")
 
     catalog = skill_catalog()
     all_behavior = behavior_cases(catalog)
     all_routing = routing_cases()
     errors = validate_behavior_cases(all_behavior, catalog)
     errors.extend(validate_routing_cases(all_routing, set(catalog)))
-    default_profile = load_json(DEFAULT_PROFILE_PATH)
-    errors.extend(
-        f"public benchmark: {error}"
-        for error in validate_benchmark_profile(
-            default_profile, all_behavior, all_routing
+    profile_paths = [DEFAULT_PROFILE_PATH, *sorted(PROFILES_DIR.glob("*.json"))]
+    seen_profile_names: set[str] = set()
+    for profile_path in profile_paths:
+        candidate_profile = load_json(profile_path)
+        profile_name = candidate_profile.get("name")
+        if profile_name in seen_profile_names:
+            errors.append(f"{profile_path}: duplicate benchmark profile name {profile_name}")
+        elif isinstance(profile_name, str):
+            seen_profile_names.add(profile_name)
+        errors.extend(
+            f"{profile_path}: {error}"
+            for error in validate_benchmark_profile(
+                candidate_profile, all_behavior, all_routing
+            )
         )
-    )
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
@@ -807,9 +1074,18 @@ def main() -> int:
         )
 
     solver = AgentRunner(args.agent, args.model, args.agent_timeout)
-    judge = AgentRunner(
-        args.judge_agent or args.agent, args.judge_model, args.agent_timeout
-    )
+    judges = [
+        AgentRunner(agent, model, args.agent_timeout)
+        for agent, model in zip(requested_judges, judge_models)
+    ]
+    judge_metadata = [
+        {
+            "agent": agent,
+            "version": judge.version(),
+            "model": model,
+        }
+        for judge, agent, model in zip(judges, requested_judges, judge_models)
+    ]
     results: dict[str, Any] = {
         "created_at": dt.datetime.now(dt.timezone.utc).isoformat(),
         "runner_version": RUNNER_VERSION,
@@ -817,9 +1093,12 @@ def main() -> int:
         "agent": args.agent,
         "agent_version": solver.version(),
         "model": args.model,
-        "judge_agent": args.judge_agent or args.agent,
-        "judge_agent_version": judge.version(),
-        "judge_model": args.judge_model,
+        # Preserve the primary judge fields for existing result consumers.
+        "judge_agent": judge_metadata[0]["agent"],
+        "judge_agent_version": judge_metadata[0]["version"],
+        "judge_model": judge_metadata[0]["model"],
+        "judges": judge_metadata,
+        "independent_primary_judge": judge_metadata[0]["agent"] != args.agent,
         "catalog_version": load_json(ROOT / "package.json")["version"],
         "profile": profile,
         "reference_coverage": coverage_data if args.coverage else None,
@@ -833,7 +1112,7 @@ def main() -> int:
         if not selected_behavior:
             raise EvalError("no behavior cases matched the requested filters")
         results["behavior"] = run_behavior_suite(
-            selected_behavior, catalog, solver, judge, args
+            selected_behavior, catalog, solver, judges, args
         )
     if args.suite in ("all", "routing"):
         if profile is not None:
@@ -852,6 +1131,10 @@ def main() -> int:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
         print(f"Wrote results to {args.output}")
+    if args.markdown_output:
+        args.markdown_output.parent.mkdir(parents=True, exist_ok=True)
+        args.markdown_output.write_text(markdown_report(results), encoding="utf-8")
+        print(f"Wrote Markdown report to {args.markdown_output}")
 
     passed = all(item["passed"] for item in results["behavior"] + results["routing"])
     return 0 if passed else 1

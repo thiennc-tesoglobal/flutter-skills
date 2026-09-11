@@ -1,0 +1,4 @@
+name: executable_eval_latest_wins
+publish_to: none
+environment:
+  sdk: ^3.5.0

@@ -1,0 +1,22 @@
+{
+  "name": "codex-claude-cross-judge",
+  "description": "Run the same fixed PR profile with Codex and Claude alternating solver and primary independent judge roles.",
+  "runs": [
+    {
+      "id": "codex-solver",
+      "agent": "codex",
+      "judges": ["claude", "codex"],
+      "profile": "profiles/pr-smoke.json",
+      "skip_baseline": true,
+      "require_independent_judge": true
+    },
+    {
+      "id": "claude-solver",
+      "agent": "claude",
+      "judges": ["codex", "claude"],
+      "profile": "profiles/pr-smoke.json",
+      "skip_baseline": true,
+      "require_independent_judge": true
+    }
+  ]
+}
