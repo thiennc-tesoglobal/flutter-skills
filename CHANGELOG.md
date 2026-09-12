@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.0 - 2026-09-12
 
 - Add multi-judge forward evaluation with strict mandatory gating, per-criterion agreement, score-range reporting, and backward-compatible primary judgment fields.
 - Add hash-bound human-review sampling and per-judge human agreement summaries.
