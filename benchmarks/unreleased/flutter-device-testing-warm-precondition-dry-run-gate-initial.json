@@ -1,0 +1,136 @@
+{
+  "created_at": "2026-09-13T08:03:42.487299+00:00",
+  "runner_version": "2.0.0",
+  "git": {
+    "commit": "489f61c3cdd5dba57ea65a927f56ab8c0c2cd261",
+    "dirty": true,
+    "branch": "feature/flutter-device-testing-operations"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.154.0",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.154.0",
+  "judge_model": null,
+  "judges": [
+    {
+      "agent": "codex",
+      "version": "codex-cli 0.154.0",
+      "model": null
+    }
+  ],
+  "independent_primary_judge": false,
+  "catalog_version": "0.8.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-device-testing",
+      "case": "requires-explicit-warm-state-precondition",
+      "with_skill": {
+        "response": "The existing setup hook does not establish a warm app state. Use matrix version 2 and require a precondition that verifies the app process is running and the expected UI is visible before the notification tap.\n\nThis is a review template; the hook names are placeholders for the project\u2019s existing tooling.\n\n```json\n{\n  \"matrix_version\": 2,\n  \"platform\": \"android\",\n  \"device_id\": \"<resolved-emulator-id>\",\n  \"target_kind\": \"android-emulator\",\n  \"target_label\": \"android-notification-test\",\n  \"include_device_id\": false,\n  \"app_id\": \"<flavor-specific-application-id>\",\n  \"timeout_seconds\": 60,\n  \"context\": {\n    \"flavor\": \"<project-flavor>\",\n    \"build_mode\": \"debug\",\n    \"entrypoint\": \"<project-entrypoint>\",\n    \"data_source\": \"<account-and-destination-data-source>\",\n    \"provider\": \"<notification-provider-or-local-fixture>\",\n    \"os_runtime\": \"<Android-version-and-API-level>\"\n  },\n  \"scenarios\": [\n    {\n      \"name\": \"warm-signed-in-notification-tap\",\n      \"lifecycle\": \"warm\",\n      \"before\": [\n        {\n          \"name\": \"seed account data\",\n          \"argv\": [\"<existing-account-setup-hook>\"]\n        },\n        {\n          \"name\": \"launch configured app and establish starting screen\",\n          \"argv\": [\"<project-launch-and-ui-setup-hook>\"]\n        },\n        {\n          \"name\": \"deliver notification and wait until available\",\n          \"argv\": [\"<project-notification-delivery-hook>\", \"test-notification-42\"]\n        }\n      ],\n      \"precondition\": [\n        {\n          \"name\": \"verify running app, signed-in account, starting UI, and notification\",\n          \"argv\": [\"<project-runtime-precondition-hook>\", \"test-notification-42\"]\n        }\n      ],\n      \"trigger\": {\n        \"name\": \"tap notification using existing native UI harness\",\n        \"argv\": [\"<project-native-notification-tap-hook>\", \"test-notification-42\"]\n      },\n      \"assert\": [\n        {\n          \"name\": \"verify destination, single navigation effect, and Back outcome\",\n          \"argv\": [\"<project-semantic-assertion-hook>\", \"test-notification-42\"]\n        }\n      ],\n      \"after\": [\n        {\n          \"name\": \"restore task overrides and remove task-owned fixtures\",\n          \"argv\": [\"<project-idempotent-cleanup-hook>\"]\n        }\n      ]\n    }\n  ]\n}\n```\n\nBefore execution, resolve these review requirements:\n\n- Discover the project configuration and select a ready emulator by stable identifier; record whether it is reused or task-created. Verify the installed flavor-specific application identity.\n- Define the exact account, starting screen, notification identity, destination, Back outcome, and allowed side effects. The precondition must observe runtime state; seeded account data alone is insufficient.\n- Replace every placeholder with existing project commands. A real notification tap requires native-capable tooling; invoking a Dart callback tests injected handling only.\n- Confirm **every hook, including `precondition`, inherits the 60-second timeout**. Confirm **`after` runs from `finally` after success, failure, timeout, or command error** and is idempotent.\n- Review the runner\u2019s dry-run plan before executing. Keep credentials out of arguments and retain only sanitized evidence.\n\nNo execution or runtime verification has occurred. This single row covers warm notification handling on an emulator with the specified data source and provider; it does not establish cold-start behavior, physical-device behavior, or production push delivery unless that delivery path is actually exercised.",
+        "judgment": {
+          "score": 80,
+          "expectations": [
+            {
+              "criterion": "Rejects or corrects the warm scenario until a bounded precondition verifies the intended process and UI state before the trigger.",
+              "met": true,
+              "evidence": "Rejects seeded account data as sufficient, adds a runtime process and expected-UI precondition before the tap, and requires its 60-second timeout."
+            },
+            {
+              "criterion": "Uses documented version 2 fields and context.provider, and requires a successful runner dry run after resolving placeholders.",
+              "met": false,
+              "evidence": "Uses matrix_version 2 and context.provider, but only requires reviewing the dry-run plan, not passing the runner dry run after placeholder resolution. Conformance to the documented schema is not explicitly verified."
+            },
+            {
+              "criterion": "Requires dry-run plan review, target preflight, and installed-app preflight without claiming unavailable checks ran.",
+              "met": true,
+              "evidence": "Requires selecting a ready emulator, verifying the installed flavor-specific application identity, and reviewing the runner\u2019s dry-run plan before execution. Explicitly states no execution or runtime verification occurred."
+            },
+            {
+              "criterion": "Bounds the warm precondition with the per-step timeout and requires idempotent finally-backed cleanup after every outcome.",
+              "met": true,
+              "evidence": "Requires every hook, including precondition, to inherit the 60-second timeout and after hooks to run from finally after success, failure, timeout, or command error, with idempotent cleanup."
+            },
+            {
+              "criterion": "Reports the target using a safe label rather than exposing its raw identifier by default.",
+              "met": true,
+              "evidence": "Provides target_label android-notification-test and include_device_id false; the device identifier remains a placeholder."
+            }
+          ],
+          "summary": "Four criteria are met. The mandatory schema and dry-run criterion is incomplete because successful dry-run validation after resolving placeholders is not required."
+        },
+        "judgments": [
+          {
+            "score": 80,
+            "expectations": [
+              {
+                "criterion": "Rejects or corrects the warm scenario until a bounded precondition verifies the intended process and UI state before the trigger.",
+                "met": true,
+                "evidence": "Rejects seeded account data as sufficient, adds a runtime process and expected-UI precondition before the tap, and requires its 60-second timeout."
+              },
+              {
+                "criterion": "Uses documented version 2 fields and context.provider, and requires a successful runner dry run after resolving placeholders.",
+                "met": false,
+                "evidence": "Uses matrix_version 2 and context.provider, but only requires reviewing the dry-run plan, not passing the runner dry run after placeholder resolution. Conformance to the documented schema is not explicitly verified."
+              },
+              {
+                "criterion": "Requires dry-run plan review, target preflight, and installed-app preflight without claiming unavailable checks ran.",
+                "met": true,
+                "evidence": "Requires selecting a ready emulator, verifying the installed flavor-specific application identity, and reviewing the runner\u2019s dry-run plan before execution. Explicitly states no execution or runtime verification occurred."
+              },
+              {
+                "criterion": "Bounds the warm precondition with the per-step timeout and requires idempotent finally-backed cleanup after every outcome.",
+                "met": true,
+                "evidence": "Requires every hook, including precondition, to inherit the 60-second timeout and after hooks to run from finally after success, failure, timeout, or command error, with idempotent cleanup."
+              },
+              {
+                "criterion": "Reports the target using a safe label rather than exposing its raw identifier by default.",
+                "met": true,
+                "evidence": "Provides target_label android-notification-test and include_device_id false; the device identifier remains a placeholder."
+              }
+            ],
+            "summary": "Four criteria are met. The mandatory schema and dry-run criterion is incomplete because successful dry-run validation after resolving placeholders is not required."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 80.0,
+          "minimum_score": 80,
+          "maximum_score": 80,
+          "score_range": 0,
+          "expectation_count": 5,
+          "unanimous_expectations": 5,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": true,
+      "passed": false
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 0,
+    "mandatory_failures": 1,
+    "baseline_average": null,
+    "with_skill_average": 80.0,
+    "average_delta": null,
+    "judge_agreement_rate": null,
+    "judge_score_range_average": null,
+    "mandatory_judge_disagreements": 0,
+    "by_skill": {
+      "flutter-device-testing": {
+        "cases": 1,
+        "passed": 0,
+        "baseline_average": null,
+        "with_skill_average": 80.0,
+        "average_delta": null
+      }
+    },
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

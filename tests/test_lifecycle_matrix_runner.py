@@ -5,6 +5,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -57,6 +58,8 @@ class LifecycleMatrixRunnerTests(unittest.TestCase):
             self.assertEqual(completed.returncode, 0, completed.stderr)
             report = json.loads(completed.stdout)
             self.assertEqual(report["status"], "planned")
+            self.assertEqual(report["schema_version"], 2)
+            self.assertNotIn("device_id", report["target"])
             trigger = report["scenarios"][0]["steps"][0]
             self.assertNotIn("token=secret", json.dumps(trigger))
 
@@ -181,6 +184,167 @@ class LifecycleMatrixRunnerTests(unittest.TestCase):
             ),
             ["tool", "Authorization: Bearer [REDACTED]", "myapp://orders/42"],
         )
+
+    def test_version_two_requires_explicit_warm_precondition(self):
+        with self.assertRaisesRegex(
+            RUNNER.MatrixError, "precondition must verify the warm app and UI state"
+        ):
+            RUNNER.validate_matrix(
+                {
+                    "matrix_version": 2,
+                    "platform": "android",
+                    "device_id": "emulator-5554",
+                    "target_kind": "android-emulator",
+                    "target_label": "pixel-api-staging",
+                    "app_id": "com.example.app",
+                    "scenarios": [
+                        {
+                            "name": "warm-link",
+                            "lifecycle": "warm",
+                            "uri": "myapp://orders/42",
+                            "assert": [
+                                {
+                                    "name": "destination",
+                                    "argv": [sys.executable, "-c", "pass"],
+                                }
+                            ],
+                        }
+                    ],
+                }
+            )
+
+    def test_safe_target_label_cannot_repeat_hidden_device_id(self):
+        with self.assertRaisesRegex(
+            RUNNER.MatrixError, "target_label must not repeat device_id"
+        ):
+            RUNNER.validate_matrix(
+                {
+                    "matrix_version": 2,
+                    "platform": "ios",
+                    "device_id": "SIMULATOR-UDID",
+                    "target_kind": "ios-simulator",
+                    "target_label": "SIMULATOR-UDID",
+                    "app_id": "com.example.app",
+                    "scenarios": [
+                        {
+                            "name": "cold-link",
+                            "lifecycle": "cold",
+                            "uri": "myapp://orders/42",
+                            "assert": [
+                                {
+                                    "name": "destination",
+                                    "argv": [sys.executable, "-c", "pass"],
+                                }
+                            ],
+                        }
+                    ],
+                }
+            )
+
+    def test_version_two_dry_run_adds_preflight_and_hides_device_id(self):
+        matrix = RUNNER.validate_matrix(
+            {
+                "matrix_version": 2,
+                "platform": "android",
+                "device_id": "physical-serial-123",
+                "target_kind": "android-physical",
+                "target_label": "checkout-test-phone",
+                "app_id": "com.example.app.staging",
+                "context": {
+                    "flavor": "staging",
+                    "build_mode": "debug",
+                    "data_source": "local mock API",
+                },
+                "scenarios": [
+                    {
+                        "name": "cold-link",
+                        "lifecycle": "cold",
+                        "uri": "myapp://orders/42?token=secret",
+                        "assert": [
+                            {
+                                "name": "destination",
+                                "argv": [sys.executable, "-c", "pass"],
+                            }
+                        ],
+                    }
+                ],
+            }
+        )
+        report = RUNNER.run_matrix(matrix, execute=False)
+        rendered = json.dumps(report)
+        self.assertEqual(report["status"], "planned")
+        self.assertEqual(len(report["preflight"]), 2)
+        self.assertEqual(
+            report["target"],
+            {"label": "checkout-test-phone", "kind": "android-physical"},
+        )
+        self.assertNotIn("physical-serial-123", rendered)
+        self.assertIn("[DEVICE_ID]", rendered)
+        self.assertNotIn("token=secret", rendered)
+
+    def test_version_two_preflight_failure_skips_scenarios(self):
+        matrix = RUNNER.validate_matrix(
+            {
+                "matrix_version": 2,
+                "platform": "android",
+                "device_id": "emulator-5554",
+                "target_kind": "android-emulator",
+                "target_label": "pixel-api-staging",
+                "app_id": "com.example.app",
+                "scenarios": [
+                    {
+                        "name": "cold-link",
+                        "lifecycle": "cold",
+                        "uri": "myapp://orders/42",
+                        "assert": [
+                            {
+                                "name": "destination",
+                                "argv": [sys.executable, "-c", "pass"],
+                            }
+                        ],
+                    }
+                ],
+            }
+        )
+
+        def fake_run_step(name, argv, timeout, execute, sensitive_values=()):
+            if name == "preflight: target online":
+                return {"name": name, "status": "passed", "output_tail": "device"}
+            if name == "preflight: app installed":
+                return {"name": name, "status": "passed"}
+            self.fail(f"unexpected step after failed preflight: {name}")
+
+        with mock.patch.object(RUNNER, "run_step", side_effect=fake_run_step):
+            report = RUNNER.run_matrix(matrix, execute=True)
+
+        self.assertEqual(report["status"], "failed")
+        self.assertEqual(report["preflight"][-1]["status"], "failed")
+        self.assertEqual(report["scenarios"][0]["status"], "skipped")
+
+    def test_device_id_can_be_retained_only_by_explicit_opt_in(self):
+        matrix = RUNNER.validate_matrix(
+            {
+                "platform": "ios",
+                "device_id": "SIMULATOR-UDID",
+                "include_device_id": True,
+                "app_id": "com.example.app",
+                "scenarios": [
+                    {
+                        "name": "cold-link",
+                        "lifecycle": "cold",
+                        "uri": "myapp://orders/42",
+                        "assert": [
+                            {
+                                "name": "destination",
+                                "argv": [sys.executable, "-c", "pass"],
+                            }
+                        ],
+                    }
+                ],
+            }
+        )
+        report = RUNNER.run_matrix(matrix, execute=False)
+        self.assertEqual(report["target"]["device_id"], "SIMULATOR-UDID")
 
 
 if __name__ == "__main__":

@@ -292,6 +292,20 @@
     "forbidden": ["flutter-app-workflow", "flutter-runtime-debugging"]
   },
   {
+    "name": "android-emulator-lifecycle-operation",
+    "prompt": "Boot the existing staging Android emulator without wiping it, install and launch the current Flutter build, exercise background and resume, capture a screenshot and focused logs, then restore task-created device overrides.",
+    "required": ["flutter-device-testing"],
+    "optional": ["flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-runtime-debugging", "flutter-performance"]
+  },
+  {
+    "name": "native-permission-dialog-device-flow",
+    "prompt": "Run the Flutter checkout acceptance flow on an iOS Simulator, interact with the native camera permission dialog using the project's existing automation stack, and verify the Flutter-owned denied and granted states.",
+    "required": ["flutter-device-testing"],
+    "optional": ["flutter-testing", "flutter-platform-integration"],
+    "forbidden": ["flutter-app-workflow", "flutter-runtime-debugging"]
+  },
+  {
     "name": "provider-neutral-streaming-model-chat",
     "prompt": "Add streamed AI assistant responses to this Flutter app through its existing backend and provider, handle cancellation and tool confirmation, and do not change its state-management package.",
     "required": ["flutter-ai-integration"],

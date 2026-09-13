@@ -1,0 +1,136 @@
+{
+  "created_at": "2026-09-13T08:05:05.099648+00:00",
+  "runner_version": "2.0.0",
+  "git": {
+    "commit": "489f61c3cdd5dba57ea65a927f56ab8c0c2cd261",
+    "dirty": true,
+    "branch": "feature/flutter-device-testing-operations"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.154.0",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.154.0",
+  "judge_model": null,
+  "judges": [
+    {
+      "agent": "codex",
+      "version": "codex-cli 0.154.0",
+      "model": null
+    }
+  ],
+  "independent_primary_judge": false,
+  "catalog_version": "0.8.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-device-testing",
+      "case": "requires-explicit-warm-state-precondition",
+      "with_skill": {
+        "response": "Using the flutter-device-testing skill, the matrix is **not ready to execute**: seeding account data does not establish a warm app state. Version 2 requires an explicit warm-state `precondition`.\n\nBelow is a review template. Its hook placeholders must be replaced with existing project commands; no commands were run.\n\n```json\n{\n  \"matrix_version\": 2,\n  \"platform\": \"android\",\n  \"device_id\": \"<resolved-emulator-id>\",\n  \"target_kind\": \"android-emulator\",\n  \"target_label\": \"notification-test-emulator\",\n  \"include_device_id\": false,\n  \"app_id\": \"<verified-flavor-application-id>\",\n  \"timeout_seconds\": 60,\n  \"context\": {\n    \"flavor\": \"<flavor>\",\n    \"build_mode\": \"<build-mode>\",\n    \"entrypoint\": \"<entrypoint>\",\n    \"data_source\": \"<account-and-destination-data-source>\",\n    \"provider\": \"<notification-provider-or-fixture>\",\n    \"os_runtime\": \"<Android-version-and-API-level>\"\n  },\n  \"scenarios\": [\n    {\n      \"name\": \"warm-signed-in-notification-tap\",\n      \"lifecycle\": \"warm\",\n      \"before\": [\n        {\n          \"name\": \"seed account data\",\n          \"argv\": [\"<existing-account-seed-hook>\"]\n        },\n        {\n          \"name\": \"launch app and establish intended UI state\",\n          \"argv\": [\"<existing-launch-and-ui-setup-hook>\"]\n        }\n      ],\n      \"precondition\": [\n        {\n          \"name\": \"verify live process, account, and intended UI state\",\n          \"argv\": [\"<existing-runtime-precondition-hook>\"]\n        }\n      ],\n      \"trigger\": {\n        \"name\": \"deliver notification and tap through native UI\",\n        \"argv\": [\"<existing-notification-delivery-and-native-tap-hook>\"]\n      },\n      \"assert\": [\n        {\n          \"name\": \"verify destination, Back outcome, and allowed side effects\",\n          \"argv\": [\"<existing-semantic-assertion-hook>\"]\n        }\n      ],\n      \"after\": [\n        {\n          \"name\": \"restore task-owned state and overrides\",\n          \"argv\": [\"<existing-idempotent-cleanup-hook>\"]\n        }\n      ]\n    }\n  ]\n}\n```\n\nBefore execution:\n\n- Specify the account fixture, initial screen or dialog, foreground/background state, notification identity, destination, Back outcome, and permitted side effects. Prove the intended process remains alive before the tap.\n- Verify emulator readiness and the installed flavor\u2019s application identity. Use the project\u2019s existing native-capable harness for notification-tray interaction; Flutter finders cannot perform that tap. Direct callback injection would test a different boundary.\n- Confirm **every hook, including `precondition`, inherits the 60-second timeout**. Confirm **`after` runs from `finally` after success, failure, timeout, or command error**, and that cleanup is idempotent.\n- Replace every placeholder, then run the runner\u2019s dry run. Require exit status **0**, report status **`planned`**, and review the redacted preflight and scenario commands before adding `--execute`.\n\nNo runtime assertions or artifacts exist yet. This single row would establish emulator functional behavior for the specified warm flow and data/provider source; cold starts, duplicate delivery, physical hardware, and production push remain untested.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Rejects or corrects the warm scenario until a bounded precondition verifies the intended process and UI state before the trigger.",
+              "met": true,
+              "evidence": "Declares the matrix not ready, adds a precondition verifying the live process and intended UI state, requires explicit foreground/background state, and bounds the precondition to 60 seconds."
+            },
+            {
+              "criterion": "Produces a version 2 matrix using context.provider and requires a successful runner dry run after resolving placeholders.",
+              "met": true,
+              "evidence": "Provides matrix_version 2 with context.provider and explicit lifecycle hooks; requires replacing every placeholder and obtaining dry-run exit status 0 with status planned."
+            },
+            {
+              "criterion": "Requires the dry-run plan and target plus installed-app preflight without claiming unavailable checks ran.",
+              "met": true,
+              "evidence": "Requires emulator readiness, installed flavor application identity verification, and review of redacted preflight and scenario commands before execution. Explicitly states no commands were run."
+            },
+            {
+              "criterion": "Bounds the warm precondition with the per-step timeout and places idempotent cleanup in finally-backed after hooks across all outcomes.",
+              "met": true,
+              "evidence": "Requires every hook, including precondition, to inherit the 60-second timeout and after to run from finally after success, failure, timeout, or command error, with idempotent cleanup."
+            },
+            {
+              "criterion": "Reports the target using a safe label rather than exposing its raw identifier by default.",
+              "met": true,
+              "evidence": "Sets target_label to notification-test-emulator and include_device_id to false; requests redacted preflight review."
+            }
+          ],
+          "summary": "The response explicitly satisfies all five criteria while correctly withholding execution and distinguishing required checks from completed verification."
+        },
+        "judgments": [
+          {
+            "score": 100,
+            "expectations": [
+              {
+                "criterion": "Rejects or corrects the warm scenario until a bounded precondition verifies the intended process and UI state before the trigger.",
+                "met": true,
+                "evidence": "Declares the matrix not ready, adds a precondition verifying the live process and intended UI state, requires explicit foreground/background state, and bounds the precondition to 60 seconds."
+              },
+              {
+                "criterion": "Produces a version 2 matrix using context.provider and requires a successful runner dry run after resolving placeholders.",
+                "met": true,
+                "evidence": "Provides matrix_version 2 with context.provider and explicit lifecycle hooks; requires replacing every placeholder and obtaining dry-run exit status 0 with status planned."
+              },
+              {
+                "criterion": "Requires the dry-run plan and target plus installed-app preflight without claiming unavailable checks ran.",
+                "met": true,
+                "evidence": "Requires emulator readiness, installed flavor application identity verification, and review of redacted preflight and scenario commands before execution. Explicitly states no commands were run."
+              },
+              {
+                "criterion": "Bounds the warm precondition with the per-step timeout and places idempotent cleanup in finally-backed after hooks across all outcomes.",
+                "met": true,
+                "evidence": "Requires every hook, including precondition, to inherit the 60-second timeout and after to run from finally after success, failure, timeout, or command error, with idempotent cleanup."
+              },
+              {
+                "criterion": "Reports the target using a safe label rather than exposing its raw identifier by default.",
+                "met": true,
+                "evidence": "Sets target_label to notification-test-emulator and include_device_id to false; requests redacted preflight review."
+              }
+            ],
+            "summary": "The response explicitly satisfies all five criteria while correctly withholding execution and distinguishing required checks from completed verification."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 100.0,
+          "minimum_score": 100,
+          "maximum_score": 100,
+          "score_range": 0,
+          "expectation_count": 5,
+          "unanimous_expectations": 5,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 1,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 100.0,
+    "average_delta": null,
+    "judge_agreement_rate": null,
+    "judge_score_range_average": null,
+    "mandatory_judge_disagreements": 0,
+    "by_skill": {
+      "flutter-device-testing": {
+        "cases": 1,
+        "passed": 1,
+        "baseline_average": null,
+        "with_skill_average": 100.0,
+        "average_delta": null
+      }
+    },
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

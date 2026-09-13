@@ -1,0 +1,136 @@
+{
+  "created_at": "2026-09-13T08:01:33.328016+00:00",
+  "runner_version": "2.0.0",
+  "git": {
+    "commit": "489f61c3cdd5dba57ea65a927f56ab8c0c2cd261",
+    "dirty": true,
+    "branch": "feature/flutter-device-testing-operations"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.154.0",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.154.0",
+  "judge_model": null,
+  "judges": [
+    {
+      "agent": "codex",
+      "version": "codex-cli 0.154.0",
+      "model": null
+    }
+  ],
+  "independent_primary_judge": false,
+  "catalog_version": "0.8.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-device-testing",
+      "case": "requires-explicit-warm-state-precondition",
+      "with_skill": {
+        "response": "Use `matrix_version: 2`. The account setup hook does **not** establish a warm app: the matrix needs a hook that launches or resumes it and a separate `precondition` that verifies the intended process and visible UI state before the notification tap.\n\nThis is a review template, not an executable matrix. Replace placeholders with existing project harness commands and the discovered target/build details.\n\n```json\n{\n  \"matrix_version\": 2,\n  \"platform\": \"android\",\n  \"device_id\": \"<resolved-emulator-id>\",\n  \"target_kind\": \"android-emulator\",\n  \"target_label\": \"android-notification-test\",\n  \"include_device_id\": false,\n  \"app_id\": \"<flavor-specific-application-id>\",\n  \"timeout_seconds\": 60,\n  \"context\": {\n    \"flavor\": \"<flavor>\",\n    \"build_mode\": \"<build-mode>\",\n    \"entrypoint\": \"<entrypoint>\",\n    \"data_source\": \"<account-and-destination-data-source>\",\n    \"provider\": \"<notification-delivery-source>\",\n    \"os_runtime\": \"<Android-version-and-API-level>\"\n  },\n  \"scenarios\": [\n    {\n      \"name\": \"warm-notification-tap\",\n      \"lifecycle\": \"warm\",\n      \"before\": [\n        {\n          \"name\": \"seed account data\",\n          \"argv\": [\"<existing-account-setup-hook>\"]\n        },\n        {\n          \"name\": \"launch or resume app at intended screen\",\n          \"argv\": [\"<existing-app-setup-hook>\"]\n        }\n      ],\n      \"precondition\": [\n        {\n          \"name\": \"verify live process, account, and visible starting screen\",\n          \"argv\": [\"<existing-runtime-state-assertion-hook>\"]\n        }\n      ],\n      \"trigger\": {\n        \"name\": \"deliver notification and tap it through native UI\",\n        \"argv\": [\"<existing-notification-delivery-and-native-tap-hook>\"]\n      },\n      \"assert\": [\n        {\n          \"name\": \"verify destination, one navigation effect, and Back outcome\",\n          \"argv\": [\"<existing-semantic-flow-assertion-hook>\"]\n        }\n      ],\n      \"after\": [\n        {\n          \"name\": \"restore task overrides and remove task-owned fixtures\",\n          \"argv\": [\"<existing-idempotent-cleanup-hook>\"]\n        }\n      ]\n    }\n  ]\n}\n```\n\nBefore execution, the review must establish:\n\n- The selected emulator is ready, its ownership is recorded, and the installed application matches the intended flavor and build.\n- The warm precondition observes the running app and intended UI; seeded account data alone cannot satisfy it.\n- The trigger performs an actual notification tap using the project\u2019s native-capable harness. Injecting a callback proves only the injected flow, not notification delivery or a system-tray tap.\n- Every hook, including `precondition`, inherits the **60-second timeout**. The runner attempts `after` from **`finally` after success, failure, timeout, or command error**; cleanup is idempotent.\n- Hooks keep credentials out of arguments and emit sanitized evidence. Cleanup affects only task-owned state.\n\nOnce placeholders are resolved, review the runner\u2019s default dry run before using `--execute`.\n\n**Review status: not ready for execution.** No runtime checks were performed. This single row covers a warm notification tap only; cold start, duplicate delivery, and production push remain untested.",
+        "judgment": {
+          "score": 60,
+          "expectations": [
+            {
+              "criterion": "1. Rejects or corrects the warm scenario until an explicit bounded precondition verifies the intended app process and foreground or background UI state before the trigger.",
+              "met": true,
+              "evidence": "Rejects account seeding as proof of warmth, adds a precondition verifying the live process and visible starting screen, bounds it to 60 seconds, and marks the matrix not ready for execution."
+            },
+            {
+              "criterion": "2. Produces a matrix accepted by the documented version 2 schema, uses context.provider, and validates it through the dry run before execution.",
+              "met": false,
+              "evidence": "Uses matrix_version: 2 and context.provider, but explicitly provides a non-executable review template. No schema acceptance or successful dry-run validation is demonstrated."
+            },
+            {
+              "criterion": "3. Uses the runner dry run and target plus installed-app preflight before execution.",
+              "met": false,
+              "evidence": "Lists emulator and installed-app checks and recommends a future dry run, but does not perform them. Explicitly states that no runtime checks were performed."
+            },
+            {
+              "criterion": "4. States that the per-step timeout bounds the warm precondition and places idempotent cleanup in finally-backed after hooks attempted after pass, failure, timeout, or command error.",
+              "met": true,
+              "evidence": "Explicitly applies the 60-second timeout to every hook, including precondition, and places idempotent cleanup in after with finally-backed attempts after success, failure, timeout, or command error."
+            },
+            {
+              "criterion": "5. Reports the target by a safe label instead of exposing its raw identifier by default.",
+              "met": true,
+              "evidence": "Provides target_label: android-notification-test and include_device_id: false; the device identifier remains a placeholder."
+            }
+          ],
+          "summary": "Meets three criteria, including the bounded warm-state gate and cleanup requirements. Fails mandatory criterion 2 and criterion 3 because schema validation, dry run, and preflight are deferred rather than completed."
+        },
+        "judgments": [
+          {
+            "score": 60,
+            "expectations": [
+              {
+                "criterion": "1. Rejects or corrects the warm scenario until an explicit bounded precondition verifies the intended app process and foreground or background UI state before the trigger.",
+                "met": true,
+                "evidence": "Rejects account seeding as proof of warmth, adds a precondition verifying the live process and visible starting screen, bounds it to 60 seconds, and marks the matrix not ready for execution."
+              },
+              {
+                "criterion": "2. Produces a matrix accepted by the documented version 2 schema, uses context.provider, and validates it through the dry run before execution.",
+                "met": false,
+                "evidence": "Uses matrix_version: 2 and context.provider, but explicitly provides a non-executable review template. No schema acceptance or successful dry-run validation is demonstrated."
+              },
+              {
+                "criterion": "3. Uses the runner dry run and target plus installed-app preflight before execution.",
+                "met": false,
+                "evidence": "Lists emulator and installed-app checks and recommends a future dry run, but does not perform them. Explicitly states that no runtime checks were performed."
+              },
+              {
+                "criterion": "4. States that the per-step timeout bounds the warm precondition and places idempotent cleanup in finally-backed after hooks attempted after pass, failure, timeout, or command error.",
+                "met": true,
+                "evidence": "Explicitly applies the 60-second timeout to every hook, including precondition, and places idempotent cleanup in after with finally-backed attempts after success, failure, timeout, or command error."
+              },
+              {
+                "criterion": "5. Reports the target by a safe label instead of exposing its raw identifier by default.",
+                "met": true,
+                "evidence": "Provides target_label: android-notification-test and include_device_id: false; the device identifier remains a placeholder."
+              }
+            ],
+            "summary": "Meets three criteria, including the bounded warm-state gate and cleanup requirements. Fails mandatory criterion 2 and criterion 3 because schema validation, dry run, and preflight are deferred rather than completed."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 60.0,
+          "minimum_score": 60,
+          "maximum_score": 60,
+          "score_range": 0,
+          "expectation_count": 5,
+          "unanimous_expectations": 5,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": true,
+      "passed": false
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 0,
+    "mandatory_failures": 1,
+    "baseline_average": null,
+    "with_skill_average": 60.0,
+    "average_delta": null,
+    "judge_agreement_rate": null,
+    "judge_score_range_average": null,
+    "mandatory_judge_disagreements": 0,
+    "by_skill": {
+      "flutter-device-testing": {
+        "cases": 1,
+        "passed": 0,
+        "baseline_average": null,
+        "with_skill_average": 60.0,
+        "average_delta": null
+      }
+    },
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}
