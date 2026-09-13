@@ -1,6 +1,6 @@
 ---
 name: flutter-device-testing
-description: Operate and verify Flutter apps on a concrete emulator, simulator, browser, desktop, or physical device. Use only when a concrete runtime target or device-only behavior is explicit; pair with flutter-navigation for deep-link route or back-stack correctness, and do not select it merely because focused widget or golden tests suffice.
+description: Operate and verify Flutter apps on a concrete emulator, simulator, browser, desktop, or physical device. Use for target lifecycle, platform-state checks, runtime evidence, and live integration flows; pair with flutter-navigation for route correctness, and do not select it for widget or golden-only work.
 ---
 
 # Flutter Device Testing
@@ -9,28 +9,32 @@ Use the smallest target matrix that proves the changed behavior, then state what
 
 ## Discover before acting
 
-Run `flutter devices` and inspect the project's supported platforms. Select targets by stable device identifier when multiple devices are available. Do not erase, reset, or recreate a user's device without explicit need and authorization.
+Inspect the project's SDK, supported platforms, flavors, entrypoints, and existing test tooling. Run `flutter devices` and, when a virtual target must be started, `flutter emulators`. Resolve one target by stable identifier, record whether it is reused or task-created, and wait until it is ready. Do not erase, reset, recreate, uninstall from, or clear data on a user's target without explicit need and authorization.
+
+Prefer Flutter CLI and available Dart and Flutter MCP capabilities for Flutter-owned state. Use `adb` or `simctl` only for platform control they actually provide. Flutter finders cannot operate native system UI such as permission dialogs, notification trays, or platform views; use a native-capable harness already adopted by the project when that interaction is required. Do not introduce Patrol, Maestro, Appium, or another framework merely because it is familiar.
 
 ## Workflow
 
-1. Confirm dependencies and generated code are ready.
-2. Launch with the correct flavor, entrypoint, and defines.
-3. Capture build or runtime errors from Flutter and platform logs.
-4. Exercise the exact user flow, including backgrounding, rotation, keyboard, deep link, or permission state when relevant.
-5. Save focused screenshots or test output when visual/runtime evidence matters.
-6. Run integration tests on the chosen target when durable automation is required.
-
-Use running-app inspection from the Dart and Flutter MCP server when it is available and useful. Otherwise use `flutter run`, `flutter logs`, `flutter drive` or `flutter test integration_test`, and native tools such as `adb` or `simctl` only where they add necessary platform control.
+1. Confirm dependencies and generated code are ready without changing the project's package or architecture choices.
+2. Verify target readiness and the flavor-specific application identity before changing runtime state.
+3. Launch with the correct flavor, entrypoint, defines, and build mode; never place credentials in command arguments or retained artifacts.
+4. Exercise the exact user flow and relevant lifecycle or platform states. Distinguish state injection from observing the real prompt, provider, or OS delivery path.
+5. Capture focused assertions, screenshots, and filtered logs that correspond to the tested build. Run the project's integration or native-UI harness when durable automation is required.
+6. Restore task-created target overrides and remove only task-owned artifacts, including after failures.
 
 ## Reliability
 
-Do not assume a successful compilation proves correct runtime behavior. Avoid hardcoded coordinates when semantic finders or integration-test APIs are available. Make test setup explicit and clean up only artifacts created by the test. Report simulator, emulator, browser, desktop, or physical device separately from fixture, mock, local server, development, staging, or production data; neither axis proves the other.
+Do not assume a successful build, launch command, or OS trigger proves correct app behavior. Prefer semantic finders, accessibility identifiers, or integration APIs over hardcoded coordinates, and prefer bounded readiness conditions over arbitrary sleeps. A warm-start claim requires an explicit precondition proving the intended process and UI state before the trigger. When using the lifecycle runner, confirm that every hook inherits its bounded timeout and that `after` cleanup is attempted from its `finally` path after pass, failure, timeout, or command error.
+
+Report target kind and a safe label, OS/runtime, build mode, flavor, entrypoint or relevant defines, exact flow, data source, assertions, artifacts, and skipped boundaries. Do not publish a raw physical-device identifier by default. Emulator or simulator behavior is functional evidence, not physical-hardware performance, GPU, camera, sensor, OEM, or production push evidence. Route benchmark attribution to `flutter-performance` and verify stronger hardware claims in profile or release-like mode on representative physical devices.
 
 ## References
 
-- Read [device discovery and emulators](references/device-discovery-and-emulators.md) when querying connected hardware, capturing platform crash logs, or exercising OS lifecycle states.
+- Read [device discovery and emulators](references/device-discovery-and-emulators.md) for shared target selection, ownership, readiness, safety, and evidence rules.
+- Read [Android emulator operations](references/android-emulator-operations.md) when starting or controlling an Android virtual or physical target with Flutter and `adb`.
+- Read [iOS Simulator operations](references/ios-simulator-operations.md) when controlling Simulator with Flutter and `simctl`, including permissions, location, screenshots, or simulated push.
 - Read [integration test workflows](references/integration-test-workflows.md) when writing or running `package:integration_test` suites, deep links, or smoke tests on a live target.
-- Read [lifecycle entry matrix](references/lifecycle-entry-matrix.md) when deep links or notification taps must be replayed across cold/warm start, authentication, duplicate delivery, slow data, or account changes. Use the included runner only after reviewing its dry-run plan.
+- Read [lifecycle entry matrix](references/lifecycle-entry-matrix.md) when deep links or notification taps must be replayed across cold/warm start, authentication, duplicate delivery, slow data, or account changes. Resolve placeholders and require the included runner's dry run to exit successfully with the expected plan before adding `--execute`.
 
 ## Sources
 

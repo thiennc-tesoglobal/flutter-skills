@@ -1,0 +1,126 @@
+{
+  "created_at": "2026-09-13T07:59:33.610634+00:00",
+  "runner_version": "2.0.0",
+  "git": {
+    "commit": "489f61c3cdd5dba57ea65a927f56ab8c0c2cd261",
+    "dirty": true,
+    "branch": "feature/flutter-device-testing-operations"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.154.0",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.154.0",
+  "judge_model": null,
+  "judges": [
+    {
+      "agent": "codex",
+      "version": "codex-cli 0.154.0",
+      "model": null
+    }
+  ],
+  "independent_primary_judge": false,
+  "catalog_version": "0.8.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-device-testing",
+      "case": "requires-explicit-warm-state-precondition",
+      "with_skill": {
+        "response": "Use `matrix_version: 2`. The account-seeding hook does **not** establish a warm app: setup must launch the app, and an explicit `precondition` must verify the running process and intended UI state before the notification tap.\n\nThe following is a review draft. Hook names are placeholders to replace with the project\u2019s existing tooling; it is not ready to execute.\n\n```json\n{\n  \"matrix_version\": 2,\n  \"platform\": \"android\",\n  \"device_id\": \"<resolved-emulator-id>\",\n  \"target_kind\": \"android-emulator\",\n  \"target_label\": \"android-notification-test\",\n  \"include_device_id\": false,\n  \"app_id\": \"<verified-flavor-application-id>\",\n  \"timeout_seconds\": 60,\n  \"context\": {\n    \"os_runtime\": \"<verified-Android-API>\",\n    \"flavor\": \"<project-flavor>\",\n    \"build_mode\": \"debug\",\n    \"entrypoint\": \"<project-entrypoint>\",\n    \"data_source\": \"<account-fixture-and-destination-API-source>\",\n    \"provider_layer\": \"<notification-delivery-path>\"\n  },\n  \"scenarios\": [\n    {\n      \"name\": \"warm-background-notification-tap\",\n      \"lifecycle\": \"warm\",\n      \"before\": [\n        {\n          \"name\": \"seed signed-in account\",\n          \"argv\": [\"<existing-account-seed-hook>\"]\n        },\n        {\n          \"name\": \"launch verified build and await home\",\n          \"argv\": [\"<existing-launch-and-home-readiness-hook>\"]\n        },\n        {\n          \"name\": \"background app without terminating process\",\n          \"argv\": [\"<existing-background-hook>\"]\n        },\n        {\n          \"name\": \"deliver notification and await native visibility\",\n          \"argv\": [\"<existing-notification-delivery-hook>\", \"order-42\"]\n        }\n      ],\n      \"precondition\": [\n        {\n          \"name\": \"verify original process alive, app backgrounded, expected account and notification visible\",\n          \"argv\": [\"<existing-warm-state-assertion-hook>\", \"order-42\"]\n        }\n      ],\n      \"trigger\": {\n        \"name\": \"tap notification using existing native-capable harness\",\n        \"argv\": [\"<existing-native-notification-tap-hook>\", \"order-42\"]\n      },\n      \"assert\": [\n        {\n          \"name\": \"verify same process resumes, order 42 opens once, Back returns home, and no unintended mutation occurs\",\n          \"argv\": [\"<existing-semantic-flow-assertion-hook>\", \"order-42\"]\n        }\n      ],\n      \"after\": [\n        {\n          \"name\": \"idempotently restore task overrides and remove task fixtures and notification\",\n          \"argv\": [\"<existing-task-cleanup-hook>\", \"order-42\"]\n        }\n      ]\n    }\n  ]\n}\n```\n\nBefore execution, resolve and verify the emulator, Android runtime, installed application identity, launch configuration, and each hook. Record whether the emulator is reused or task-created. Review the runner\u2019s dry-run plan first.\n\nThe critical review requirements are:\n\n- The precondition must inspect runtime state, including process continuity; another fixture write is insufficient.\n- Delivery and tapping are separate operations. Flutter finders cannot tap the native notification tray; use the project\u2019s existing native-capable harness.\n- Directly injecting a notification callback proves only callback handling. Declare the actual delivery path and avoid claiming provider or OS tap coverage from injection.\n- Cleanup must run through the runner\u2019s failure-safe `after` path without clearing unrelated user data.\n\nNothing has been executed or verified. This single row targets warm background entry; cold starts, duplicate delivery, signed-out continuation, and physical-device behavior remain untested. Any eventual report should include sanitized assertions and focused artifacts tied to the tested build.",
+        "judgment": {
+          "score": 50,
+          "expectations": [
+            {
+              "criterion": "Rejects or corrects the warm scenario until an explicit bounded precondition verifies the intended app process and foreground or background UI state before the trigger.",
+              "met": false,
+              "evidence": "Corrects the setup and requires process continuity and background-state verification before tapping, but does not explicitly bound the precondition. The matrix-level timeout_seconds does not establish how that verification is bounded."
+            },
+            {
+              "criterion": "Uses the runner dry run and target plus installed-app preflight before execution.",
+              "met": true,
+              "evidence": "Requires reviewing the runner\u2019s dry-run plan and verifying the emulator, runtime, installed application identity, launch configuration, and hooks before execution."
+            },
+            {
+              "criterion": "Places idempotent cleanup in after hooks and states that the runner executes them after pass, failure, timeout, or command error.",
+              "met": false,
+              "evidence": "Places explicitly idempotent cleanup in after, but 'failure-safe' does not explicitly guarantee execution after all four required outcomes."
+            },
+            {
+              "criterion": "Reports the target by a safe label instead of exposing its raw identifier by default.",
+              "met": true,
+              "evidence": "Provides target_label: android-notification-test and include_device_id: false; the device identifier shown is only a placeholder."
+            }
+          ],
+          "summary": "Meets preflight and safe target reporting requirements. Needs an explicitly bounded precondition and an explicit cleanup guarantee covering pass, failure, timeout, and command error."
+        },
+        "judgments": [
+          {
+            "score": 50,
+            "expectations": [
+              {
+                "criterion": "Rejects or corrects the warm scenario until an explicit bounded precondition verifies the intended app process and foreground or background UI state before the trigger.",
+                "met": false,
+                "evidence": "Corrects the setup and requires process continuity and background-state verification before tapping, but does not explicitly bound the precondition. The matrix-level timeout_seconds does not establish how that verification is bounded."
+              },
+              {
+                "criterion": "Uses the runner dry run and target plus installed-app preflight before execution.",
+                "met": true,
+                "evidence": "Requires reviewing the runner\u2019s dry-run plan and verifying the emulator, runtime, installed application identity, launch configuration, and hooks before execution."
+              },
+              {
+                "criterion": "Places idempotent cleanup in after hooks and states that the runner executes them after pass, failure, timeout, or command error.",
+                "met": false,
+                "evidence": "Places explicitly idempotent cleanup in after, but 'failure-safe' does not explicitly guarantee execution after all four required outcomes."
+              },
+              {
+                "criterion": "Reports the target by a safe label instead of exposing its raw identifier by default.",
+                "met": true,
+                "evidence": "Provides target_label: android-notification-test and include_device_id: false; the device identifier shown is only a placeholder."
+              }
+            ],
+            "summary": "Meets preflight and safe target reporting requirements. Needs an explicitly bounded precondition and an explicit cleanup guarantee covering pass, failure, timeout, and command error."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 50.0,
+          "minimum_score": 50,
+          "maximum_score": 50,
+          "score_range": 0,
+          "expectation_count": 4,
+          "unanimous_expectations": 4,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": true,
+      "passed": false
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 0,
+    "mandatory_failures": 1,
+    "baseline_average": null,
+    "with_skill_average": 50.0,
+    "average_delta": null,
+    "judge_agreement_rate": null,
+    "judge_score_range_average": null,
+    "mandatory_judge_disagreements": 0,
+    "by_skill": {
+      "flutter-device-testing": {
+        "cases": 1,
+        "passed": 0,
+        "baseline_average": null,
+        "with_skill_average": 50.0,
+        "average_delta": null
+      }
+    },
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

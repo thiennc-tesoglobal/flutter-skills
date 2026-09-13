@@ -1,0 +1,116 @@
+{
+  "created_at": "2026-09-13T07:57:57.138990+00:00",
+  "runner_version": "2.0.0",
+  "git": {
+    "commit": "489f61c3cdd5dba57ea65a927f56ab8c0c2cd261",
+    "dirty": true,
+    "branch": "feature/flutter-device-testing-operations"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.154.0",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.154.0",
+  "judge_model": null,
+  "judges": [
+    {
+      "agent": "codex",
+      "version": "codex-cli 0.154.0",
+      "model": null
+    }
+  ],
+  "independent_primary_judge": false,
+  "catalog_version": "0.8.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-device-testing",
+      "case": "requires-explicit-warm-state-precondition",
+      "with_skill": {
+        "response": "Use matrix version 2. The account-seeding hook does **not** establish a warm app state. Before execution, add a launch/resume step and an explicit runtime precondition proving that the intended app process is running and its expected UI is visible.\n\nThis review draft uses placeholders for existing project hooks; it is not executable yet:\n\n```json\n{\n  \"matrix_version\": 2,\n  \"platform\": \"android\",\n  \"device_id\": \"<resolved-emulator-id>\",\n  \"target_kind\": \"android-emulator\",\n  \"target_label\": \"android-notification-test\",\n  \"include_device_id\": false,\n  \"app_id\": \"<flavor-specific-application-id>\",\n  \"timeout_seconds\": 60,\n  \"context\": {\n    \"flavor\": \"<project-flavor>\",\n    \"build_mode\": \"debug\",\n    \"entrypoint\": \"<project-entrypoint>\",\n    \"data_source\": \"<account-fixture-and-destination-API>\"\n  },\n  \"scenarios\": [\n    {\n      \"name\": \"warm-signed-in-notification-tap\",\n      \"lifecycle\": \"warm\",\n      \"before\": [\n        {\n          \"name\": \"seed account data\",\n          \"argv\": [\"<existing-account-setup-hook>\"]\n        },\n        {\n          \"name\": \"launch configured app and await signed-in home\",\n          \"argv\": [\"<project-launch-and-readiness-hook>\"]\n        }\n      ],\n      \"precondition\": [\n        {\n          \"name\": \"verify intended app process is alive and signed-in home is visible\",\n          \"argv\": [\"<project-runtime-precondition-hook>\"]\n        }\n      ],\n      \"trigger\": {\n        \"name\": \"deliver test notification and tap it using existing native-capable harness\",\n        \"argv\": [\"<project-notification-delivery-and-native-tap-hook>\"]\n      },\n      \"assert\": [\n        {\n          \"name\": \"verify warm process continuity, intended destination, one navigation effect, and expected Back outcome\",\n          \"argv\": [\"<project-semantic-assertion-hook>\"]\n        }\n      ],\n      \"after\": [\n        {\n          \"name\": \"restore task-owned fixtures and runtime overrides\",\n          \"argv\": [\"<project-cleanup-hook>\"]\n        }\n      ]\n    }\n  ]\n}\n```\n\nReview status: **not ready for execution**. Resolve these items first:\n\n- Confirm emulator readiness, ownership, OS/runtime, installed application identity, and matching flavor/build configuration.\n- Replace placeholders with existing project commands. Define the notification identity, expected destination, Back outcome, and allowed side effects.\n- Make the precondition inspect the live process and UI; fail the scenario if either is missing. This draft selects a foreground warm state.\n- Ensure the trigger actually taps a system notification through an existing native-capable harness. Directly invoking a Flutter callback tests injected handling, not a notification tap. Record whether delivery uses a fixture or a real provider.\n- Review the runner\u2019s dry-run plan before execution. Keep credentials out of arguments and retain only sanitized evidence.\n\nNo execution occurred, and no runtime assertions or artifacts were collected. This single row excludes cold starts and physical-device or production-push claims.",
+        "judgment": {
+          "score": 67,
+          "expectations": [
+            {
+              "criterion": "Rejects or corrects the warm scenario until an explicit bounded precondition verifies the intended app process and foreground or background UI state before the trigger.",
+              "met": true,
+              "evidence": "Declares the draft not ready for execution, sets timeout_seconds to 60, places live process and signed-in UI verification before the trigger, selects foreground warm state, and requires failure if either check is missing."
+            },
+            {
+              "criterion": "Uses the runner dry run and target plus installed-app preflight before execution.",
+              "met": true,
+              "evidence": "Requires reviewing the runner\u2019s dry-run plan and confirming emulator readiness, ownership, OS/runtime, installed application identity, and matching flavor/build configuration before execution."
+            },
+            {
+              "criterion": "Keeps cleanup after failures and reports the target by a safe label instead of exposing its raw identifier by default.",
+              "met": false,
+              "evidence": "Provides target_label and include_device_id: false, but merely places cleanup in an after hook without explicitly requiring it to run after failures."
+            }
+          ],
+          "summary": "The review corrects the warm-state prerequisite and requires preflight and dry-run review. Safe target reporting is explicit, but cleanup after failures is not."
+        },
+        "judgments": [
+          {
+            "score": 67,
+            "expectations": [
+              {
+                "criterion": "Rejects or corrects the warm scenario until an explicit bounded precondition verifies the intended app process and foreground or background UI state before the trigger.",
+                "met": true,
+                "evidence": "Declares the draft not ready for execution, sets timeout_seconds to 60, places live process and signed-in UI verification before the trigger, selects foreground warm state, and requires failure if either check is missing."
+              },
+              {
+                "criterion": "Uses the runner dry run and target plus installed-app preflight before execution.",
+                "met": true,
+                "evidence": "Requires reviewing the runner\u2019s dry-run plan and confirming emulator readiness, ownership, OS/runtime, installed application identity, and matching flavor/build configuration before execution."
+              },
+              {
+                "criterion": "Keeps cleanup after failures and reports the target by a safe label instead of exposing its raw identifier by default.",
+                "met": false,
+                "evidence": "Provides target_label and include_device_id: false, but merely places cleanup in an after hook without explicitly requiring it to run after failures."
+              }
+            ],
+            "summary": "The review corrects the warm-state prerequisite and requires preflight and dry-run review. Safe target reporting is explicit, but cleanup after failures is not."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 67.0,
+          "minimum_score": 67,
+          "maximum_score": 67,
+          "score_range": 0,
+          "expectation_count": 3,
+          "unanimous_expectations": 3,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": false
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 0,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 67.0,
+    "average_delta": null,
+    "judge_agreement_rate": null,
+    "judge_score_range_average": null,
+    "mandatory_judge_disagreements": 0,
+    "by_skill": {
+      "flutter-device-testing": {
+        "cases": 1,
+        "passed": 0,
+        "baseline_average": null,
+        "with_skill_average": 67.0,
+        "average_delta": null
+      }
+    },
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

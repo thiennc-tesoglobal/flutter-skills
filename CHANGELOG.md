@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Expand `flutter-device-testing` with Android Emulator and iOS Simulator operation references, explicit native-system-UI automation boundaries, readiness checks, safe target ownership, focused evidence, and physical-hardware verification limits.
+- Add lifecycle matrix version 2 with target and installed-app preflight, mandatory warm-state preconditions, safe target labels, opt-in device identifier retention, execution context, and version 1 compatibility.
+- Add five device behavior cases and two routing cases covering target readiness, native permission dialogs, Simulator override cleanup, physical evidence boundaries, and warm-state correctness.
+- Retain focused warm-state forward-evaluation results covering cleanup, bounded precondition, and schema-contract gaps plus the corrected outcome.
 - Correct `flutter-text-rendering` flex guidance so constraints and truncation follow the failing axis and content contract instead of wrapping every text node mechanically.
 - Document production ownership and disposal for inline gesture recognizers and include the ambient locale in localized `TextPainter` measurement.
 - Add two behavior-focused regression cases for unbounded column flex and inline recognizer lifecycle handling.

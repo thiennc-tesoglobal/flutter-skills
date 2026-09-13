@@ -3,7 +3,8 @@
     "name": "verifies-deep-link-on-device",
     "prompt": "Confirm a product deep link launches the correct screen on an Android emulator.",
     "resources": [
-      "references/device-discovery-and-emulators.md"
+      "references/device-discovery-and-emulators.md",
+      "references/android-emulator-operations.md"
     ],
     "expectations": [
       {"text": "discovers and selects a target explicitly", "mandatory": true},
@@ -82,6 +83,95 @@
       },
       "does not mechanically await a synchronous void main or leave asynchronous initialization unobserved",
       "prefers a shared testable bootstrap over duplicating production initialization and specifies regression coverage for startup failure as well as success"
+    ]
+  },
+  {
+    "name": "reuses-android-emulator-with-readiness-and-evidence",
+    "prompt": "Run the staging app on an existing stopped Android AVD without wiping its data. Select the intended AVD, wait until it is usable, confirm the staging application is installed, exercise a rotation-and-resume smoke flow, and retain focused evidence without publishing the device serial.",
+    "resources": [
+      "references/device-discovery-and-emulators.md",
+      "references/android-emulator-operations.md"
+    ],
+    "expectations": [
+      {
+        "id": "safe-target-readiness",
+        "text": "resolves the intended existing AVD and stable runtime target, starts it without wiping or recreating it, and waits for boot readiness before launching or asserting",
+        "mandatory": true
+      },
+      "confirms the flavor-specific application identity and installation before exercising the requested flow",
+      "restores any changed orientation or other target override and records target kind OS/runtime flavor data source and focused artifacts without publishing the raw serial"
+    ]
+  },
+  {
+    "name": "routes-native-permission-dialog-to-capable-existing-tool",
+    "prompt": "Our Flutter integration test reaches an Android camera permission dialog and then hangs because tester.tap cannot see the Allow button. Keep our existing test stack unless a change is justified, and explain how to make this device flow durable.",
+    "resources": [
+      "references/integration-test-workflows.md"
+    ],
+    "expectations": [
+      {
+        "id": "native-ui-boundary",
+        "text": "states that package:integration_test Flutter finders cannot operate native system UI such as the permission dialog",
+        "mandatory": true
+      },
+      "uses an already adopted native-capable harness or platform automation for the dialog and keeps Flutter-owned assertions in the existing integration test layer",
+      "does not add Patrol Maestro Appium or another dependency as a universal default and avoids hardcoded coordinates or arbitrary sleeps",
+      "tests denied granted and relevant limited or permanently-denied behavior while distinguishing injected permission state from the real prompt flow"
+    ]
+  },
+  {
+    "name": "cleans-ios-simulator-overrides-narrowly",
+    "prompt": "Verify a Flutter map screen on one existing iOS Simulator with dark appearance, denied then granted location permission, a fixed test coordinate, and a screenshot. Preserve its installed app data and leave the simulator as you found it.",
+    "resources": [
+      "references/device-discovery-and-emulators.md",
+      "references/ios-simulator-operations.md"
+    ],
+    "expectations": [
+      {
+        "id": "simulator-override-cleanup",
+        "text": "targets one resolved simulator UDID, waits for it to be booted, records prior or task-owned override state, and clears or restores appearance location and permission changes after pass or failure",
+        "mandatory": true
+      },
+      "does not uninstall the app erase the simulator or claim that injected permission state proves the real system prompt flow",
+      "captures a focused screenshot and reports simulator runtime app flavor permission states and data source separately"
+    ]
+  },
+  {
+    "name": "does-not-upgrade-simulator-performance-or-hardware-evidence",
+    "prompt": "The checkout animation is smooth and camera capture opens on an iOS Simulator. Report release performance as verified on iPhone hardware and mark camera behavior production-ready without another run.",
+    "resources": [
+      "references/ios-simulator-operations.md"
+    ],
+    "expectations": [
+      {
+        "id": "physical-evidence-boundary",
+        "text": "rejects upgrading simulator observations into physical-device performance GPU camera or release-readiness evidence",
+        "mandatory": true
+      },
+      "keeps the simulator result as functional evidence only and identifies profile or release-like verification on representative physical hardware when those stronger claims are required",
+      "routes benchmark attribution to flutter-performance while keeping concrete target operation with flutter-device-testing"
+    ]
+  },
+  {
+    "name": "requires-explicit-warm-state-precondition",
+    "prompt": "Prepare a versioned lifecycle matrix that claims to test a warm notification tap on an Android emulator. The existing setup hook only seeds account data and does not launch or inspect the app. Review the matrix before execution.",
+    "resources": [
+      "references/lifecycle-entry-matrix.md"
+    ],
+    "expectations": [
+      {
+        "id": "warm-state-proof",
+        "text": "rejects or corrects the warm scenario until an explicit bounded precondition verifies the intended app process and foreground or background UI state before the trigger",
+        "mandatory": true
+      },
+      {
+        "id": "valid-version-two-schema",
+        "text": "produces a matrix that conforms to the documented version 2 fields, uses context.provider instead of inventing unsupported fields, and requires it to pass the runner dry run after placeholders are resolved",
+        "mandatory": true
+      },
+      "requires the runner dry-run plan and its target plus installed-app preflight before execution without claiming those checks ran when concrete hooks or target facts are unavailable",
+      "states that the per-step timeout bounds the warm precondition and places idempotent cleanup in finally-backed after hooks attempted after pass failure timeout or command error",
+      "reports the target by a safe label instead of exposing its raw identifier by default"
     ]
   }
 ]
