@@ -29,7 +29,25 @@
         "text": "configures overflow behavior with TextOverflow.ellipsis and an explicit maxLines",
         "mandatory": true
       },
-      "identifies that Row provides unbounded horizontal constraints to its children by default"
+      "identifies that Row initially provides unbounded horizontal constraints to non-flex children"
+    ]
+  },
+  {
+    "name": "does-not-force-flex-or-truncation-in-column",
+    "prompt": "A settings screen uses a Column inside a vertical SingleChildScrollView. Its help Text already receives the screen width and should wrap in full. A teammate proposes wrapping every Text in Expanded and setting maxLines: 1 with ellipsis to prevent all future overflows. Review that fix and recommend a constraint-aware approach.",
+    "resources": [
+      "references/text-overflow-and-wrapping.md"
+    ],
+    "expectations": [
+      {
+        "text": "rejects blanket Expanded or Flexible wrappers and blanket single-line ellipsis because the full help copy should remain readable",
+        "mandatory": true
+      },
+      {
+        "text": "distinguishes Row horizontal allocation from Column vertical flex behavior and warns that Expanded under an unbounded vertical scroll constraint can fail",
+        "mandatory": true
+      },
+      "inspects the actual failing axis and preserves natural wrapping when the text already has an appropriate finite width"
     ]
   },
   {
@@ -48,6 +66,24 @@
     ]
   },
   {
+    "name": "owns-and-disposes-inline-recognizer",
+    "prompt": "A StatefulWidget currently creates TapGestureRecognizer()..onTap inside build for a clickable TextSpan. Refactor the ownership so repeated rebuilds do not leak recognizers, and explain how cleanup differs if a widget test creates its own recognizer.",
+    "resources": [
+      "references/text-overflow-and-wrapping.md"
+    ],
+    "expectations": [
+      {
+        "text": "stores the production recognizer in the owning State and disposes it from State.dispose",
+        "mandatory": true
+      },
+      {
+        "text": "does not allocate a new recognizer on every build and does not treat addTearDown as the production lifecycle",
+        "mandatory": true
+      },
+      "uses addTearDown only for a recognizer created directly by the test"
+    ]
+  },
+  {
     "name": "measures-dynamic-text-dimensions",
     "prompt": "We are building an expandable comment widget that needs to detect whether dynamic localized copy exceeds 3 lines before layout, in order to conditionally show a 'Show more' button. How should we measure the text dimensions in Flutter?",
     "resources": [
@@ -62,7 +98,10 @@
         "text": "disposes the TextPainter instance to avoid resource leaks",
         "mandatory": true
       },
-      "passes Directionality and ambient TextScaler into TextPainter for accurate layout simulation"
+      {
+        "text": "passes the ambient Directionality, locale, and TextScaler into TextPainter for accurate localized layout simulation",
+        "mandatory": true
+      }
     ]
   },
   {

@@ -43,13 +43,17 @@ Text('24\u00A0°C')
 
 ## Flex layout text containment
 
-The most common Flutter layout exception is `RenderFlex overflowed by X pixels` caused by unconstrained text inside a `Row` or `Flex`.
+One common Flutter layout exception is `RenderFlex overflowed by X pixels`, which can occur when text competes with siblings for space along a flex layout's main axis.
 
 ### Why it happens
 
-A `Row` grants unbounded maximum width to its children. A `Text` widget measures its own natural width and attempts to consume infinite width, colliding with the viewport boundary.
+A `Row` initially lays out its non-flex children with unbounded horizontal constraints. A long `Text` can therefore choose its intrinsic width without knowing how much room its siblings need, leaving the row wider than its incoming constraint. A flex child is laid out later against an allocated share of the remaining width.
 
-### Solutions
+This behavior is axis-specific. A `Column` ordinarily constrains its children's width and uses flex vertically. Wrapping text in `Expanded` inside a vertically unbounded `Column`, such as one placed in a vertical scrollable, can cause a different layout exception rather than fixing horizontal wrapping.
+
+### Choose a constraint that matches the layout contract
+
+Do not wrap every `Text` in flex or truncate every label. Let short or full-fidelity copy wrap naturally when it already receives an appropriate width. When text must share the remaining horizontal space with siblings, choose the smallest suitable constraint:
 
 1. **`Expanded` (tight fit):** Forces the `Text` widget to consume all remaining available space and forces width constraints onto the text layout engine:
 
@@ -89,6 +93,8 @@ Row(
   ],
 )
 ```
+
+3. **`SizedBox` or `ConstrainedBox`:** Use an explicit or maximum width when the design contract defines a cap independently of the row's remaining-space allocation.
 
 ---
 
@@ -154,13 +160,35 @@ Text.rich(
           color: Theme.of(context).colorScheme.primary,
           decoration: TextDecoration.underline,
         ),
-        recognizer: tapGestureRecognizer,
+        recognizer: _accountLinkRecognizer,
       ),
       const TextSpan(text: ' to view your account details.'),
     ],
   ),
 )
 ```
+
+### Recognizer ownership
+
+`TextSpan` does not own or dispose its `GestureRecognizer`. In production code, keep a recognizer that survives rebuilds in the owning `State`, configure it during initialization, and dispose it with that state:
+
+```dart
+late final TapGestureRecognizer _accountLinkRecognizer;
+
+@override
+void initState() {
+  super.initState();
+  _accountLinkRecognizer = TapGestureRecognizer()..onTap = _openAccount;
+}
+
+@override
+void dispose() {
+  _accountLinkRecognizer.dispose();
+  super.dispose();
+}
+```
+
+Pass `_accountLinkRecognizer` to the span instead of allocating a new recognizer in `build`. If a test directly creates its own recognizer, register `addTearDown(recognizer.dispose)` immediately after creation.
 
 ---
 
@@ -180,6 +208,7 @@ bool checkWillOverflow({
     text: TextSpan(text: text, style: style),
     maxLines: maxLines,
     textDirection: Directionality.of(context),
+    locale: Localizations.maybeLocaleOf(context),
     textScaler: MediaQuery.textScalerOf(context),
   )..layout(maxWidth: maxWidth);
 

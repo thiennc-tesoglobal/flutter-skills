@@ -11,7 +11,7 @@ Render readable, predictable text across dynamic content lengths, locales, and a
 
 Identify the failure mechanism before adjusting layout:
 
-1. **Unconstrained flex overflow:** An unconstrained `Text` inside a `Row` or `Flex` expands infinitely, producing `RenderFlex overflowed`.
+1. **Main-axis flex overflow:** A non-flex `Text` can receive an unbounded constraint along a `Flex` main axis and choose an intrinsic size larger than the space available beside its siblings, producing `RenderFlex overflowed`.
 2. **Orphaned words (widows):** The last word of a headline or paragraph dangles alone on a new line because line breaking occurred at the final whitespace.
 3. **Uncontrolled truncation:** Text clips silently or exceeds intended lines without a visible truncation affordance (`ellipsis`, `fade`).
 4. **Broken inline flow:** Multiple adjacent `Text` widgets in a `Row` break across lines awkwardly instead of flowing as a continuous paragraph.
@@ -19,11 +19,11 @@ Identify the failure mechanism before adjusting layout:
 
 ## Rules
 
-- **Constrain text in flex layouts:** Always wrap `Text` in `Expanded` or `Flexible` when placed inside a `Row`, `Column`, or `Flex` where available space is bounded, and set `overflow: TextOverflow.ellipsis` with explicit `maxLines`.
-- **Prevent orphaned words:** Use a non-breaking space (`\u00A0`) between the final two words of headings, titles, and callouts so the last word never wraps alone to a new line.
-- **Choose deliberate truncation:** Pair `maxLines` with `overflow: TextOverflow.ellipsis`, `TextOverflow.fade`, or `TextOverflow.clip`. Do not set `softWrap: false` without verifying whether single-line clipping is acceptable.
+- **Constrain the competing branch, not every `Text`:** In a `Row`, use `Flexible`, `Expanded`, `SizedBox`, or `ConstrainedBox` when text must share finite horizontal space with siblings. In a `Column`, flex changes vertical allocation and is not a default fix for horizontal text overflow. Never add a flex child when the parent's main-axis constraint is unbounded.
+- **Prevent orphaned words only where segmentation fits:** A non-breaking space (`\u00A0`) can bind the final two words of space-delimited headings, titles, and callouts. Do not apply that heuristic universally across locales.
+- **Choose wrapping or truncation deliberately:** Allow natural wrapping when the full copy matters. When the product contract calls for truncation, pair an explicit `maxLines` with `TextOverflow.ellipsis`, `TextOverflow.fade`, or `TextOverflow.clip`. Do not set `softWrap: false` without verifying whether single-line clipping is acceptable.
 - **Use `Text.rich` for inline styling:** Prefer `Text.rich` (which inherits ambient `DefaultTextStyle`) over `RichText` (which requires explicit style and text direction) when mixing weights, colors, inline badges (`WidgetSpan`), or link recognizers.
-- **Measure text with `TextPainter` when layout depends on copy size:** When building dynamic chips, custom canvas callouts, or expandable "Read more" widgets, layout a `TextPainter` with explicit `maxWidth` and `textScaler` to check rendered height and `didExceedMaxLines`.
+- **Measure text with `TextPainter` when layout depends on copy size:** When building dynamic chips, custom canvas callouts, or expandable "Read more" widgets, layout a `TextPainter` with explicit `maxWidth` plus the ambient direction, locale, and `TextScaler` to check rendered height and `didExceedMaxLines`.
 - **Adapt to text scaling:** Support enlarged system fonts (`MediaQuery.textScalerOf(context)`). Avoid hardcoded container heights around text; prefer flexible or scrollable containers.
 - **Account for internationalization:** Design copy containers to tolerate 20–35% text length expansion for localized strings and support bidirectional text (`TextDirection`).
 

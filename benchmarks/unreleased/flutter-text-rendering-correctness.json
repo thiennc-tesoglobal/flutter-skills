@@ -1,0 +1,246 @@
+{
+  "created_at": "2026-09-13T07:22:18.545852+00:00",
+  "runner_version": "2.0.0",
+  "git": {
+    "commit": "192be8c4f70d09c792796d08633bc3f9ce53a05b",
+    "dirty": true,
+    "branch": "fix/flutter-text-rendering-correctness"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.154.0",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.154.0",
+  "judge_model": null,
+  "judges": [
+    {
+      "agent": "codex",
+      "version": "codex-cli 0.154.0",
+      "model": null
+    }
+  ],
+  "independent_primary_judge": false,
+  "catalog_version": "0.8.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-text-rendering",
+      "case": "does-not-force-flex-or-truncation-in-column",
+      "with_skill": {
+        "response": "I wouldn\u2019t apply that fix. The help text already has a finite width, so it can wrap naturally. `Expanded` in this `Column` controls **height**, and the vertical `SingleChildScrollView` supplies an unbounded height; adding flex children can cause a layout exception. A one-line ellipsis would also hide help content that should remain fully readable.\n\nKeep the help text free to grow vertically:\n\n```dart\nSingleChildScrollView(\n  child: Column(\n    crossAxisAlignment: CrossAxisAlignment.stretch,\n    children: [\n      Text(helpText), // Natural wrapping; no line limit.\n    ],\n  ),\n)\n```\n\nApply constraints where competition actually occurs:\n\n- In a **bounded-width `Row`**, wrap the text branch in `Flexible` or `Expanded` when it shares space with icons or actions.\n- If the design defines a width cap, use `SizedBox` or `ConstrainedBox`.\n- Use `maxLines` and ellipsis only for content explicitly allowed to truncate.\n- Avoid fixed heights around help text so enlarged system fonts can grow within the scrollable screen.\n\nVerify narrow widths, empty and long copy, localized strings, long unbroken strings, and 1.5\u00d7/2\u00d7 text scaling. Widget tests should assert no layout exceptions and confirm that long help text wraps onto multiple lines without truncation.",
+        "judgment": {
+          "score": 85,
+          "expectations": [
+            {
+              "criterion": "Rejects blanket Expanded or Flexible wrappers and blanket single-line ellipsis because the full help copy should remain readable.",
+              "met": true,
+              "evidence": "Explicitly rejects the proposed fix, explains that ellipsis hides required help content, and reserves flex wrappers for bounded-width Rows."
+            },
+            {
+              "criterion": "Distinguishes Row horizontal allocation from Column vertical flex behavior and warns that Expanded under an unbounded vertical scroll constraint can fail.",
+              "met": true,
+              "evidence": "States that Expanded controls height in the Column, warns of a layout exception under unbounded scroll height, and recommends Row flex for sharing horizontal space."
+            },
+            {
+              "criterion": "Inspects the actual failing axis and preserves natural wrapping when the text already has an appropriate finite width.",
+              "met": false,
+              "evidence": "Explicitly preserves natural wrapping at the existing finite width, but does not explicitly inspect or require verification of the actual overflow axis before selecting a fix."
+            }
+          ],
+          "summary": "Meets both mandatory criteria and preserves readable wrapping. Falls short of explicitly verifying the actual failing axis."
+        },
+        "judgments": [
+          {
+            "score": 85,
+            "expectations": [
+              {
+                "criterion": "Rejects blanket Expanded or Flexible wrappers and blanket single-line ellipsis because the full help copy should remain readable.",
+                "met": true,
+                "evidence": "Explicitly rejects the proposed fix, explains that ellipsis hides required help content, and reserves flex wrappers for bounded-width Rows."
+              },
+              {
+                "criterion": "Distinguishes Row horizontal allocation from Column vertical flex behavior and warns that Expanded under an unbounded vertical scroll constraint can fail.",
+                "met": true,
+                "evidence": "States that Expanded controls height in the Column, warns of a layout exception under unbounded scroll height, and recommends Row flex for sharing horizontal space."
+              },
+              {
+                "criterion": "Inspects the actual failing axis and preserves natural wrapping when the text already has an appropriate finite width.",
+                "met": false,
+                "evidence": "Explicitly preserves natural wrapping at the existing finite width, but does not explicitly inspect or require verification of the actual overflow axis before selecting a fix."
+              }
+            ],
+            "summary": "Meets both mandatory criteria and preserves readable wrapping. Falls short of explicitly verifying the actual failing axis."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 85.0,
+          "minimum_score": 85,
+          "maximum_score": 85,
+          "score_range": 0,
+          "expectation_count": 3,
+          "unanimous_expectations": 3,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    },
+    {
+      "skill": "flutter-text-rendering",
+      "case": "owns-and-disposes-inline-recognizer",
+      "with_skill": {
+        "response": "Keep the recognizer in the widget\u2019s `State`, initialize it once, and dispose it when the state is removed. `TextSpan` does not dispose its recognizer.\n\n```dart\nimport 'package:flutter/gestures.dart';\nimport 'package:flutter/material.dart';\n\nclass AccountLink extends StatefulWidget {\n  const AccountLink({super.key, required this.onTap});\n\n  final VoidCallback onTap;\n\n  @override\n  State<AccountLink> createState() => _AccountLinkState();\n}\n\nclass _AccountLinkState extends State<AccountLink> {\n  late final TapGestureRecognizer _recognizer;\n\n  @override\n  void initState() {\n    super.initState();\n    _recognizer = TapGestureRecognizer()\n      ..onTap = () => widget.onTap();\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Text.rich(\n      TextSpan(\n        text: 'View your account',\n        style: const TextStyle(\n          decoration: TextDecoration.underline,\n        ),\n        recognizer: _recognizer,\n      ),\n    );\n  }\n\n  @override\n  void dispose() {\n    _recognizer.dispose();\n    super.dispose();\n  }\n}\n```\n\nThe closure reads the current `widget.onTap`, so callback changes are respected across rebuilds.\n\nIf a widget test creates its **own** recognizer, the test owns cleanup. Register disposal immediately after creation:\n\n```dart\nfinal recognizer = TapGestureRecognizer();\naddTearDown(recognizer.dispose);\nrecognizer.onTap = () { /* test action */ };\n```\n\nWhen testing `AccountLink`, let its `State.dispose()` clean up the widget-owned recognizer; do not dispose it again from the test.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Stores the production recognizer in the owning State and disposes it from State.dispose.",
+              "met": true,
+              "evidence": "_AccountLinkState owns the _recognizer field and calls _recognizer.dispose() in its dispose() override."
+            },
+            {
+              "criterion": "Does not allocate a new recognizer on every build and does not treat addTearDown as the production lifecycle.",
+              "met": true,
+              "evidence": "The recognizer is created once in initState(); build reuses _recognizer. Production cleanup explicitly uses State.dispose()."
+            },
+            {
+              "criterion": "Uses addTearDown only for a recognizer created directly by the test.",
+              "met": true,
+              "evidence": "The test example creates its own recognizer and registers addTearDown(recognizer.dispose). The response explicitly leaves widget-owned cleanup to State.dispose() and warns against disposing it again."
+            }
+          ],
+          "summary": "The response explicitly satisfies all criteria with correct ownership, reuse, and separate cleanup for test-created recognizers."
+        },
+        "judgments": [
+          {
+            "score": 100,
+            "expectations": [
+              {
+                "criterion": "Stores the production recognizer in the owning State and disposes it from State.dispose.",
+                "met": true,
+                "evidence": "_AccountLinkState owns the _recognizer field and calls _recognizer.dispose() in its dispose() override."
+              },
+              {
+                "criterion": "Does not allocate a new recognizer on every build and does not treat addTearDown as the production lifecycle.",
+                "met": true,
+                "evidence": "The recognizer is created once in initState(); build reuses _recognizer. Production cleanup explicitly uses State.dispose()."
+              },
+              {
+                "criterion": "Uses addTearDown only for a recognizer created directly by the test.",
+                "met": true,
+                "evidence": "The test example creates its own recognizer and registers addTearDown(recognizer.dispose). The response explicitly leaves widget-owned cleanup to State.dispose() and warns against disposing it again."
+              }
+            ],
+            "summary": "The response explicitly satisfies all criteria with correct ownership, reuse, and separate cleanup for test-created recognizers."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 100.0,
+          "minimum_score": 100,
+          "maximum_score": 100,
+          "score_range": 0,
+          "expectation_count": 3,
+          "unanimous_expectations": 3,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    },
+    {
+      "skill": "flutter-text-rendering",
+      "case": "measures-dynamic-text-dimensions",
+      "with_skill": {
+        "response": "Use `TextPainter` inside a `LayoutBuilder`, so measurement uses the actual available width before laying out the text child. Set `maxLines: 3` and check `didExceedMaxLines`.\n\nThe measurement must match the rendered text\u2019s style, direction, locale, and accessibility text scale.\n\n```dart\nLayoutBuilder(\n  builder: (context, constraints) {\n    // Place this inside any horizontal padding so widths match.\n    final style = DefaultTextStyle.of(context).style.merge(\n      Theme.of(context).textTheme.bodyMedium,\n    );\n    final direction = Directionality.of(context);\n    final locale = Localizations.maybeLocaleOf(context);\n    final scaler = MediaQuery.textScalerOf(context);\n\n    final painter = TextPainter(\n      text: TextSpan(text: comment, style: style),\n      maxLines: 3,\n      ellipsis: '\\u2026',\n      textDirection: direction,\n      locale: locale,\n      textScaler: scaler,\n    );\n\n    late final bool needsExpansion;\n    try {\n      // Requires a finite width from the parent.\n      painter.layout(maxWidth: constraints.maxWidth);\n      needsExpansion = painter.didExceedMaxLines;\n      // painter.size gives the measured, collapsed text dimensions.\n    } finally {\n      painter.dispose();\n    }\n\n    return Column(\n      crossAxisAlignment: CrossAxisAlignment.start,\n      mainAxisSize: MainAxisSize.min,\n      children: [\n        Text(\n          comment,\n          style: style,\n          textDirection: direction,\n          locale: locale,\n          textScaler: scaler,\n          maxLines: expanded ? null : 3,\n          overflow: expanded\n              ? TextOverflow.visible\n              : TextOverflow.ellipsis,\n        ),\n        if (needsExpansion)\n          TextButton(\n            onPressed: () => setState(() => expanded = !expanded),\n            child: Text(expanded ? showLessLabel : showMoreLabel),\n          ),\n      ],\n    );\n  },\n)\n```\n\nHere, `expanded` is state, and the button labels are localized strings. Keep measuring against three lines even when expanded so the \u201cShow less\u201d button remains available.\n\nYou cannot measure wrapping reliably before knowing the available width. Avoid estimating from character counts or dividing height by font size. Let the widget grow vertically rather than assigning a fixed height.\n\nAdd widget tests covering empty, short, long, and localized copy at narrow widths and text scales of `1.5` and `2.0`. Assert no layout exceptions, a collapsed three-line limit with ellipsis, and that the button appears only when the copy exceeds that limit.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Uses TextPainter with layout(maxWidth) to measure whether copy exceeds maxLines.",
+              "met": true,
+              "evidence": "Creates TextPainter with maxLines: 3, calls painter.layout(maxWidth: constraints.maxWidth), and uses painter.didExceedMaxLines to conditionally show the button."
+            },
+            {
+              "criterion": "Disposes the TextPainter instance to avoid resource leaks.",
+              "met": true,
+              "evidence": "Calls painter.dispose() in a finally block, ensuring cleanup even if measurement throws."
+            },
+            {
+              "criterion": "Passes the ambient Directionality, locale, and TextScaler into TextPainter for accurate localized layout simulation.",
+              "met": true,
+              "evidence": "Reads Directionality.of(context), Localizations.maybeLocaleOf(context), and MediaQuery.textScalerOf(context), then passes them as textDirection, locale, and textScaler."
+            }
+          ],
+          "summary": "The response explicitly satisfies all three mandatory criteria."
+        },
+        "judgments": [
+          {
+            "score": 100,
+            "expectations": [
+              {
+                "criterion": "Uses TextPainter with layout(maxWidth) to measure whether copy exceeds maxLines.",
+                "met": true,
+                "evidence": "Creates TextPainter with maxLines: 3, calls painter.layout(maxWidth: constraints.maxWidth), and uses painter.didExceedMaxLines to conditionally show the button."
+              },
+              {
+                "criterion": "Disposes the TextPainter instance to avoid resource leaks.",
+                "met": true,
+                "evidence": "Calls painter.dispose() in a finally block, ensuring cleanup even if measurement throws."
+              },
+              {
+                "criterion": "Passes the ambient Directionality, locale, and TextScaler into TextPainter for accurate localized layout simulation.",
+                "met": true,
+                "evidence": "Reads Directionality.of(context), Localizations.maybeLocaleOf(context), and MediaQuery.textScalerOf(context), then passes them as textDirection, locale, and textScaler."
+              }
+            ],
+            "summary": "The response explicitly satisfies all three mandatory criteria."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 100.0,
+          "minimum_score": 100,
+          "maximum_score": 100,
+          "score_range": 0,
+          "expectation_count": 3,
+          "unanimous_expectations": 3,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 3,
+    "behavior_passed": 3,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 95.0,
+    "average_delta": null,
+    "judge_agreement_rate": null,
+    "judge_score_range_average": null,
+    "mandatory_judge_disagreements": 0,
+    "by_skill": {
+      "flutter-text-rendering": {
+        "cases": 3,
+        "passed": 3,
+        "baseline_average": null,
+        "with_skill_average": 95.0,
+        "average_delta": null
+      }
+    },
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}
