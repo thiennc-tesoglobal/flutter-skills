@@ -39,5 +39,29 @@
       "clears or makes prior-user sensitive data unreachable when its lifecycle ends",
       "tests logout, account switching, backup, and concurrent session boundaries"
     ]
+  },
+  {
+    "name": "migration-failure-preserves-prior-user-data",
+    "prompt": "Plan a safe migration for an existing SQLite-backed Flutter app. Production users may open schema version 3 or 4 with user-authored notes and unsent outbox rows. Version 5 splits display_name into two columns and adds a NOT NULL account_id. The current onUpgrade handles only 4 to 5 and catches any error by deleting and recreating the database. Preserve the existing database package and report the implementation and verification plan without claiming execution.",
+    "resources": ["references/schema-migrations-and-recovery.md"],
+    "expectations": [
+      {
+        "id": "rejects-destructive-recovery",
+        "text": "rejects delete-and-recreate fallback for durable user data and leaves the prior database recoverable when migration fails instead of reporting success",
+        "mandatory": true
+      },
+      {
+        "id": "supports-skipped-version-upgrades",
+        "text": "defines ordered version transitions that correctly upgrade both version 3 and version 4 to version 5 without assuming only the immediately prior version",
+        "mandatory": true
+      },
+      {
+        "id": "migrates-schema-and-data-atomically",
+        "text": "uses the established package transaction or migration boundary to backfill valid account and split-name data before enforcing constraints while preserving notes and outbox rows",
+        "mandatory": true
+      },
+      "uses real prior-version fixtures and verifies direct upgrades, an injected mid-migration failure, reopen or retry behavior, schema version, constraints, and preserved domain and outbox data",
+      "checks the resolved database package and SDK contract before choosing APIs and does not introduce a new persistence package"
+    ]
   }
 ]

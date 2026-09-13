@@ -1,0 +1,136 @@
+{
+  "created_at": "2026-09-13T09:03:32.394448+00:00",
+  "runner_version": "2.0.0",
+  "git": {
+    "commit": "ddd4edccdb3de09088e4fa66cc853f99b8ca3de6",
+    "dirty": true,
+    "branch": "feature/flutter-persistence-migration-safety"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.154.0",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.154.0",
+  "judge_model": null,
+  "judges": [
+    {
+      "agent": "codex",
+      "version": "codex-cli 0.154.0",
+      "model": null
+    }
+  ],
+  "independent_primary_judge": false,
+  "catalog_version": "0.9.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-persistence",
+      "case": "migration-failure-preserves-prior-user-data",
+      "with_skill": {
+        "response": "I\u2019m applying the flutter-persistence skill to plan this migration while preserving the existing SQLite package. The priority is to retain user-authored notes and unsent outbox rows on every supported upgrade path.\n\n**Implementation plan**\n\n1. Remove the catch-and-delete fallback. On migration failure, roll back, retain the database, and show a recoverable upgrade error. Never silently recreate a database containing user data.\n\n2. Implement sequential, version-gated migrations: run `3 \u2192 4` when needed, then `4 \u2192 5`. Review the existing `3 \u2192 4` transformation for preservation of notes and outbox data. Use the package\u2019s transaction and version-management mechanisms so the schema version advances only after success; avoid nested transactions if its upgrade callback already supplies one.\n\n3. Define backfill rules before enforcing the v5 constraints:\n   - **Name split:** A display name cannot reliably be parsed into personal-name components. Use a documented, lossless mapping\u2014for example, retain the complete value in the first column and leave the second empty if those column semantics permit it. Preserve the original value where necessary; do not discard ambiguous content.\n   - **Account ownership:** Backfill `account_id` from authoritative ownership information, including relationships between notes and outbox rows. Do not assign every legacy row to the currently signed-in account or invent an account ID merely to satisfy `NOT NULL`. If ownership is unresolved, preserve the database and block the affected migration pending resolution, or introduce an explicitly supported local/unassigned ownership model.\n\n4. Build the v5 schema within the migration transaction. Where SQLite requires table reconstruction, create replacement tables with the final constraints, copy and transform rows, validate them, then replace the old tables and restore indexes, foreign keys, and triggers. Preserve primary keys and relationships.\n\n5. Preserve outbox operation IDs, payloads, ordering, retry state, and deduplication keys. Check whether serialized payloads also need migration or compatibility handling. Migration must not send, acknowledge, or drop queued operations. Pause repository writes and synchronization until the upgrade completes, and keep schema changes behind repositories.\n\n6. Treat corruption or incompatible schemas as recovery cases, not empty databases. Retain the original data and provide retry or a SQLite-consistent backup/export path. Avoid logging note contents or sensitive payloads.\n\n**Verification plan**\n\nUse temporary databases seeded with realistic v3 and v4 schemas and data:\n\n- Verify both `3 \u2192 4 \u2192 5` and `4 \u2192 5`, plus fresh v5 creation and reopening without another migration.\n- Compare note contents, IDs, relationships, and every outbox field before and after migration.\n- Cover empty, null where historically allowed, Unicode, single-word, and multiword display names.\n- Cover known, mixed, and unresolved account ownership; confirm no cross-account reassignment.\n- Inject failures during copying, validation, and replacement, including failed writes or insufficient storage. Confirm rollback retains the prior schema version and data, and retry succeeds.\n- Verify final constraints, indexes, foreign-key integrity, and deletion behavior.\n- Exercise concurrent startup access and background synchronization to ensure neither sees a partially migrated schema.\n- Test offline upgrade and subsequent reconnection: queued operations remain pending and use their original deduplication identities.\n- Test corrupted databases and unsupported newer schemas: recovery preserves data rather than recreating storage.\n\nRelease only after both upgrade paths pass preservation checks. This is an implementation and verification plan; no code changes or tests have been executed.",
+        "judgment": {
+          "score": 60,
+          "expectations": [
+            {
+              "criterion": "1. Reject destructive recovery and retain a recoverable database on migration failure.",
+              "met": true,
+              "evidence": "Explicitly removes catch-and-delete, requires rollback and retention of the database, and surfaces a recoverable upgrade error instead of reporting success."
+            },
+            {
+              "criterion": "2. Define ordered transitions supporting both v3 and v4 upgrades to v5.",
+              "met": true,
+              "evidence": "Specifies version-gated 3 \u2192 4 followed by 4 \u2192 5, with schema version advancement only after success."
+            },
+            {
+              "criterion": "3. Use the established package migration boundary for valid backfills and data preservation.",
+              "met": true,
+              "evidence": "Requires package transaction/version mechanisms, defines lossless name and authoritative account backfills before enforcing constraints, and preserves note and outbox identities, fields, and relationships."
+            },
+            {
+              "criterion": "4. Verify real prior-version fixtures, upgrade paths, failure recovery, versions, constraints, and preserved data.",
+              "met": false,
+              "evidence": "Plans both upgrade paths, injected failures, rollback, retry, reopening, constraints, and data comparisons. However, 'temporary databases seeded with realistic v3 and v4 schemas' does not explicitly require real prior-version fixtures, and successful upgrades lack an explicit assertion that the stored schema version equals 5."
+            },
+            {
+              "criterion": "5. Check the resolved package and SDK contract before selecting APIs, without adding a persistence package.",
+              "met": false,
+              "evidence": "Preserves the existing package and conditionally avoids nested transactions, but never explicitly checks the resolved package version or SDK contract before choosing APIs."
+            }
+          ],
+          "summary": "Meets all three mandatory safety criteria and clearly reports a plan without claiming execution. Missing explicit real prior-version fixtures, successful schema-version verification, and resolved package/SDK contract checks."
+        },
+        "judgments": [
+          {
+            "score": 60,
+            "expectations": [
+              {
+                "criterion": "1. Reject destructive recovery and retain a recoverable database on migration failure.",
+                "met": true,
+                "evidence": "Explicitly removes catch-and-delete, requires rollback and retention of the database, and surfaces a recoverable upgrade error instead of reporting success."
+              },
+              {
+                "criterion": "2. Define ordered transitions supporting both v3 and v4 upgrades to v5.",
+                "met": true,
+                "evidence": "Specifies version-gated 3 \u2192 4 followed by 4 \u2192 5, with schema version advancement only after success."
+              },
+              {
+                "criterion": "3. Use the established package migration boundary for valid backfills and data preservation.",
+                "met": true,
+                "evidence": "Requires package transaction/version mechanisms, defines lossless name and authoritative account backfills before enforcing constraints, and preserves note and outbox identities, fields, and relationships."
+              },
+              {
+                "criterion": "4. Verify real prior-version fixtures, upgrade paths, failure recovery, versions, constraints, and preserved data.",
+                "met": false,
+                "evidence": "Plans both upgrade paths, injected failures, rollback, retry, reopening, constraints, and data comparisons. However, 'temporary databases seeded with realistic v3 and v4 schemas' does not explicitly require real prior-version fixtures, and successful upgrades lack an explicit assertion that the stored schema version equals 5."
+              },
+              {
+                "criterion": "5. Check the resolved package and SDK contract before selecting APIs, without adding a persistence package.",
+                "met": false,
+                "evidence": "Preserves the existing package and conditionally avoids nested transactions, but never explicitly checks the resolved package version or SDK contract before choosing APIs."
+              }
+            ],
+            "summary": "Meets all three mandatory safety criteria and clearly reports a plan without claiming execution. Missing explicit real prior-version fixtures, successful schema-version verification, and resolved package/SDK contract checks."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 60.0,
+          "minimum_score": 60,
+          "maximum_score": 60,
+          "score_range": 0,
+          "expectation_count": 5,
+          "unanimous_expectations": 5,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": false
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 0,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 60.0,
+    "average_delta": null,
+    "judge_agreement_rate": null,
+    "judge_score_range_average": null,
+    "mandatory_judge_disagreements": 0,
+    "by_skill": {
+      "flutter-persistence": {
+        "cases": 1,
+        "passed": 0,
+        "baseline_average": null,
+        "with_skill_average": 60.0,
+        "average_delta": null
+      }
+    },
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

@@ -42,6 +42,20 @@
     "forbidden": []
   },
   {
+    "name": "local-database-schema-migration",
+    "prompt": "Migrate the existing Flutter SQLite database from schema version 3 or 4 to version 5 while preserving user-authored notes and pending outbox operations. Keep the current database package and test rollback, reopen, and direct skipped-version upgrades.",
+    "required": ["flutter-persistence"],
+    "optional": ["flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-architecture", "flutter-dependency-upgrades", "flutter-networking"]
+  },
+  {
+    "name": "remote-api-schema-change-is-not-local-migration",
+    "prompt": "Update the generated Flutter client for a documented OpenAPI response-field rename and verify runtime decoding. This feature has no local database, durable queue, or on-device cache.",
+    "required": ["flutter-openapi-client"],
+    "optional": ["flutter-networking", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-architecture", "flutter-persistence"]
+  },
+  {
     "name": "signed-bundle-no-upload",
     "prompt": "Produce and smoke-test a signed staging Android App Bundle, but do not upload or publish it.",
     "required": ["flutter-build-release"],
