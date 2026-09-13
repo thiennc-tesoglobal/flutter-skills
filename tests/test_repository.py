@@ -1,6 +1,7 @@
 import argparse
 import importlib.util
 import json
+import re
 import subprocess
 import sys
 import unittest
@@ -58,7 +59,12 @@ class RepositoryTests(unittest.TestCase):
         self.assertIn('npm view "${package_name}@${package_version}" version', workflow)
         self.assertIn("release_tag:", workflow)
         self.assertIn("inputs.release_tag || github.ref", workflow)
-        self.assertIn("for attempt in {1..12}", workflow)
+        retry_match = re.search(r"for attempt in \{1\.\.(\d+)\}; do", workflow)
+        sleep_match = re.search(r"^\s+sleep (\d+)\s*$", workflow, re.MULTILINE)
+        self.assertIsNotNone(retry_match)
+        self.assertIsNotNone(sleep_match)
+        retry_window_seconds = int(retry_match.group(1)) * int(sleep_match.group(1))
+        self.assertGreaterEqual(retry_window_seconds, 180)
         self.assertIn(
             'npm exec --yes --prefix "$smoke_directory" --package="${package_name}@${package_version}" -- flutter-skills --version',
             workflow,

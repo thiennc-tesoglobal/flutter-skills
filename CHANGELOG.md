@@ -1,7 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.9.0 - 2026-09-13
 
+- Extend npm registry propagation verification to three minutes so a successful trusted publish is not reported as failed while npm is still processing the package.
 - Harden `flutter-code-review` with compatibility proof obligations, adversarial safety-boundary checks, large-diff coverage tracking, and a final false-positive and duplication filter.
 - Add three behavior cases and three routing cases covering report-schema compatibility, redaction order, large-diff completeness, review self-critique, and specialist scope boundaries.
 - Expand `flutter-device-testing` with Android Emulator and iOS Simulator operation references, explicit native-system-UI automation boundaries, readiness checks, safe target ownership, focused evidence, and physical-hardware verification limits.
