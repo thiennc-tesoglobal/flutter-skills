@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Harden `flutter-code-review` with compatibility proof obligations, adversarial safety-boundary checks, large-diff coverage tracking, and a final false-positive and duplication filter.
+- Add three behavior cases and three routing cases covering report-schema compatibility, redaction order, large-diff completeness, review self-critique, and specialist scope boundaries.
 - Expand `flutter-device-testing` with Android Emulator and iOS Simulator operation references, explicit native-system-UI automation boundaries, readiness checks, safe target ownership, focused evidence, and physical-hardware verification limits.
 - Add lifecycle matrix version 2 with target and installed-app preflight, mandatory warm-state preconditions, safe target labels, opt-in device identifier retention, execution context, and version 1 compatibility.
 - Add five device behavior cases and two routing cases covering target readiness, native permission dialogs, Simulator override cleanup, physical evidence boundaries, and warm-state correctness.

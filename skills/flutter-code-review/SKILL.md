@@ -1,6 +1,6 @@
 ---
 name: flutter-code-review
-description: Review Flutter and Dart diffs, commits, pull requests, focused modules, or completed implementations for concrete correctness, lifecycle, architecture, security, accessibility, performance, and test risks. Use for an explicit review or a bounded review pass within an active delivery workflow; report actionable evidence without changing code unless remediation is authorized.
+description: Review Flutter and Dart diffs, commits, pull requests, focused code scopes, or completed implementations for concrete defects and regression risks. Use for an explicit change review or bounded delivery review; report evidence without edits. Not for broad threat audits, performance diagnosis, or test authoring.
 ---
 
 # Flutter Code Review
@@ -20,6 +20,8 @@ Prioritize data loss, security exposure, crashes, incorrect results, broken life
 
 Do not report preferences, hypothetical rewrites, unchanged legacy issues, or framework behavior that current code already handles. Validate API and package claims against the project's SDK and resolved dependencies.
 
+Treat compatibility and safety claims as proof obligations. Compare changed inputs, outputs, defaults, schemas, exit behavior, and supported callers with the base revision; accepting an old input alone does not prove backward compatibility. For redaction, escaping, validation, or other security-sensitive transforms, test ordering and boundary conditions instead of trusting the happy-path example.
+
 ## Load references conditionally
 
 - Read [review workflow](references/review-workflow.md) for gathering the change, tracing impact, calibrating severity, and formatting findings.
@@ -30,6 +32,8 @@ Load available specialists only when their domain is materially changed or a cla
 ## Output
 
 Lead with findings ordered by severity. Each finding must name the affected file and tight line range, explain the failure path and impact, and propose a proportionate correction. Keep separate sections for open questions and a short summary only when useful.
+
+Before responding, challenge and deduplicate the candidate findings. Drop any claim defeated by a guard, ownership rule, version constraint, test, or framework guarantee. Anchor a finding to the smallest changed range that introduced or exposes it; cite unchanged code only as supporting evidence.
 
 If there are no actionable findings, say so directly and identify meaningful verification gaps. Never invent findings to make the review appear thorough.
 
