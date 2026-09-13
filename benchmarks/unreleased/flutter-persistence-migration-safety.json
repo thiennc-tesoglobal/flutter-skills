@@ -1,0 +1,136 @@
+{
+  "created_at": "2026-09-13T09:06:58.811682+00:00",
+  "runner_version": "2.0.0",
+  "git": {
+    "commit": "ddd4edccdb3de09088e4fa66cc853f99b8ca3de6",
+    "dirty": true,
+    "branch": "feature/flutter-persistence-migration-safety"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.154.0",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.154.0",
+  "judge_model": null,
+  "judges": [
+    {
+      "agent": "codex",
+      "version": "codex-cli 0.154.0",
+      "model": null
+    }
+  ],
+  "independent_primary_judge": false,
+  "catalog_version": "0.9.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-persistence",
+      "case": "migration-failure-preserves-prior-user-data",
+      "with_skill": {
+        "response": "The migration must support both `3 \u2192 4 \u2192 5` and `4 \u2192 5`, preserve notes and pending outbox operations, and remove the delete-and-recreate error handler. Notes are durable user data; unsent outbox rows are durable operations. Neither is disposable.\n\nApplying the supplied `flutter-persistence` skill, the implementation plan is:\n\n1. **Confirm the existing storage contract.** Before writing package-specific code, review the dependency and lockfile, SDK constraints, resolved database package version, migration callbacks, generated-schema policy, supported platforms, and storage owners. Confirm whether the package already wraps `onUpgrade` in a transaction; preserve that boundary and avoid nested transactions.\n\n2. **Gate database access during migration.** Use one coordinated initialization path. Repositories, background workers, isolates, and synchronization must wait until migration succeeds. Keep schema details behind repositories.\n\n3. **Implement ordered version transitions.** Restore the released `3 \u2192 4` transition and then apply `4 \u2192 5` for every supported starting version. Create new installations directly at version 5. Let the package advance the schema version only after successful migration. Explicitly reject unsupported newer schemas or downgrades without modifying their data.\n\n4. **Define backfill rules before enforcing constraints.**\n   - For the `display_name` split, specify the meaning of both new columns and rules for empty, null, single-part, multipart, malformed, and ambiguous values. Do not assume a space reliably separates names. Preserve the original value in a compatible legacy field or equivalent lossless representation until the transformation is demonstrably safe.\n   - For `account_id`, use trustworthy existing ownership evidence. Do not assign all historical records to the currently signed-in account or invent an account identifier. Where ownership cannot be established, require an explicit resolution or supported local-account policy before completing version 5; keep unresolved data recoverable.\n\n5. **Transform and validate atomically.** Add compatible intermediate structures, backfill, validate values and ownership, then enforce final constraints. If the established SQLite package requires table rebuilding, copy explicit columns while preserving primary keys and relationships, and recreate required indexes, triggers, and views. Validate final nullability, foreign keys, uniqueness, and row preservation before committing.\n\n6. **Preserve outbox semantics.** Retain operation IDs, ordering, retry metadata, account ownership, and relationships to notes. Ensure version 5 can read pending legacy payloads, or migrate them losslessly with explicit compatibility rules. Migration itself must never send, acknowledge, duplicate, or discard an operation.\n\n7. **Make failure recoverable.** Replace destructive recovery with rollback through the package\u2019s documented mechanism. Stop access by code expecting version 5 and expose a retry, support, export, or restore path appropriate to the failure. Preserve existing storage on migration failure or corruption; never automatically reset it.\n\nVerification should use temporary, file-backed databases produced by released version 3 and version 4 schemas or binaries, or reviewed snapshots from those releases:\n\n| Scenario | Required assertions |\n|---|---|\n| Fresh version 5 creation; direct upgrades from 3 and 4 | Exact target version, complete schema, working repository reads and writes |\n| Close and reopen after success | No repeated transformation or duplicate records |\n| Notes and outbox preservation | IDs, values, ownership, relationships, operation ordering, retry metadata, and compatible payloads retained |\n| Backfill edge cases | Empty databases, large datasets, nullable and ambiguous names, missing ownership, and conflicting ownership handled by explicit rules |\n| Failure injection during each transformative or destructive phase | Prior version and data remain recoverable after reopen; documented retry succeeds |\n| Final schema validation | Required constraints, indexes, triggers, and views are present and effective |\n| Failed writes and concurrent startup | No partial writes or access before migration completes |\n| Background work and offline/online transitions | Pending operations remain intact and resume through normal synchronization only after success |\n| Corruption, insufficient storage, and process interruption | Recoverable behavior verified where supported by the platform and test harness |\n| Deletion and unsupported newer schemas | Existing deletion semantics remain correct; incompatible databases remain untouched |\n\nNo implementation or tests have been executed. The eventual verification report should identify the exact package version, platforms, released fixtures, upgrade paths, failure points, and invariants actually exercised, with any untested recovery or interruption behavior stated explicitly.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "1. Rejects destructive fallback and preserves recoverability on migration failure.",
+              "met": true,
+              "evidence": "Removes delete-and-recreate recovery, requires rollback through the package\u2019s documented mechanism, blocks version 5 access after failure, and advances the schema version only after success."
+            },
+            {
+              "criterion": "2. Defines ordered transitions supporting both version 3 and version 4.",
+              "met": true,
+              "evidence": "Explicitly specifies 3 \u2192 4 \u2192 5 and 4 \u2192 5, restoring the released 3 \u2192 4 transition."
+            },
+            {
+              "criterion": "3. Uses the established migration boundary to backfill before enforcing constraints while preserving durable rows.",
+              "met": true,
+              "evidence": "Requires confirming and preserving the package transaction boundary, atomically backfilling and validating names and account ownership before enforcing constraints, and retaining note and outbox identities, relationships, and payloads."
+            },
+            {
+              "criterion": "4. Verifies real prior-version fixtures, upgrades, failures, recovery, schema, constraints, and data preservation.",
+              "met": true,
+              "evidence": "Specifies file-backed fixtures from released version 3 and 4 schemas, binaries, or reviewed snapshots; direct upgrades; injected failures during transformation; reopen and retry assertions; exact schema versions; effective constraints; and detailed note and outbox preservation checks."
+            },
+            {
+              "criterion": "5. Checks the resolved package and SDK contract before selecting APIs without replacing persistence.",
+              "met": true,
+              "evidence": "Requires reviewing dependencies, lockfile, SDK constraints, resolved package version, and migration callbacks before package-specific code, then using the established package\u2019s migration and rollback mechanisms."
+            }
+          ],
+          "summary": "All criteria are explicitly satisfied. The response provides an implementation and verification plan, preserves the existing persistence approach, and clearly states that no implementation or tests were executed."
+        },
+        "judgments": [
+          {
+            "score": 100,
+            "expectations": [
+              {
+                "criterion": "1. Rejects destructive fallback and preserves recoverability on migration failure.",
+                "met": true,
+                "evidence": "Removes delete-and-recreate recovery, requires rollback through the package\u2019s documented mechanism, blocks version 5 access after failure, and advances the schema version only after success."
+              },
+              {
+                "criterion": "2. Defines ordered transitions supporting both version 3 and version 4.",
+                "met": true,
+                "evidence": "Explicitly specifies 3 \u2192 4 \u2192 5 and 4 \u2192 5, restoring the released 3 \u2192 4 transition."
+              },
+              {
+                "criterion": "3. Uses the established migration boundary to backfill before enforcing constraints while preserving durable rows.",
+                "met": true,
+                "evidence": "Requires confirming and preserving the package transaction boundary, atomically backfilling and validating names and account ownership before enforcing constraints, and retaining note and outbox identities, relationships, and payloads."
+              },
+              {
+                "criterion": "4. Verifies real prior-version fixtures, upgrades, failures, recovery, schema, constraints, and data preservation.",
+                "met": true,
+                "evidence": "Specifies file-backed fixtures from released version 3 and 4 schemas, binaries, or reviewed snapshots; direct upgrades; injected failures during transformation; reopen and retry assertions; exact schema versions; effective constraints; and detailed note and outbox preservation checks."
+              },
+              {
+                "criterion": "5. Checks the resolved package and SDK contract before selecting APIs without replacing persistence.",
+                "met": true,
+                "evidence": "Requires reviewing dependencies, lockfile, SDK constraints, resolved package version, and migration callbacks before package-specific code, then using the established package\u2019s migration and rollback mechanisms."
+              }
+            ],
+            "summary": "All criteria are explicitly satisfied. The response provides an implementation and verification plan, preserves the existing persistence approach, and clearly states that no implementation or tests were executed."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 100.0,
+          "minimum_score": 100,
+          "maximum_score": 100,
+          "score_range": 0,
+          "expectation_count": 5,
+          "unanimous_expectations": 5,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 1,
+    "behavior_passed": 1,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 100.0,
+    "average_delta": null,
+    "judge_agreement_rate": null,
+    "judge_score_range_average": null,
+    "mandatory_judge_disagreements": 0,
+    "by_skill": {
+      "flutter-persistence": {
+        "cases": 1,
+        "passed": 1,
+        "baseline_average": null,
+        "with_skill_average": 100.0,
+        "average_delta": null
+      }
+    },
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

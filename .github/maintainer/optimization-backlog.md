@@ -12,6 +12,7 @@ Use this file for failures and weak signals observed in executed forward evaluat
 
 ## Closed and retained as regressions
 
+- `flutter-persistence:migration-failure-preserves-prior-user-data`: the [initial 60-point run](../../benchmarks/unreleased/flutter-persistence-migration-safety-initial.json) preserved durable rows but omitted explicit released prior-version fixtures, the exact target-version assertion, and resolved package and SDK contract inspection. The package-neutral migration and recovery reference now requires all three, and the [focused rerun](../../benchmarks/unreleased/flutter-persistence-migration-safety.json) passed at 100; both [routing boundaries](../../benchmarks/unreleased/flutter-persistence-routing-boundaries.json) also passed.
 - `flutter-runtime-debugging:runtime-fix-repeats-original-flow`: require a clean launch for every affected target and record unsupported-platform behavior instead of extrapolating from hot reload.
 - `flutter-in-app-purchases:sandbox-readiness-is-not-store-publication`: accept an executable sandbox evidence plan when store credentials or consoles are unavailable; never fabricate readiness or publish.
 - `flutter-product-analytics:sdk-log-is-not-end-to-end-proof`: record client dispatch, provider ingestion, and downstream dashboard or funnel evidence separately.

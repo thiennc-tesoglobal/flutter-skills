@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Harden `flutter-persistence` with resolved-package preflight, explicit durable-data classification, ordered skipped-version migrations, atomic failure recovery, and prior-release fixture verification.
+- Add a mandatory migration-safety behavior case and two routing boundaries separating local schema evolution from remote OpenAPI contract changes.
+
 ## 0.9.0 - 2026-09-13
 
 - Extend npm registry propagation verification to three minutes so a successful trusted publish is not reported as failed while npm is still processing the package.

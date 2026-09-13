@@ -28,8 +28,8 @@ class RepositoryTests(unittest.TestCase):
         errors, _, counts = VALIDATOR.validate_repository()
         self.assertEqual(errors, [])
         self.assertEqual(counts["skills"], 37)
-        self.assertEqual(counts["evals"], 199)
-        self.assertEqual(counts["routing_evals"], 70)
+        self.assertEqual(counts["evals"], 200)
+        self.assertEqual(counts["routing_evals"], 72)
 
     def test_codex_plugin_and_marketplace_resolve_the_full_catalog(self):
         plugin = json.loads(
@@ -340,8 +340,8 @@ class RepositoryTests(unittest.TestCase):
         routing = BEHAVIOR_EVAL.routing_cases()
         expectations = {
             "pr-smoke.json": (6, 7),
-            "nightly-representative.json": (37, 70),
-            "release-full.json": (199, 70),
+            "nightly-representative.json": (37, 72),
+            "release-full.json": (200, 72),
         }
         for filename, counts in expectations.items():
             profile = BEHAVIOR_EVAL.load_json(BEHAVIOR_EVAL.PROFILES_DIR / filename)
@@ -594,8 +594,8 @@ class RepositoryTests(unittest.TestCase):
         catalog = BEHAVIOR_EVAL.skill_catalog()
         cases = BEHAVIOR_EVAL.behavior_cases(catalog)
         cov = BEHAVIOR_EVAL.reference_coverage_report(catalog, cases)
-        self.assertEqual(cov["total_references"], 93)
-        self.assertEqual(cov["covered_references"], 93)
+        self.assertEqual(cov["total_references"], 94)
+        self.assertEqual(cov["covered_references"], 94)
         self.assertEqual(cov["uncovered_references"], 0)
         self.assertEqual(cov["coverage_rate"], 100.0)
 
