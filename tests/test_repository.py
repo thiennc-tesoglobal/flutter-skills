@@ -27,7 +27,7 @@ class RepositoryTests(unittest.TestCase):
         errors, _, counts = VALIDATOR.validate_repository()
         self.assertEqual(errors, [])
         self.assertEqual(counts["skills"], 37)
-        self.assertEqual(counts["evals"], 189)
+        self.assertEqual(counts["evals"], 191)
         self.assertEqual(counts["routing_evals"], 65)
 
     def test_codex_plugin_and_marketplace_resolve_the_full_catalog(self):
@@ -335,7 +335,7 @@ class RepositoryTests(unittest.TestCase):
         expectations = {
             "pr-smoke.json": (6, 7),
             "nightly-representative.json": (37, 65),
-            "release-full.json": (189, 65),
+            "release-full.json": (191, 65),
         }
         for filename, counts in expectations.items():
             profile = BEHAVIOR_EVAL.load_json(BEHAVIOR_EVAL.PROFILES_DIR / filename)

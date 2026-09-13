@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Correct `flutter-text-rendering` flex guidance so constraints and truncation follow the failing axis and content contract instead of wrapping every text node mechanically.
+- Document production ownership and disposal for inline gesture recognizers and include the ambient locale in localized `TextPainter` measurement.
+- Add two behavior-focused regression cases for unbounded column flex and inline recognizer lifecycle handling.
+
 ## 0.8.0 - 2026-09-12
 
 - Add multi-judge forward evaluation with strict mandatory gating, per-criterion agreement, score-range reporting, and backward-compatible primary judgment fields.
