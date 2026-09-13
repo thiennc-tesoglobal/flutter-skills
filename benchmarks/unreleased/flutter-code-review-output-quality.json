@@ -1,0 +1,246 @@
+{
+  "created_at": "2026-09-13T08:26:00.774945+00:00",
+  "runner_version": "2.0.0",
+  "git": {
+    "commit": "e735162e69c712f0d2bfa7251e6618e1b803f675",
+    "dirty": true,
+    "branch": "feature/flutter-code-review-quality-gate"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.154.0",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.154.0",
+  "judge_model": null,
+  "judges": [
+    {
+      "agent": "codex",
+      "version": "codex-cli 0.154.0",
+      "model": null
+    }
+  ],
+  "independent_primary_judge": false,
+  "catalog_version": "0.8.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-code-review",
+      "case": "review-proves-versioned-output-compatibility-and-redaction-order",
+      "with_skill": {
+        "response": "- **P1 \u2014 Truncation before redaction can expose bearer tokens** \u2014 Command-output sanitization helper; filename and lines not supplied. Keeping only the last 4,000 characters can remove the `Authorization: Bearer` marker while retaining its token, so subsequent redaction misses the secret and exposes it in reported output. Redact the full output before truncating. Add a regression case with the truncation boundary between the marker and token; short-token tests do not cover this failure.\n\n- **P2 \u2014 Legacy matrix support does not preserve the version 1 output contract** \u2014 Report serialization helper; filename and lines not supplied. An unversioned matrix previously produced `schema_version: 1` with a top-level `device_id`. It now always produces version 2, relocates the identifier under `target`, and hides it by default. Existing consumers can reject the schema or lose device identification despite the changelog\u2019s compatibility claim. Preserve the prior output contract for legacy input, making version 2 opt-in, or explicitly declare a breaking change and correct the compatibility claim. Verify a real legacy input against the prior schema version, field location, and default visibility.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Reports that legacy matrix acceptance does not preserve the version 1 report contract and requests compatible output or an explicit breaking contract.",
+              "met": true,
+              "evidence": "Explicitly identifies the schema version change, relocation of device_id, and changed default visibility; requests preserving the prior output contract or declaring a breaking change and correcting the compatibility claim."
+            },
+            {
+              "criterion": "Reports reachable token disclosure from truncation before redaction and directs redaction before bounded tail retention with an adversarial regression test.",
+              "met": true,
+              "evidence": "Explains that truncation can remove the bearer marker while retaining the token, directs redacting full output before truncating, and requests a regression case with the boundary between marker and token."
+            },
+            {
+              "criterion": "Leads with two concrete findings, explains failure paths and proportionate corrections, and avoids broadening into a rewrite.",
+              "met": true,
+              "evidence": "Contains only the two findings, explains secret exposure and consumer compatibility failures, and proposes targeted sanitization, contract, and regression-test corrections."
+            }
+          ],
+          "summary": "The candidate explicitly satisfies all supplied criteria with two focused, actionable findings."
+        },
+        "judgments": [
+          {
+            "score": 100,
+            "expectations": [
+              {
+                "criterion": "Reports that legacy matrix acceptance does not preserve the version 1 report contract and requests compatible output or an explicit breaking contract.",
+                "met": true,
+                "evidence": "Explicitly identifies the schema version change, relocation of device_id, and changed default visibility; requests preserving the prior output contract or declaring a breaking change and correcting the compatibility claim."
+              },
+              {
+                "criterion": "Reports reachable token disclosure from truncation before redaction and directs redaction before bounded tail retention with an adversarial regression test.",
+                "met": true,
+                "evidence": "Explains that truncation can remove the bearer marker while retaining the token, directs redacting full output before truncating, and requests a regression case with the boundary between marker and token."
+              },
+              {
+                "criterion": "Leads with two concrete findings, explains failure paths and proportionate corrections, and avoids broadening into a rewrite.",
+                "met": true,
+                "evidence": "Contains only the two findings, explains secret exposure and consumer compatibility failures, and proposes targeted sanitization, contract, and regression-test corrections."
+              }
+            ],
+            "summary": "The candidate explicitly satisfies all supplied criteria with two focused, actionable findings."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 100.0,
+          "minimum_score": 100,
+          "maximum_score": 100,
+          "score_range": 0,
+          "expectation_count": 3,
+          "unanimous_expectations": 3,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    },
+    {
+      "skill": "flutter-code-review",
+      "case": "review-large-diff-keeps-internal-coverage-without-file-tour",
+      "with_skill": {
+        "response": "I\u2019ll use the flutter-code-review skill and keep a private coverage ledger for all 19 changed files so later files receive the same risk-based review as earlier ones.\n\n- Establish the base/head and intended behavior, then group changes into checkout UI, serialization, Android configuration, tests, generated output, and documentation.\n- For each group, trace changed behavior through relevant callers, lifecycle owners, and data boundaries. Compare serialization contracts against the base, check Android release implications, and verify generated output and documentation agree with the implementation.\n- Record each file as reviewed, needing follow-up, or blocked, along with unresolved risks. Before finishing, revisit every incomplete entry; reaching the end of the diff does not establish coverage.\n- Challenge each candidate defect against guards, ownership, dependency versions, and existing tests. Deduplicate findings and exclude unrelated legacy TODOs, naming preferences, and unchanged issues.\n\nThe response will contain only actionable findings ordered by severity, each with a file, tight changed-line range, concrete failure path, impact, and proportionate correction. Any meaningful verification gaps will be explicit rather than hidden behind a claim of completeness.\n\nNo diff was supplied here, so I can describe the review approach but cannot substantiate findings or claim that the PR has been reviewed.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Groups the diff into coherent risk slices and internally tracks production files, contracts, tests, generated boundaries, and configuration before concluding.",
+              "met": true,
+              "evidence": "Groups changes into checkout UI, serialization, Android configuration, tests, generated output, and documentation. Maintains a private ledger for every changed file, checks contracts and boundaries, challenges defects against existing tests, and revisits every incomplete entry before finishing."
+            },
+            {
+              "criterion": "Does not use file count or file size as a finding or emit a compulsory per-file summary.",
+              "met": true,
+              "evidence": "Uses the 19-file count only to establish internal coverage. Explicitly limits the response to actionable findings ordered by severity, with concrete failure paths, impact, and corrections."
+            },
+            {
+              "criterion": "Explicitly distinguishes tracing directly affected consumers from unrelated legacy cleanup.",
+              "met": true,
+              "evidence": "Traces changed behavior through relevant callers, lifecycle owners, and data boundaries while explicitly excluding unrelated legacy TODOs, naming preferences, and unchanged issues."
+            }
+          ],
+          "summary": "Meets all criteria through explicit risk grouping, internal coverage tracking, completion checks, and scoped consumer tracing. Correctly avoids claiming an actual review without the diff."
+        },
+        "judgments": [
+          {
+            "score": 100,
+            "expectations": [
+              {
+                "criterion": "Groups the diff into coherent risk slices and internally tracks production files, contracts, tests, generated boundaries, and configuration before concluding.",
+                "met": true,
+                "evidence": "Groups changes into checkout UI, serialization, Android configuration, tests, generated output, and documentation. Maintains a private ledger for every changed file, checks contracts and boundaries, challenges defects against existing tests, and revisits every incomplete entry before finishing."
+              },
+              {
+                "criterion": "Does not use file count or file size as a finding or emit a compulsory per-file summary.",
+                "met": true,
+                "evidence": "Uses the 19-file count only to establish internal coverage. Explicitly limits the response to actionable findings ordered by severity, with concrete failure paths, impact, and corrections."
+              },
+              {
+                "criterion": "Explicitly distinguishes tracing directly affected consumers from unrelated legacy cleanup.",
+                "met": true,
+                "evidence": "Traces changed behavior through relevant callers, lifecycle owners, and data boundaries while explicitly excluding unrelated legacy TODOs, naming preferences, and unchanged issues."
+              }
+            ],
+            "summary": "Meets all criteria through explicit risk grouping, internal coverage tracking, completion checks, and scoped consumer tracing. Correctly avoids claiming an actual review without the diff."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 100.0,
+          "minimum_score": 100,
+          "maximum_score": 100,
+          "score_range": 0,
+          "expectation_count": 3,
+          "unanimous_expectations": 3,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    },
+    {
+      "skill": "flutter-code-review",
+      "case": "review-self-critique-removes-defeated-and-duplicate-findings",
+      "with_skill": {
+        "response": "- **P2 \u2014 Decimal API values crash parsing** \u2014 `lib/order_parser.dart:42`  \n  The new `int` cast throws when the documented API returns `12.5`, preventing the order from being parsed. Accept `num` and preserve decimal values, or apply an explicitly defined conversion if the domain requires integers.\n\n- **P2 \u2014 Stale search responses overwrite newer results** \u2014 `lib/search_bloc.dart:88, 101`  \n  These locations share one race: an earlier request can complete after a later request and replace its results. Guard result emission with the current request identity so only the latest search updates state.\n\nVerification gap: The full diff and tests were not supplied; findings are based on the described behavior.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Does not report the mounted-guard false positive or unrequested state-management migration and emits only one stale-response finding for the shared root cause.",
+              "met": true,
+              "evidence": "Omits both excluded candidates and combines search_bloc.dart:88 and :101 into one finding explicitly identifying their shared race."
+            },
+            {
+              "criterion": "Retains the reachable numeric JSON cast defect at lib/order_parser.dart:42 with a concrete trigger, impact, and proportionate correction.",
+              "met": true,
+              "evidence": "Identifies the documented 12.5 value as triggering an int-cast exception that prevents order parsing; recommends accepting num and preserving decimals or applying a domain-defined conversion."
+            },
+            {
+              "criterion": "Does not include praise or repeat discarded candidates in the final findings.",
+              "met": true,
+              "evidence": "Contains only the two retained findings and a verification limitation, without praise or repetition of discarded candidates."
+            }
+          ],
+          "summary": "The response explicitly satisfies all supplied criteria."
+        },
+        "judgments": [
+          {
+            "score": 100,
+            "expectations": [
+              {
+                "criterion": "Does not report the mounted-guard false positive or unrequested state-management migration and emits only one stale-response finding for the shared root cause.",
+                "met": true,
+                "evidence": "Omits both excluded candidates and combines search_bloc.dart:88 and :101 into one finding explicitly identifying their shared race."
+              },
+              {
+                "criterion": "Retains the reachable numeric JSON cast defect at lib/order_parser.dart:42 with a concrete trigger, impact, and proportionate correction.",
+                "met": true,
+                "evidence": "Identifies the documented 12.5 value as triggering an int-cast exception that prevents order parsing; recommends accepting num and preserving decimals or applying a domain-defined conversion."
+              },
+              {
+                "criterion": "Does not include praise or repeat discarded candidates in the final findings.",
+                "met": true,
+                "evidence": "Contains only the two retained findings and a verification limitation, without praise or repetition of discarded candidates."
+              }
+            ],
+            "summary": "The response explicitly satisfies all supplied criteria."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 100.0,
+          "minimum_score": 100,
+          "maximum_score": 100,
+          "score_range": 0,
+          "expectation_count": 3,
+          "unanimous_expectations": 3,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 3,
+    "behavior_passed": 3,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 100.0,
+    "average_delta": null,
+    "judge_agreement_rate": null,
+    "judge_score_range_average": null,
+    "mandatory_judge_disagreements": 0,
+    "by_skill": {
+      "flutter-code-review": {
+        "cases": 3,
+        "passed": 3,
+        "baseline_average": null,
+        "with_skill_average": 100.0,
+        "average_delta": null
+      }
+    },
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

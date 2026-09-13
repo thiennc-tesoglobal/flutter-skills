@@ -4,7 +4,7 @@ Read only the sections touched by the change.
 
 ## Dart and asynchronous behavior
 
-- Nullability, exhaustiveness, equality, collection mutation, serialization, and public API compatibility.
+- Nullability, exhaustiveness, equality, collection mutation, serialization, and public API compatibility, including report schemas, default fields, errors, and CLI exit behavior.
 - Awaited work, cancellation, stale-result ordering, error propagation, stream completion, isolate transferability, and cleanup.
 - Work triggered from `build`, duplicated by rebuilds, or retained beyond its owner.
 
@@ -19,7 +19,7 @@ Read only the sections touched by the change.
 
 - UI bypassing state or repository boundaries, circular dependencies, duplicated sources of truth, and schema details leaking upward.
 - Cache freshness, transaction boundaries, migration compatibility, offline conflicts, deletion semantics, retry safety, and user isolation.
-- Wire-data validation, authentication refresh races, pagination identity, and sensitive logging.
+- Wire-data validation, authentication refresh races, pagination identity, and sensitive logging. For redaction or sanitization, test transformation order and length or truncation boundaries.
 
 ## Accessibility, localization, and layout
 
@@ -40,6 +40,7 @@ Read only the sections touched by the change.
 
 - Tests should fail before the fix for the right reason and cover the changed behavior, not implementation trivia.
 - Check determinism, clocks, async settling, fake boundaries, cleanup, golden stability, platform assumptions, and whether skipped or weakened assertions hide regression.
+- When compatibility is claimed, exercise a real prior input and assert the prior observable output contract, defaults, errors, and exit status that consumers rely on.
 
 ## Implementation hygiene
 

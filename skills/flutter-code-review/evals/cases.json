@@ -83,5 +83,57 @@
       "restores a behavior-specific regression assertion rather than accepting anyOf or deleting durable coverage",
       "reviews the final changed-file list and diff and reruns focused tests without proposing unrelated style or architecture rewrites"
     ]
+  },
+  {
+    "name": "review-proves-versioned-output-compatibility-and-redaction-order",
+    "prompt": "Review a Python helper shipped inside a Flutter device-testing skill. The base revision accepted an unversioned matrix and emitted schema_version 1 with a top-level device_id. The diff still accepts that old matrix, but now always emits schema_version 2, moves device_id under target, and hides it by default while the changelog claims 'version 1 compatibility'. The same diff keeps only the last 4000 characters of command output before applying `Authorization: Bearer <token>` redaction; a long prefix can push the marker outside the retained tail while leaving the token inside it. Short-token tests pass. Report findings only; do not edit files.",
+    "resources": [
+      "references/review-workflow.md",
+      "references/flutter-review-checklist.md"
+    ],
+    "expectations": [
+      {
+        "id": "rejects-input-only-compatibility-proof",
+        "text": "reports that accepting the legacy matrix does not preserve the version 1 report contract because schema fields and default identifier visibility changed, and asks for either compatible version 1 output or an explicit breaking contract",
+        "mandatory": true
+      },
+      {
+        "id": "catches-redaction-truncation-order",
+        "text": "reports the reachable token disclosure when output is truncated before redaction and directs redaction to occur before bounded tail retention with an adversarial regression test",
+        "mandatory": true
+      },
+      "leads with the two concrete findings, gives failure paths and proportionate corrections, and does not broaden into a rewrite of the device-testing skill"
+    ]
+  },
+  {
+    "name": "review-large-diff-keeps-internal-coverage-without-file-tour",
+    "prompt": "Review a 19-file Flutter pull request spanning checkout UI, repository serialization, Android configuration, tests, generated output, and documentation. Some shared modules also contain unrelated legacy TODOs and naming problems outside the diff. The user wants actionable defects only, not a file summary. Explain how you keep the review complete when later files are at risk of receiving a shallow pass.",
+    "resources": ["references/review-workflow.md"],
+    "expectations": [
+      {
+        "id": "uses-risk-slices-and-coverage-ledger",
+        "text": "groups the diff into coherent risk slices and tracks changed production files contracts tests generated boundaries and configuration internally before concluding",
+        "mandatory": true
+      },
+      "does not use file count or file size as a finding and does not emit a compulsory per-file summary when the user asked for actionable defects only",
+      "explicitly distinguishes tracing directly affected consumers from expanding into the supplied unrelated legacy cleanup"
+    ]
+  },
+  {
+    "name": "review-self-critique-removes-defeated-and-duplicate-findings",
+    "prompt": "Review a Flutter diff after an initial scan proposed four comments: (1) lib/checkout_page.dart:73 navigates after await, but the changed code checks context.mounted immediately before Navigator; (2) lib/search_bloc.dart:88 and :101 received separate comments caused by the same stale-response race; (3) migrate the feature from Bloc to Riverpod for readability; and (4) lib/order_parser.dart:42 changes to an int cast that crashes when the documented API sends 12.5. Return the final review only.",
+    "resources": [
+      "references/review-workflow.md",
+      "references/flutter-review-checklist.md"
+    ],
+    "expectations": [
+      {
+        "id": "filters-and-deduplicates-candidates",
+        "text": "does not report the mounted-guard false positive or unrequested state-management migration and emits only one stale-response finding for the shared root cause",
+        "mandatory": true
+      },
+      "retains the reachable numeric JSON cast defect at lib/order_parser.dart:42 with a concrete trigger impact and proportionate correction",
+      "does not include praise or repeat discarded candidates in the final findings"
+    ]
   }
 ]

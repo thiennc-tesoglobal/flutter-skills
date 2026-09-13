@@ -1,0 +1,246 @@
+{
+  "created_at": "2026-09-13T08:23:18.299683+00:00",
+  "runner_version": "2.0.0",
+  "git": {
+    "commit": "e735162e69c712f0d2bfa7251e6618e1b803f675",
+    "dirty": true,
+    "branch": "feature/flutter-code-review-quality-gate"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.154.0",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.154.0",
+  "judge_model": null,
+  "judges": [
+    {
+      "agent": "codex",
+      "version": "codex-cli 0.154.0",
+      "model": null
+    }
+  ],
+  "independent_primary_judge": false,
+  "catalog_version": "0.8.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "flutter-code-review",
+      "case": "review-proves-versioned-output-compatibility-and-redaction-order",
+      "with_skill": {
+        "response": "- **P1 \u2014 Truncation before redaction can expose bearer tokens** \u2014 Command-output helper, changed truncation/redaction statements (file and line numbers not supplied). Keeping the last 4000 characters before redacting can remove the `Authorization: Bearer ` marker while retaining token content. The redactor then misses the credential, exposing it in captured output. Redact the full output before truncation, and add a regression test where the cutoff splits the marker from the token; short-token tests do not cover this boundary.\n\n- **P2 \u2014 Claimed version 1 compatibility breaks the output contract** \u2014 Report serializer, changed schema and device-field statements (file and line numbers not supplied). Accepting an unversioned matrix preserves input acceptance, but the base emitted `schema_version: 1` and a top-level `device_id`. Always emitting version 2, nesting that field under `target`, and hiding it by default breaks consumers relying on the prior schema or device identity. Preserve the version 1 output contract for legacy usage and make version 2 opt-in, or explicitly document a breaking migration and remove the compatibility claim. Add a legacy-input regression test asserting the prior schema, field location, and default visibility.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Reports that legacy matrix acceptance does not preserve the version 1 report contract and requests compatible output or an explicit breaking contract.",
+              "met": true,
+              "evidence": "Distinguishes input acceptance from output compatibility, identifies schema_version 2, nesting device_id under target, and default hiding, then requests preserved version 1 output or an explicitly documented breaking migration."
+            },
+            {
+              "criterion": "Reports reachable token disclosure from truncation before redaction and directs redaction before bounded tail retention with an adversarial regression test.",
+              "met": true,
+              "evidence": "Explains that the 4000-character cutoff can remove the authorization marker while retaining token content. Directs redacting full output before truncation and testing a cutoff that separates the marker from the token."
+            },
+            {
+              "criterion": "Leads with two concrete findings, gives failure paths and proportionate corrections, and avoids broadening into a skill rewrite.",
+              "met": true,
+              "evidence": "Contains only the two findings, explains credential exposure and report-consumer breakage, and proposes focused corrections and regression tests without edits or a broader rewrite."
+            }
+          ],
+          "summary": "The candidate explicitly satisfies all three criteria with concrete failure paths and focused remedies."
+        },
+        "judgments": [
+          {
+            "score": 100,
+            "expectations": [
+              {
+                "criterion": "Reports that legacy matrix acceptance does not preserve the version 1 report contract and requests compatible output or an explicit breaking contract.",
+                "met": true,
+                "evidence": "Distinguishes input acceptance from output compatibility, identifies schema_version 2, nesting device_id under target, and default hiding, then requests preserved version 1 output or an explicitly documented breaking migration."
+              },
+              {
+                "criterion": "Reports reachable token disclosure from truncation before redaction and directs redaction before bounded tail retention with an adversarial regression test.",
+                "met": true,
+                "evidence": "Explains that the 4000-character cutoff can remove the authorization marker while retaining token content. Directs redacting full output before truncation and testing a cutoff that separates the marker from the token."
+              },
+              {
+                "criterion": "Leads with two concrete findings, gives failure paths and proportionate corrections, and avoids broadening into a skill rewrite.",
+                "met": true,
+                "evidence": "Contains only the two findings, explains credential exposure and report-consumer breakage, and proposes focused corrections and regression tests without edits or a broader rewrite."
+              }
+            ],
+            "summary": "The candidate explicitly satisfies all three criteria with concrete failure paths and focused remedies."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 100.0,
+          "minimum_score": 100,
+          "maximum_score": 100,
+          "score_range": 0,
+          "expectation_count": 3,
+          "unanimous_expectations": 3,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    },
+    {
+      "skill": "flutter-code-review",
+      "case": "review-large-diff-keeps-internal-coverage-without-file-tour",
+      "with_skill": {
+        "response": "I can explain the review approach, but I need the PR diff and relevant surrounding context to report actionable defects with file and line references.\n\nFor a 19-file PR, I keep an internal coverage ledger covering every changed production file, test, generated artifact, configuration file, and document. I group the changes into risk areas and trace their connections\u2014for example, checkout input through repository serialization, or Android configuration through the affected build variant.\n\nTo prevent later files from getting a shallow pass, I track which files have only been scanned and which have had their behavior and contracts checked. I reserve a final completeness pass for unresolved paths and unreviewed changes; file order does not determine review depth. Generated output is checked against its source, tests against actual failure cases, and documentation against any compatibility claims.\n\nI report only concrete, introduced defects, ordered by severity, with a tight changed-line range, triggering conditions, user or delivery impact, and a proportionate correction. Before reporting, I challenge each finding against guards, callers, dependency versions, and existing tests, then deduplicate shared causes.\n\nWith no diff supplied, there are no substantiated findings yet. Any eventual review will explicitly identify verification gaps rather than imply that unchecked behavior passed.",
+        "judgment": {
+          "score": 67,
+          "expectations": [
+            {
+              "criterion": "Groups the diff into coherent risk slices and internally tracks production files, contracts, tests, generated boundaries, and configuration before concluding.",
+              "met": true,
+              "evidence": "Explicitly groups changes into connected risk areas, maintains an internal coverage ledger, distinguishes scanned files from behavior-and-contract checks, and reserves a completeness pass for unresolved paths. It also checks generated output against its source."
+            },
+            {
+              "criterion": "Does not use file count or size as a finding or emit a compulsory per-file summary.",
+              "met": true,
+              "evidence": "Uses the 19-file count only to frame coverage planning and commits to reporting only concrete introduced defects. No per-file summary is emitted."
+            },
+            {
+              "criterion": "Follows shared behavior only far enough to validate affected consumers without expanding into unrelated legacy cleanup.",
+              "met": false,
+              "evidence": "Describes tracing connections and checking callers, but does not explicitly limit that tracing to affected consumers or exclude unrelated legacy cleanup."
+            }
+          ],
+          "summary": "Explicitly addresses complete, risk-based coverage and defect-only reporting, but leaves the boundary for shared-behavior investigation unstated."
+        },
+        "judgments": [
+          {
+            "score": 67,
+            "expectations": [
+              {
+                "criterion": "Groups the diff into coherent risk slices and internally tracks production files, contracts, tests, generated boundaries, and configuration before concluding.",
+                "met": true,
+                "evidence": "Explicitly groups changes into connected risk areas, maintains an internal coverage ledger, distinguishes scanned files from behavior-and-contract checks, and reserves a completeness pass for unresolved paths. It also checks generated output against its source."
+              },
+              {
+                "criterion": "Does not use file count or size as a finding or emit a compulsory per-file summary.",
+                "met": true,
+                "evidence": "Uses the 19-file count only to frame coverage planning and commits to reporting only concrete introduced defects. No per-file summary is emitted."
+              },
+              {
+                "criterion": "Follows shared behavior only far enough to validate affected consumers without expanding into unrelated legacy cleanup.",
+                "met": false,
+                "evidence": "Describes tracing connections and checking callers, but does not explicitly limit that tracing to affected consumers or exclude unrelated legacy cleanup."
+              }
+            ],
+            "summary": "Explicitly addresses complete, risk-based coverage and defect-only reporting, but leaves the boundary for shared-behavior investigation unstated."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 67.0,
+          "minimum_score": 67,
+          "maximum_score": 67,
+          "score_range": 0,
+          "expectation_count": 3,
+          "unanimous_expectations": 3,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": false
+    },
+    {
+      "skill": "flutter-code-review",
+      "case": "review-self-critique-removes-defeated-and-duplicate-findings",
+      "with_skill": {
+        "response": "- **P2 \u2014 JSON cast rejects a documented API value.** The changed cast to `int` throws when the API returns `12.5`, preventing the response from loading. Accept `num` and preserve the documented fractional value. Add a regression case using `12.5`.\n\n- **P2 \u2014 Stale responses can overwrite newer state.** Consolidate the two race comments into one finding: an earlier request completing after a newer request can replace current results with stale data. Guard state updates with request identity or cancel superseded work; verify completion in reverse request order.\n\nExact file names and line ranges were not supplied, so finding locations could not be verified.",
+        "judgment": {
+          "score": 50,
+          "expectations": [
+            {
+              "criterion": "Drops the mounted-guard false positive, merges stale-response comments by root cause, and rejects the unrequested state-management migration.",
+              "met": false,
+              "evidence": "Explicitly consolidates the stale-response comments into one root-cause finding, but omission alone does not explicitly establish dismissal of the mounted-guard false positive or rejection of the migration."
+            },
+            {
+              "criterion": "Retains the reachable numeric JSON cast defect with a concrete trigger, impact, tight changed location, and proportionate correction.",
+              "met": false,
+              "evidence": "Identifies 12.5 as the trigger, a thrown cast preventing loading as the impact, and accepting num while preserving fractions as the correction. However, it explicitly states that finding locations could not be verified and supplies no tight changed location."
+            },
+            {
+              "criterion": "Does not include praise or repeat discarded candidates in the final findings.",
+              "met": true,
+              "evidence": "Contains only the numeric-cast and consolidated race findings, with no praise or repetition of the discarded navigation and migration candidates."
+            }
+          ],
+          "summary": "Provides two substantive findings and explicitly consolidates the race, but does not explicitly establish all required filtering decisions or provide a tight changed location."
+        },
+        "judgments": [
+          {
+            "score": 50,
+            "expectations": [
+              {
+                "criterion": "Drops the mounted-guard false positive, merges stale-response comments by root cause, and rejects the unrequested state-management migration.",
+                "met": false,
+                "evidence": "Explicitly consolidates the stale-response comments into one root-cause finding, but omission alone does not explicitly establish dismissal of the mounted-guard false positive or rejection of the migration."
+              },
+              {
+                "criterion": "Retains the reachable numeric JSON cast defect with a concrete trigger, impact, tight changed location, and proportionate correction.",
+                "met": false,
+                "evidence": "Identifies 12.5 as the trigger, a thrown cast preventing loading as the impact, and accepting num while preserving fractions as the correction. However, it explicitly states that finding locations could not be verified and supplies no tight changed location."
+              },
+              {
+                "criterion": "Does not include praise or repeat discarded candidates in the final findings.",
+                "met": true,
+                "evidence": "Contains only the numeric-cast and consolidated race findings, with no praise or repetition of the discarded navigation and migration candidates."
+              }
+            ],
+            "summary": "Provides two substantive findings and explicitly consolidates the race, but does not explicitly establish all required filtering decisions or provide a tight changed location."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 50.0,
+          "minimum_score": 50,
+          "maximum_score": 50,
+          "score_range": 0,
+          "expectation_count": 3,
+          "unanimous_expectations": 3,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": true,
+      "passed": false
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 3,
+    "behavior_passed": 1,
+    "mandatory_failures": 1,
+    "baseline_average": null,
+    "with_skill_average": 72.33,
+    "average_delta": null,
+    "judge_agreement_rate": null,
+    "judge_score_range_average": null,
+    "mandatory_judge_disagreements": 0,
+    "by_skill": {
+      "flutter-code-review": {
+        "cases": 3,
+        "passed": 1,
+        "baseline_average": null,
+        "with_skill_average": 72.33,
+        "average_delta": null
+      }
+    },
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

@@ -103,6 +103,27 @@
     "forbidden": ["flutter-app-workflow"]
   },
   {
+    "name": "review-widget-test-diff-without-rewriting-tests",
+    "prompt": "Review only the changed Flutter widget tests for false positives, weak assertions, async flakiness, and missing regression coverage. Report findings without editing the tests or application code.",
+    "required": ["flutter-code-review"],
+    "optional": ["flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-ui-patterns"]
+  },
+  {
+    "name": "broad-flutter-threat-audit-is-not-generic-code-review",
+    "prompt": "Perform a repository-wide Flutter threat audit covering credentials, local storage, WebViews, deep links, platform channels, and production data exposure. This is not a pull-request or diff review.",
+    "required": ["flutter-security"],
+    "optional": ["flutter-authentication", "flutter-persistence", "flutter-webview"],
+    "forbidden": ["flutter-app-workflow", "flutter-code-review"]
+  },
+  {
+    "name": "focused-async-fix-does-not-preload-review-skill",
+    "prompt": "Fix a stale search-result race in one existing Bloc and add the focused regression test. Preserve the current architecture; I am asking for implementation, not a separate code review.",
+    "required": ["dart-concurrency"],
+    "optional": ["flutter-state-management", "flutter-testing"],
+    "forbidden": ["flutter-app-workflow", "flutter-architecture", "flutter-code-review"]
+  },
+  {
     "name": "isolated-widget-previews",
     "prompt": "Add deterministic Widget Previewer variants for our payment card in loading, error, light, dark, and large-text states.",
     "required": ["flutter-ui-patterns"],

@@ -72,7 +72,7 @@ Skills guide the agent through implementation and verification, with clear repor
 
 ## Quality
 
-**196 behavior-focused evaluation cases** and **67 cross-catalog routing cases** define expected behavior and skill selection. See [measured results](benchmarks/README.md) and [contribution guidelines](CONTRIBUTING.md).
+**199 behavior-focused evaluation cases** and **70 cross-catalog routing cases** define expected behavior and skill selection. See [measured results](benchmarks/README.md) and [contribution guidelines](CONTRIBUTING.md).
 
 ## License
 

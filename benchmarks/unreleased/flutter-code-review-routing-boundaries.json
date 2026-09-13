@@ -1,0 +1,95 @@
+{
+  "created_at": "2026-09-13T08:21:56.247254+00:00",
+  "runner_version": "2.0.0",
+  "git": {
+    "commit": "e735162e69c712f0d2bfa7251e6618e1b803f675",
+    "dirty": true,
+    "branch": "feature/flutter-code-review-quality-gate"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.154.0",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.154.0",
+  "judge_model": null,
+  "judges": [
+    {
+      "agent": "codex",
+      "version": "codex-cli 0.154.0",
+      "model": null
+    }
+  ],
+  "independent_primary_judge": false,
+  "catalog_version": "0.8.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [],
+  "routing": [
+    {
+      "case": "review-widget-test-diff-without-rewriting-tests",
+      "response": {
+        "skills": [
+          "flutter-code-review"
+        ],
+        "reason": "A focused, read-only review of changed widget tests for concrete defects and regression risks."
+      },
+      "passed": true,
+      "selected": [
+        "flutter-code-review"
+      ],
+      "missing": [],
+      "forbidden_selected": [],
+      "unexpected": []
+    },
+    {
+      "case": "broad-flutter-threat-audit-is-not-generic-code-review",
+      "response": {
+        "skills": [
+          "flutter-security"
+        ],
+        "reason": "A repository-wide threat audit across sensitive data and platform attack surfaces falls within flutter-security."
+      },
+      "passed": true,
+      "selected": [
+        "flutter-security"
+      ],
+      "missing": [],
+      "forbidden_selected": [],
+      "unexpected": []
+    },
+    {
+      "case": "focused-async-fix-does-not-preload-review-skill",
+      "response": {
+        "skills": [
+          "dart-concurrency",
+          "flutter-state-management",
+          "flutter-testing"
+        ],
+        "reason": "Fix asynchronous result ordering in the existing Bloc and add a focused regression test while preserving the architecture."
+      },
+      "passed": true,
+      "selected": [
+        "dart-concurrency",
+        "flutter-state-management",
+        "flutter-testing"
+      ],
+      "missing": [],
+      "forbidden_selected": [],
+      "unexpected": []
+    }
+  ],
+  "summary": {
+    "behavior_cases": 0,
+    "behavior_passed": 0,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": null,
+    "average_delta": null,
+    "judge_agreement_rate": null,
+    "judge_score_range_average": null,
+    "mandatory_judge_disagreements": 0,
+    "by_skill": {},
+    "routing_cases": 3,
+    "routing_passed": 3
+  }
+}
