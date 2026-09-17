@@ -28,7 +28,7 @@ class RepositoryTests(unittest.TestCase):
         errors, _, counts = VALIDATOR.validate_repository()
         self.assertEqual(errors, [])
         self.assertEqual(counts["skills"], 37)
-        self.assertEqual(counts["evals"], 200)
+        self.assertEqual(counts["evals"], 203)
         self.assertEqual(counts["routing_evals"], 72)
 
     def test_codex_plugin_and_marketplace_resolve_the_full_catalog(self):
@@ -291,7 +291,9 @@ class RepositoryTests(unittest.TestCase):
             for item in cases
             if item["name"] == "sandbox-readiness-is-not-store-publication"
         )
-        expectations = " ".join(case["expectations"])
+        expectations = " ".join(
+            BEHAVIOR_EVAL.expectation_text(item) for item in case["expectations"]
+        )
         self.assertIn("requires a pre-change inspection", expectations)
         self.assertIn("interrupted-purchase and one restoration", expectations)
         self.assertNotIn("inspects identifiers", expectations)
@@ -341,7 +343,7 @@ class RepositoryTests(unittest.TestCase):
         expectations = {
             "pr-smoke.json": (6, 7),
             "nightly-representative.json": (37, 72),
-            "release-full.json": (200, 72),
+            "release-full.json": (203, 72),
         }
         for filename, counts in expectations.items():
             profile = BEHAVIOR_EVAL.load_json(BEHAVIOR_EVAL.PROFILES_DIR / filename)

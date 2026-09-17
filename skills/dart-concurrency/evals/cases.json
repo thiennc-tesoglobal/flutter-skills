@@ -1,5 +1,15 @@
 [
   {
+    "name": "web-compute-does-not-provide-parallelism",
+    "prompt": "Our Flutter app targets Android and web. A large JSON transform blocks scrolling. Browser profiling has confirmed synchronous jsonDecode is the dominant long task; the payload cannot be reduced and the repository already has a tested Web Worker adapter compatible with its pinned SDK. Replace the transform with Isolate.run on both targets, or compute if that guarantees a background thread everywhere. Explain the implementation boundary, choose the web strategy using this evidence, and describe how to verify each target.",
+    "resources": ["references/isolate-communication-and-worker-pools.md"],
+    "expectations": [
+      {"text": "does not use Isolate.run as a supported Flutter web execution path", "mandatory": true},
+      {"text": "explains that compute runs on the main thread on web and does not promise CPU offloading there", "mandatory": true},
+      "chooses a platform-compatible strategy from measured work reduction chunking or supported web workers and verifies each target separately"
+    ]
+  },
+  {
     "name": "latest-request-wins",
     "prompt": "Search results sometimes show the response for an older query after the newest query finishes.",
     "resources": [

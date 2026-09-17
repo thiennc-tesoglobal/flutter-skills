@@ -123,7 +123,7 @@ Text(
 ```
 
 > [!NOTE]
-> `softWrap: false` forces text onto a single line regardless of container width. If you set `softWrap: false`, `maxLines` is overridden or redundant. Always pair `softWrap: false` with explicit `overflow` to avoid accidental clipping.
+> `softWrap: false` disables soft line wrapping; it does not remove explicit newline characters or override `maxLines`. Keep `maxLines: 1` when the contract requires one displayed line, and choose overflow behavior explicitly. Test copy containing `\n` as well as long unbroken text. See [softWrap](https://api.flutter.dev/flutter/widgets/Text/softWrap.html) and [maxLines](https://api.flutter.dev/flutter/widgets/Text/maxLines.html).
 
 ---
 
@@ -134,7 +134,7 @@ When copy requires mixed colors, weights, links, or badges, avoid placing adjace
 ### `Text.rich` vs `RichText`
 
 - **Prefer `Text.rich`:** Inherits the ambient `DefaultTextStyle`, `Directionality`, and `TextScaler` from the Flutter widget tree.
-- **Avoid raw `RichText`:** Requires explicit `TextStyle`, explicit `TextDirection`, and does not automatically listen to theme or text scale changes.
+- **Raw `RichText`:** Supply the intended span style and text scaler explicitly. It inherits ambient `Directionality` when `textDirection` is omitted; an explicit direction is required only when there is no ambient direction.
 
 ```dart
 Text.rich(

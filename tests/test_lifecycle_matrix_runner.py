@@ -185,6 +185,43 @@ class LifecycleMatrixRunnerTests(unittest.TestCase):
             ["tool", "Authorization: Bearer [REDACTED]", "myapp://orders/42"],
         )
 
+    def test_report_redacts_before_truncating_output(self):
+        secret = "synthetic-secret-value"
+        for prefix in ("Authorization: Bearer ", "access_token=", "refresh_token: "):
+            with self.subTest(prefix=prefix):
+                output = prefix + secret + "\n" + "x" * (4000 - len(secret) - 1)
+                with mock.patch.object(
+                    RUNNER.subprocess,
+                    "run",
+                    return_value=subprocess.CompletedProcess(
+                        ["fixture"], 0, stdout=output, stderr=""
+                    ),
+                ):
+                    result = RUNNER.run_step("fixture", ["fixture"], 1, True)
+                self.assertEqual(result["status"], "passed")
+                self.assertNotIn(secret, result["output_tail"])
+                self.assertLessEqual(len(result["output_tail"]), 4000)
+
+    def test_redacts_device_id_when_truncation_splits_it(self):
+        device_id = "synthetic-device-id"
+        output = device_id + "\n" + "x" * 3990
+        redacted = RUNNER.redact(output, sensitive_values=(device_id,))
+        self.assertNotIn("device-id", redacted)
+        self.assertLessEqual(len(redacted), 4000)
+
+    def test_timeout_output_is_redacted_before_truncation(self):
+        secret = "synthetic-secret-value"
+        output = ("Authorization: Bearer " + secret + "\n" + "x" * 3970).encode()
+        with mock.patch.object(
+            RUNNER.subprocess,
+            "run",
+            side_effect=subprocess.TimeoutExpired(["fixture"], 1, output=output),
+        ):
+            result = RUNNER.run_step("fixture", ["fixture"], 1, True)
+        self.assertEqual(result["status"], "timeout")
+        self.assertNotIn(secret, result["output_tail"])
+        self.assertLessEqual(len(result["output_tail"]), 4000)
+
     def test_version_two_requires_explicit_warm_precondition(self):
         with self.assertRaisesRegex(
             RUNNER.MatrixError, "precondition must verify the warm app and UI state"

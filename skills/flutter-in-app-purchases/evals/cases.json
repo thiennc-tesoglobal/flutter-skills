@@ -5,8 +5,8 @@
     "resources": ["references/purchase-lifecycle-and-entitlements.md"],
     "expectations": [
       "preserves the existing billing package",
-      "does not grant entitlement for a pending or unverified transaction",
-      "defines verified idempotent delivery followed by the correct acknowledgement or finish step",
+      {"text": "does not grant entitlement for a pending or unverified transaction", "mandatory": true},
+      {"text": "defines verified idempotent delivery followed by the correct acknowledgement or finish step", "mandatory": true},
       "reconciles completion after backgrounding restart or a later store update"
     ]
   },
@@ -15,9 +15,9 @@
     "prompt": "A consumable coin pack is sometimes delivered twice after the app crashes between granting coins and consuming the purchase. Add a delay before consume so callbacks stop racing.",
     "resources": ["references/purchase-lifecycle-and-entitlements.md"],
     "expectations": [
-      "rejects timing delays as an exactly-once strategy",
-      "uses stable transaction identity and durable idempotent delivery",
-      "orders recoverable delivery before consumption and handles duplicate callbacks after restart"
+      {"text": "rejects timing delays as an exactly-once strategy", "mandatory": true},
+      {"text": "uses stable transaction identity and durable idempotent delivery", "mandatory": true},
+      {"text": "orders recoverable delivery before consumption and handles duplicate callbacks after restart", "mandatory": true}
     ]
   },
   {
@@ -25,8 +25,8 @@
     "prompt": "Implement Restore Purchases by calling the buy method again for every non-consumable product and granting anything that returns success.",
     "resources": ["references/subscriptions-and-restoration.md"],
     "expectations": [
-      "does not initiate new purchases during restoration",
-      "reconciles existing verified transactions into idempotent entitlements",
+      {"text": "does not initiate new purchases during restoration", "mandatory": true},
+      {"text": "reconciles existing verified transactions into idempotent entitlements", "mandatory": true},
       "distinguishes no purchases account mismatch store failure and verification failure"
     ]
   },
@@ -35,8 +35,8 @@
     "prompt": "Remove premium immediately when a user turns off subscription auto-renewal, regardless of the paid-through date or grace state.",
     "resources": ["references/subscriptions-and-restoration.md"],
     "expectations": [
-      "does not equate cancellation with immediate expiration",
-      "derives access from the verified effective subscription state and period",
+      {"text": "does not equate cancellation with immediate expiration", "mandatory": true},
+      {"text": "derives access from the verified effective subscription state and period", "mandatory": true},
       "covers grace hold expiration refund revocation and account changes"
     ]
   },
@@ -47,7 +47,7 @@
     "expectations": [
       "requires a pre-change inspection of identifiers environments signing and existing store configuration and keeps readiness unverified until that access exists",
       "provides at least one interrupted-purchase and one restoration case with explicit starting conditions actions expected transaction and entitlement outcomes and pass-fail evidence",
-      "does not create live products credentials prices uploads or releases without explicit scoped authorization"
+      {"text": "does not create live products credentials prices uploads or releases without explicit scoped authorization", "mandatory": true}
     ]
   }
 ]

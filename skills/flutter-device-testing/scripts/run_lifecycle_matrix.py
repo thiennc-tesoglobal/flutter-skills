@@ -44,13 +44,13 @@ class MatrixError(ValueError):
 def redact(
     text: str, limit: int = 4000, sensitive_values: tuple[str, ...] = ()
 ) -> str:
-    value = text[-limit:]
+    value = text
     for pattern, replacement in SECRET_PATTERNS:
         value = pattern.sub(replacement, value)
     for sensitive in sensitive_values:
         if sensitive:
             value = value.replace(sensitive, "[DEVICE_ID]")
-    return value
+    return value[-limit:]
 
 
 def safe_uri(uri: str) -> str:

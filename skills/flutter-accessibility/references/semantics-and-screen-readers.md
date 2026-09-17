@@ -39,17 +39,23 @@ MergeSemantics(
 
 ## Dynamic Announcements
 
-To notify screen reader users of asynchronous events (e.g., "Item added to cart", "Network disconnected"):
+Prefer semantic state changes, including a suitable live region, for ordinary asynchronous feedback. Use an explicit announcement only when the system does not already announce the change. On SDKs supporting the current view-aware API:
 ```dart
-SemanticsService.announce(
-  'Changes saved successfully',
-  Directionality.of(context),
-  assertiveness: Assertiveness.polite, // or Assertiveness.assertive for critical alerts
-);
+if (MediaQuery.supportsAnnounceOf(context)) {
+  SemanticsService.sendAnnouncement(
+    View.of(context),
+    'Changes saved successfully', // Use the project's localized message.
+    Directionality.of(context),
+    assertiveness: Assertiveness.polite,
+  );
+}
 ```
 - Obtain text direction from `Directionality.of(context)` instead of hardcoding LTR to preserve RTL locale support.
-- Check the project's SDK constraint before passing `assertiveness` (introduced in Flutter 3.19+; older SDKs accept only message and textDirection).
-- Avoid rapid, continuous announcements that interrupt assistive technology navigation.
+- Resolve the message through the originating window's localization context as well as its direction and view; windows can have different locale overrides. Do not use a global locale or context for window-owned feedback.
+- Check the pinned SDK before using `sendAnnouncement` or `supportsAnnounceOf`. The deprecated `announce` API relies on an implicit view and is incompatible with multiple windows; retain a legacy path only when the supported SDK requires it and its single-view contract is satisfied.
+- `assertiveness` currently affects web only. On Android, prefer semantic updates because explicit announcement events can disrupt TalkBack's speech queue. Avoid duplicate or repetitive announcements.
+
+See [SemanticsService.sendAnnouncement](https://api.flutter.dev/flutter/semantics/SemanticsService/sendAnnouncement.html) and the [legacy API limitations](https://api.flutter.dev/flutter/semantics/SemanticsService/announce.html).
 
 ## Automated Verification
 

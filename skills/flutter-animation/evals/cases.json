@@ -28,10 +28,11 @@
   {
     "name": "hero-tag-uniqueness-across-list",
     "prompt": "Add Hero transitions from a product grid to a detail screen. Products can appear in multiple tabs.",
+    "resources": ["references/motion-patterns-and-reduced-motion.md"],
     "expectations": [
-      "ensures Hero tags are unique per visual instance not just per product ID",
+      {"text": "keeps tags unique within each participating route subtree while using the same selected tag on the source and destination Heroes", "mandatory": true},
       "handles the case where the same product appears in multiple tab contexts",
-      "tests navigation forward and back without tag collision assertion errors"
+      "verifies that forward and reverse Hero flights occur as well as checking for tag collision assertion errors"
     ]
   }
 ]
