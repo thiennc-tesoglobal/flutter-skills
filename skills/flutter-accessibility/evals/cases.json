@@ -1,5 +1,16 @@
 [
   {
+    "name": "announcements-use-the-owning-view",
+    "prompt": "A Flutter desktop app with multiple windows asserts in SemanticsService.announce when saving. Its pinned SDK exposes sendAnnouncement, View.of, and MediaQuery.supportsAnnounceOf. We also target Android and web. Explain a compatible fix without duplicate screen-reader feedback.",
+    "resources": ["references/semantics-and-screen-readers.md"],
+    "expectations": [
+      {"text": "uses the originating FlutterView for explicit announcements instead of the deprecated implicit-view announce API", "mandatory": true},
+      "checks announcement support and keeps direction and message localization consistent with the originating UI",
+      {"text": "prefers semantic state updates for ordinary feedback and does not claim assertiveness controls Android speech priority", "mandatory": true},
+      "verifies the originating window and avoids duplicate feedback across semantic and explicit announcement paths"
+    ]
+  },
+  {
     "name": "custom-control-full-semantics",
     "prompt": "Make a custom favorite toggle accessible on Android and iOS.",
     "resources": [

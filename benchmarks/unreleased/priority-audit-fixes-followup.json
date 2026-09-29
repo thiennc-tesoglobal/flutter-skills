@@ -1,0 +1,198 @@
+{
+  "created_at": "2026-09-17T09:52:18.308185+00:00",
+  "runner_version": "2.0.0",
+  "git": {
+    "commit": "b31ef38b25d424b2c210597933558dee2ddf29cd",
+    "dirty": true,
+    "branch": "fix/skill-audit-priority"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.154.0",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.154.0",
+  "judge_model": null,
+  "judges": [
+    {
+      "agent": "codex",
+      "version": "codex-cli 0.154.0",
+      "model": null
+    }
+  ],
+  "independent_primary_judge": false,
+  "catalog_version": "0.9.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "dart-concurrency",
+      "case": "web-compute-does-not-provide-parallelism",
+      "with_skill": {
+        "response": "Use `Isolate.run` on Android and the repository\u2019s Web Worker adapter on web. Dart isolates are unavailable on Flutter web, while Flutter\u2019s `compute()` runs on the main thread there, so neither option guarantees background execution in browsers.\n\nKeep the platform choice behind one application-facing boundary:\n\n```dart\nabstract interface class JsonTransformer {\n  Future<TransformResult> transform(String json);\n}\n```\n\nProvide implementations through conditional imports:\n\n```dart\n// json_transformer.dart\nexport 'json_transformer_native.dart'\n    if (dart.library.js_interop) 'json_transformer_web.dart';\n```\n\nOn Android, move both decoding and transformation into the isolate:\n\n```dart\nFuture<TransformResult> transformJson(String source) {\n  return Isolate.run(() {\n    final decoded = jsonDecode(source);\n    return transformDecodedJson(decoded);\n  });\n}\n```\n\n`transformDecodedJson` should be top-level or static and return values transferable between isolates, such as strings, numbers, booleans, typed data, and maps or lists containing those types. Avoid capturing repositories, controllers, open files, platform objects, or UI state in the closure.\n\nOn web, send the raw JSON string to the existing worker adapter and perform `jsonDecode` plus the entire CPU-heavy transform inside the worker:\n\n```dart\nFuture<TransformResult> transformJson(String source) {\n  return webWorkerAdapter.transformJson(source);\n}\n```\n\nMoving only the post-decode transform would leave the measured bottleneck on the browser\u2019s main thread. The worker response should contain a serialized or structured-clone-compatible result. If the result includes large byte buffers, use the adapter\u2019s transferable-buffer support when available.\n\nThe caller should own ordering and lifecycle. If multiple transforms can overlap, use cancellation supported by the worker adapter or a sequence token so an older result cannot replace newer state:\n\n```dart\nvar _generation = 0;\n\nFuture<void> load(String source) async {\n  final generation = ++_generation;\n\n  try {\n    final result = await transformJson(source);\n    if (!mounted || generation != _generation) return;\n    setState(() => data = result);\n  } catch (error, stackTrace) {\n    if (!mounted || generation != _generation) return;\n    reportTransformFailure(error, stackTrace);\n  }\n}\n```\n\nDispose should cancel an active worker request or detach its response listener. Native `Isolate.run` does not provide cooperative cancellation through its returned `Future`; the generation guard prevents obsolete results from updating UI. If stopping expensive native work itself is necessary, use an explicitly managed isolate rather than `Isolate.run`.\n\nVerify Android with:\n\n- A realistic large payload on a physical or representative device.\n- Flutter DevTools timeline showing decoding and transformation outside the UI isolate.\n- Scrolling measurements confirming frames stay within the target frame budget.\n- Tests for success, malformed JSON, transformation failure, disposal during work, and two requests completing out of order.\n- Static analysis to catch non-sendable or platform-specific boundary mistakes.\n\nVerify web with:\n\n- A release or profile web build in the same browser used for the original profiling.\n- Browser Performance tools confirming `jsonDecode` and transformation appear on the worker thread.\n- No equivalent long task on the main thread while scrolling.\n- Network and worker inspection confirming the worker asset loads correctly under the deployed base path and CSP.\n- The same failure, disposal, and out-of-order tests, plus an integration test against the real worker adapter.\n\nThe decisive evidence is the browser profile: because synchronous `jsonDecode` is the dominant long task, the raw JSON must cross the worker boundary before decoding.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Does not use Isolate.run as a supported Flutter web execution path",
+              "met": true,
+              "evidence": "Explicitly selects Isolate.run for Android and the existing Web Worker adapter for web, separated through conditional imports."
+            },
+            {
+              "criterion": "Explains that compute runs on the main thread on web and does not promise CPU offloading there",
+              "met": true,
+              "evidence": "Explicitly states that compute() runs on the main thread on web and does not guarantee background execution in browsers."
+            },
+            {
+              "criterion": "Chooses a platform-compatible strategy from measured work reduction, chunking, or supported web workers and verifies each target separately",
+              "met": true,
+              "evidence": "Uses the repository\u2019s supported worker adapter and sends raw JSON before decoding because profiling identified synchronous jsonDecode as the bottleneck. Separately verifies Android using the isolate timeline and scrolling frame budget, and web using worker-thread profiling, main-thread long-task checks, deployment checks, and real-adapter integration testing."
+            }
+          ],
+          "summary": "Meets all supplied criteria with explicit platform decisions, an evidence-based worker boundary, and separate verification plans for Android and web."
+        },
+        "judgments": [
+          {
+            "score": 100,
+            "expectations": [
+              {
+                "criterion": "Does not use Isolate.run as a supported Flutter web execution path",
+                "met": true,
+                "evidence": "Explicitly selects Isolate.run for Android and the existing Web Worker adapter for web, separated through conditional imports."
+              },
+              {
+                "criterion": "Explains that compute runs on the main thread on web and does not promise CPU offloading there",
+                "met": true,
+                "evidence": "Explicitly states that compute() runs on the main thread on web and does not guarantee background execution in browsers."
+              },
+              {
+                "criterion": "Chooses a platform-compatible strategy from measured work reduction, chunking, or supported web workers and verifies each target separately",
+                "met": true,
+                "evidence": "Uses the repository\u2019s supported worker adapter and sends raw JSON before decoding because profiling identified synchronous jsonDecode as the bottleneck. Separately verifies Android using the isolate timeline and scrolling frame budget, and web using worker-thread profiling, main-thread long-task checks, deployment checks, and real-adapter integration testing."
+              }
+            ],
+            "summary": "Meets all supplied criteria with explicit platform decisions, an evidence-based worker boundary, and separate verification plans for Android and web."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 100.0,
+          "minimum_score": 100,
+          "maximum_score": 100,
+          "score_range": 0,
+          "expectation_count": 3,
+          "unanimous_expectations": 3,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    },
+    {
+      "skill": "flutter-accessibility",
+      "case": "announcements-use-the-owning-view",
+      "with_skill": {
+        "response": "Replace deprecated `SemanticsService.announce`, which relies on an implicit view and is incompatible with multiple windows.\n\nFirst, prefer updating an accessible save-status widget, using a suitable live region if needed. If that already announces success, **do not also send an explicit announcement**. This is especially useful on Android, where explicit announcements can interrupt TalkBack\u2019s speech queue.\n\nWhen explicit feedback is necessary, your pinned SDK supports the view-aware replacement:\n\n```dart\n// After saving, using a context belonging to the originating window.\nif (!context.mounted) return;\n\n// Only use this path if existing semantic feedback does not announce success.\nif (MediaQuery.supportsAnnounceOf(context)) {\n  SemanticsService.sendAnnouncement(\n    View.of(context),\n    AppLocalizations.of(context)!.changesSavedSuccessfully,\n    Directionality.of(context),\n    assertiveness: Assertiveness.polite,\n  );\n}\n```\n\nUse the originating window\u2019s context for **the view, localized message, and text direction**; a global context can select the wrong window or locale. No legacy fallback is needed for this SDK. `Assertiveness.polite` currently affects web only; it does not prevent interruptions on Android.\n\nVerify that each save produces one success announcement in its originating window, including windows with different locales. Test semantic status updates in widget tests, then check TalkBack, desktop screen readers, and web screen-reader and keyboard behavior. Keep focus on the save control rather than moving it to the status message.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Uses the originating FlutterView for explicit announcements instead of the deprecated implicit-view announce API.",
+              "met": true,
+              "evidence": "Replaces announce with sendAnnouncement using View.of(context), and explicitly requires context from the originating window."
+            },
+            {
+              "criterion": "Checks announcement support and keeps direction and message localization consistent with the originating UI.",
+              "met": true,
+              "evidence": "Guards the call with MediaQuery.supportsAnnounceOf(context) and obtains localization and Directionality from the same originating context."
+            },
+            {
+              "criterion": "Prefers semantic state updates for ordinary feedback and does not claim assertiveness controls Android speech priority.",
+              "met": true,
+              "evidence": "First recommends updating an accessible save-status widget; explicitly states that polite assertiveness affects web only and does not prevent Android interruptions."
+            },
+            {
+              "criterion": "Verifies the originating window and avoids duplicate feedback across semantic and explicit announcement paths.",
+              "met": true,
+              "evidence": "Explicitly prohibits sending an announcement when semantic feedback already announces success, and requires verification of one success announcement in the originating window, including windows with different locales."
+            }
+          ],
+          "summary": "The response explicitly satisfies all four criteria, including both mandatory requirements."
+        },
+        "judgments": [
+          {
+            "score": 100,
+            "expectations": [
+              {
+                "criterion": "Uses the originating FlutterView for explicit announcements instead of the deprecated implicit-view announce API.",
+                "met": true,
+                "evidence": "Replaces announce with sendAnnouncement using View.of(context), and explicitly requires context from the originating window."
+              },
+              {
+                "criterion": "Checks announcement support and keeps direction and message localization consistent with the originating UI.",
+                "met": true,
+                "evidence": "Guards the call with MediaQuery.supportsAnnounceOf(context) and obtains localization and Directionality from the same originating context."
+              },
+              {
+                "criterion": "Prefers semantic state updates for ordinary feedback and does not claim assertiveness controls Android speech priority.",
+                "met": true,
+                "evidence": "First recommends updating an accessible save-status widget; explicitly states that polite assertiveness affects web only and does not prevent Android interruptions."
+              },
+              {
+                "criterion": "Verifies the originating window and avoids duplicate feedback across semantic and explicit announcement paths.",
+                "met": true,
+                "evidence": "Explicitly prohibits sending an announcement when semantic feedback already announces success, and requires verification of one success announcement in the originating window, including windows with different locales."
+              }
+            ],
+            "summary": "The response explicitly satisfies all four criteria, including both mandatory requirements."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 100.0,
+          "minimum_score": 100,
+          "maximum_score": 100,
+          "score_range": 0,
+          "expectation_count": 4,
+          "unanimous_expectations": 4,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 2,
+    "behavior_passed": 2,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 100.0,
+    "average_delta": null,
+    "judge_agreement_rate": null,
+    "judge_score_range_average": null,
+    "mandatory_judge_disagreements": 0,
+    "by_skill": {
+      "dart-concurrency": {
+        "cases": 1,
+        "passed": 1,
+        "baseline_average": null,
+        "with_skill_average": 100.0,
+        "average_delta": null
+      },
+      "flutter-accessibility": {
+        "cases": 1,
+        "passed": 1,
+        "baseline_average": null,
+        "with_skill_average": 100.0,
+        "average_delta": null
+      }
+    },
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

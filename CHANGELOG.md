@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Redact lifecycle output before truncation so report boundaries cannot expose tokens or device identifiers; add regression checks for normal and timeout output.
+- Correct Hero tag matching, Flutter web isolate limits, view-aware accessibility announcements, and text wrapping guidance; repair the TextOverflow source link.
+- Add three behavior regressions, strengthen Hero flight verification, and make authentication and purchase correctness constraints mandatory.
 - Harden `flutter-persistence` with resolved-package preflight, explicit durable-data classification, ordered skipped-version migrations, atomic failure recovery, and prior-release fixture verification.
 - Add a mandatory migration-safety behavior case and two routing boundaries separating local schema evolution from remote OpenAPI contract changes.
 

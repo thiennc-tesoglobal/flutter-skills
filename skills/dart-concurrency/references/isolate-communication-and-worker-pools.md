@@ -11,11 +11,13 @@ Isolates execute code in independent memory heaps with their own event loops. Us
 ## Patterns
 
 ### 1. One-Shot Computations (`Isolate.run`)
-For isolated, single-result tasks, prefer `Isolate.run()`:
+Check the supported platforms and SDK constraints first. On native Dart/Flutter targets, use `Isolate.run()` for isolated, single-result tasks:
 
 ```dart
 final processed = await Isolate.run(() => heavyTransform(rawData));
 ```
+
+Flutter web does not support Dart isolates. `compute()` provides a cross-platform call shape, but executes on the main thread on web and therefore does not remove CPU jank there. For web CPU bottlenecks, measure and reduce or chunk the work, or use an explicitly supported web-worker integration when actual parallelism is required. Do not promise off-thread execution from a portable API alone. See [Flutter's web isolate limitations](https://docs.flutter.dev/perf/isolates#web-platforms-and-compute).
 
 - Closure must be top-level or static, or capture only sendable objects.
 - Uncaught errors in the closure are propagated back to the calling isolate as asynchronous exceptions.

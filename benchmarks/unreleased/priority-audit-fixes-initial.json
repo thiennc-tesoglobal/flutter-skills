@@ -1,0 +1,506 @@
+{
+  "created_at": "2026-09-17T09:48:08.623290+00:00",
+  "runner_version": "2.0.0",
+  "git": {
+    "commit": "b31ef38b25d424b2c210597933558dee2ddf29cd",
+    "dirty": true,
+    "branch": "fix/skill-audit-priority"
+  },
+  "agent": "codex",
+  "agent_version": "codex-cli 0.154.0",
+  "model": null,
+  "judge_agent": "codex",
+  "judge_agent_version": "codex-cli 0.154.0",
+  "judge_model": null,
+  "judges": [
+    {
+      "agent": "codex",
+      "version": "codex-cli 0.154.0",
+      "model": null
+    }
+  ],
+  "independent_primary_judge": false,
+  "catalog_version": "0.9.0",
+  "profile": null,
+  "reference_coverage": null,
+  "behavior": [
+    {
+      "skill": "dart-concurrency",
+      "case": "web-compute-does-not-provide-parallelism",
+      "with_skill": {
+        "response": "Neither `Isolate.run` nor Flutter\u2019s `compute` guarantees background execution on both Android and web:\n\n- **Android:** `Isolate.run` executes the transform in a background isolate. `compute` also uses a background isolate.\n- **Web:** Dart isolates are unavailable. `compute` runs on the main thread, so it can still block scrolling.\n\nKeep the boundary platform-neutral and make the transform accept and return transferable data:\n\n```dart\nFuture<ProcessedData> transformJson(String rawJson) {\n  return compute(parseAndTransform, rawJson);\n}\n\nProcessedData parseAndTransform(String rawJson) {\n  final json = jsonDecode(rawJson);\n  return ProcessedData.fromJson(transform(json));\n}\n```\n\n`parseAndTransform` should be top-level or static and avoid UI objects, open handles, services, or captured state. Its input and result should contain sendable values such as strings, numbers, lists, maps, and byte buffers. Errors should propagate through the returned `Future`; if translating them, preserve the original stack trace.\n\nThis boundary gives Android background-isolate execution and a compatible API on web, but does **not** solve web jank by itself. For web, choose based on measurement:\n\n- Reduce or incrementally parse/transform the payload.\n- Split work into bounded chunks and yield between them so frames and input events can run.\n- If real parallelism is required, use an explicitly supported Web Worker implementation and keep it behind the same `transformJson` interface.\n\nAlso treat results as potentially obsolete. If multiple transforms can overlap, assign each request a sequence token and only publish the latest result. After awaiting, check that the owning widget or controller is still alive before updating UI state.\n\nVerify with a production/profile build and a payload representative of the largest real input:\n\n1. Record Flutter DevTools performance traces while continuously scrolling and triggering the transform.\n2. On Android, confirm the UI isolate no longer contains the long parsing/transform task and check frame build/raster times for jank.\n3. On web, verify whether the portable `compute` implementation still creates a long main-thread task; it usually will. Test chunking or a Web Worker separately.\n4. Add focused tests for successful output, malformed JSON/error propagation, disposal while work is pending, and two requests completing out of order.\n5. Run static analysis and compare elapsed time, dropped frames, and main-thread long tasks before and after the change.",
+        "judgment": {
+          "score": 75,
+          "expectations": [
+            {
+              "criterion": "1. Does not use Isolate.run as a supported Flutter web execution path",
+              "met": true,
+              "evidence": "The response explicitly states that Dart isolates are unavailable on web and limits Isolate.run background-isolate behavior to Android."
+            },
+            {
+              "criterion": "2. Explains that compute runs on the main thread on web and does not promise CPU offloading there",
+              "met": true,
+              "evidence": "It explicitly says, \u201ccompute runs on the main thread, so it can still block scrolling,\u201d and later says the compute-based boundary does not solve web jank."
+            },
+            {
+              "criterion": "3. Chooses a platform-compatible strategy from measured work reduction, chunking, or supported web workers and verifies each target separately",
+              "met": false,
+              "evidence": "The response gives valid alternatives\u2014reduce work, chunk and yield, or use a supported Web Worker\u2014and provides separate Android and web verification steps. However, it does not make an explicit implementation choice for web; it only says to choose based on measurement and test the alternatives."
+            }
+          ],
+          "summary": "The response correctly rejects Isolate.run as a web execution path and clearly states compute\u2019s main-thread behavior on web. Its implementation boundary and target-specific verification are strong, but it stops short of selecting a concrete web strategy, which the criterion explicitly requires."
+        },
+        "judgments": [
+          {
+            "score": 75,
+            "expectations": [
+              {
+                "criterion": "1. Does not use Isolate.run as a supported Flutter web execution path",
+                "met": true,
+                "evidence": "The response explicitly states that Dart isolates are unavailable on web and limits Isolate.run background-isolate behavior to Android."
+              },
+              {
+                "criterion": "2. Explains that compute runs on the main thread on web and does not promise CPU offloading there",
+                "met": true,
+                "evidence": "It explicitly says, \u201ccompute runs on the main thread, so it can still block scrolling,\u201d and later says the compute-based boundary does not solve web jank."
+              },
+              {
+                "criterion": "3. Chooses a platform-compatible strategy from measured work reduction, chunking, or supported web workers and verifies each target separately",
+                "met": false,
+                "evidence": "The response gives valid alternatives\u2014reduce work, chunk and yield, or use a supported Web Worker\u2014and provides separate Android and web verification steps. However, it does not make an explicit implementation choice for web; it only says to choose based on measurement and test the alternatives."
+              }
+            ],
+            "summary": "The response correctly rejects Isolate.run as a web execution path and clearly states compute\u2019s main-thread behavior on web. Its implementation boundary and target-specific verification are strong, but it stops short of selecting a concrete web strategy, which the criterion explicitly requires."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 75.0,
+          "minimum_score": 75,
+          "maximum_score": 75,
+          "score_range": 0,
+          "expectation_count": 3,
+          "unanimous_expectations": 3,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": false
+    },
+    {
+      "skill": "flutter-accessibility",
+      "case": "announcements-use-the-owning-view",
+      "with_skill": {
+        "response": "Replace `SemanticsService.announce`: it relies on an implicit view and is incompatible with multiple windows. Your pinned SDK supports the view-aware replacement.\n\nFirst, expose the save result through semantic state updates, such as a visible status with `Semantics(liveRegion: true, ...)`. Prefer this on Android, where explicit announcements can interrupt TalkBack\u2019s speech queue.\n\nIf the save result is **not already announced** by a semantic update or live region, use this fallback from the window that initiated the save:\n\n```dart\nvoid announceSaveResult(BuildContext context, String localizedMessage) {\n  if (!context.mounted ||\n      !MediaQuery.supportsAnnounceOf(context)) {\n    return;\n  }\n\n  SemanticsService.sendAnnouncement(\n    View.of(context),\n    localizedMessage,\n    Directionality.of(context),\n    assertiveness: Assertiveness.polite,\n  );\n}\n```\n\nAfter an asynchronous save, check that the context is still mounted, as above. Use a context belonging to the originating window; a global context could target the wrong view. `Directionality.of` preserves RTL support. Polite assertiveness affects web only.\n\nChoose **one feedback path per save result**: semantic status/live region, or explicit announcement when necessary. The support check reports capability; it does not prevent duplicate feedback. Announce meaningful transitions once, rather than on every rebuild.\n\nVerify saving independently in both windows, one announcement per result with TalkBack and supported desktop/web screen readers, and unchanged keyboard focus. Add semantics-enabled widget tests for the status changes.",
+        "judgment": {
+          "score": 75,
+          "expectations": [
+            {
+              "criterion": "Uses the originating FlutterView for explicit announcements instead of the deprecated implicit-view announce API.",
+              "met": true,
+              "evidence": "Uses sendAnnouncement(View.of(context), ...) and explicitly requires a context belonging to the originating window."
+            },
+            {
+              "criterion": "Checks announcement support and keeps direction and message localization consistent with the originating UI.",
+              "met": false,
+              "evidence": "Checks MediaQuery.supportsAnnounceOf(context) and obtains Directionality from the originating context. However, naming a parameter localizedMessage does not explicitly establish that its localization matches the originating UI."
+            },
+            {
+              "criterion": "Prefers semantic state updates for ordinary feedback and does not claim assertiveness controls Android speech priority.",
+              "met": true,
+              "evidence": "Recommends semantic state updates first, reserves explicit announcements for fallback, and states that polite assertiveness affects web only."
+            },
+            {
+              "criterion": "Verifies the originating window and avoids duplicate feedback across semantic and explicit announcement paths.",
+              "met": true,
+              "evidence": "Requires one feedback path per save result and verification independently in both windows, with one announcement per result."
+            }
+          ],
+          "summary": "Meets both mandatory criteria and explicitly addresses window verification and duplicate feedback. It does not explicitly tie message localization to the originating UI\u2019s locale."
+        },
+        "judgments": [
+          {
+            "score": 75,
+            "expectations": [
+              {
+                "criterion": "Uses the originating FlutterView for explicit announcements instead of the deprecated implicit-view announce API.",
+                "met": true,
+                "evidence": "Uses sendAnnouncement(View.of(context), ...) and explicitly requires a context belonging to the originating window."
+              },
+              {
+                "criterion": "Checks announcement support and keeps direction and message localization consistent with the originating UI.",
+                "met": false,
+                "evidence": "Checks MediaQuery.supportsAnnounceOf(context) and obtains Directionality from the originating context. However, naming a parameter localizedMessage does not explicitly establish that its localization matches the originating UI."
+              },
+              {
+                "criterion": "Prefers semantic state updates for ordinary feedback and does not claim assertiveness controls Android speech priority.",
+                "met": true,
+                "evidence": "Recommends semantic state updates first, reserves explicit announcements for fallback, and states that polite assertiveness affects web only."
+              },
+              {
+                "criterion": "Verifies the originating window and avoids duplicate feedback across semantic and explicit announcement paths.",
+                "met": true,
+                "evidence": "Requires one feedback path per save result and verification independently in both windows, with one announcement per result."
+              }
+            ],
+            "summary": "Meets both mandatory criteria and explicitly addresses window verification and duplicate feedback. It does not explicitly tie message localization to the originating UI\u2019s locale."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 75.0,
+          "minimum_score": 75,
+          "maximum_score": 75,
+          "score_range": 0,
+          "expectation_count": 4,
+          "unanimous_expectations": 4,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": false
+    },
+    {
+      "skill": "flutter-animation",
+      "case": "hero-tag-uniqueness-across-list",
+      "with_skill": {
+        "response": "Use a Hero tag scoped to the tab and product, then pass that exact tag to the detail screen. I\u2019m applying the flutter-animation skill to keep identity stable and respect reduced motion.\n\n```dart\n// Inside the product grid's item builder.\n// tabId must be stable and unique for this tab.\nfinal heroTag = 'product:$tabId:${product.id}';\nfinal reduceMotion = MediaQuery.disableAnimationsOf(context);\n\nreturn GestureDetector(\n  onTap: () {\n    Navigator.of(context).push(\n      PageRouteBuilder<void>(\n        transitionDuration:\n            reduceMotion ? Duration.zero : const Duration(milliseconds: 300),\n        reverseTransitionDuration:\n            reduceMotion ? Duration.zero : const Duration(milliseconds: 250),\n        pageBuilder: (_, __, ___) => ProductDetailScreen(\n          product: product,\n          heroTag: heroTag,\n        ),\n      ),\n    );\n  },\n  child: HeroMode(\n    enabled: !reduceMotion,\n    child: Hero(\n      tag: heroTag,\n      child: Image.network(product.imageUrl, fit: BoxFit.cover),\n    ),\n  ),\n);\n```\n\n```dart\nclass ProductDetailScreen extends StatelessWidget {\n  const ProductDetailScreen({\n    super.key,\n    required this.product,\n    required this.heroTag,\n  });\n\n  final Product product; // Your existing product model.\n  final String heroTag;\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text(product.name)),\n      body: HeroMode(\n        enabled: !MediaQuery.disableAnimationsOf(context),\n        child: Hero(\n          tag: heroTag,\n          child: AspectRatio(\n            aspectRatio: 1,\n            child: Image.network(product.imageUrl, fit: BoxFit.cover),\n          ),\n        ),\n      ),\n    );\n  }\n}\n```\n\nIf a product appears twice **within one tab**, include a stable section or occurrence ID in its tag too. The destination must always receive the selected tile\u2019s tag.\n\nFor nested navigators, check which route subtrees participate in the owning Hero controller; mounted tabs alone don\u2019t establish a collision. Use `HeroMode(enabled: false)` for nonparticipating tab content where needed.\n\nVerify forward and back flights from each tab, rapid push/pop interruption, absence of duplicate-tag assertions, and immediate navigation with reduced motion enabled. Hero manages the flight, so no custom animation controller is needed.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Keeps tags unique within each participating route subtree while using the same selected tag on source and destination Heroes",
+              "met": true,
+              "evidence": "Scopes tags by tab and product, requires a stable occurrence or section ID for duplicates within a tab, and passes the exact selected tag to the destination Hero."
+            },
+            {
+              "criterion": "Handles the same product appearing in multiple tab contexts",
+              "met": true,
+              "evidence": "Includes a stable, unique tabId in each tag and addresses participating route subtrees for nested navigators."
+            },
+            {
+              "criterion": "Verifies forward and reverse Hero flights and checks for tag collision assertion errors",
+              "met": true,
+              "evidence": "Explicitly instructs verification of forward and back flights from each tab and absence of duplicate-tag assertions. These are prescribed checks, not reported test results."
+            }
+          ],
+          "summary": "Meets all criteria with explicit tag identity decisions, tab-context handling, and verification instructions."
+        },
+        "judgments": [
+          {
+            "score": 100,
+            "expectations": [
+              {
+                "criterion": "Keeps tags unique within each participating route subtree while using the same selected tag on source and destination Heroes",
+                "met": true,
+                "evidence": "Scopes tags by tab and product, requires a stable occurrence or section ID for duplicates within a tab, and passes the exact selected tag to the destination Hero."
+              },
+              {
+                "criterion": "Handles the same product appearing in multiple tab contexts",
+                "met": true,
+                "evidence": "Includes a stable, unique tabId in each tag and addresses participating route subtrees for nested navigators."
+              },
+              {
+                "criterion": "Verifies forward and reverse Hero flights and checks for tag collision assertion errors",
+                "met": true,
+                "evidence": "Explicitly instructs verification of forward and back flights from each tab and absence of duplicate-tag assertions. These are prescribed checks, not reported test results."
+              }
+            ],
+            "summary": "Meets all criteria with explicit tag identity decisions, tab-context handling, and verification instructions."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 100.0,
+          "minimum_score": 100,
+          "maximum_score": 100,
+          "score_range": 0,
+          "expectation_count": 3,
+          "unanimous_expectations": 3,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    },
+    {
+      "skill": "flutter-authentication",
+      "case": "native-client-secret-is-not-secret",
+      "with_skill": {
+        "response": "I\u2019ll apply the flutter-authentication skill while preserving your existing provider, backend, router, storage, and state management.\n\nTwo requested choices need changing:\n\n- **`--dart-define` cannot protect a client secret.** Flutter Android, iOS, and web builds expose values shipped to users. Use a public-client registration with authorization code and PKCE. If your provider requires a secret, keep it on your trusted backend.\n- **Use the system browser on Android and iOS**, or the provider\u2019s supported external authorization agent, instead of an embedded WebView. On web, use a provider-supported browser redirect flow.\n\nThe implementation should use a fresh PKCE verifier and `state` for each attempt, validate the exact registered callback and pending attempt, reject duplicate or replayed callbacks, and validate OIDC tokens and `nonce` when applicable. Session handling should coordinate refresh, isolate accounts, and clear credentials on logout.\n\nTo produce a project-specific patch, please provide your provider name, relevant `pubspec.yaml` entries, existing authentication/backend code, and registered redirect URIs for each platform and environment. Include public client IDs only\u2014no secrets.\n\nNo files or external configuration have been changed, and no login flow has been verified.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Rejects a reusable client secret in distributed Flutter artifacts",
+              "met": true,
+              "evidence": "Explicitly rejects --dart-define for protecting secrets because distributed Android, iOS, and web builds expose shipped values; requires any provider secret to remain on a trusted backend."
+            },
+            {
+              "criterion": "Uses the established public-client or backend flow with authorization code PKCE",
+              "met": true,
+              "evidence": "Explicitly selects public-client registration with authorization code and PKCE, with a trusted backend if the provider requires a secret."
+            },
+            {
+              "criterion": "Uses an external authorization agent rather than an embedded WebView",
+              "met": true,
+              "evidence": "Explicitly replaces the embedded WebView with the system browser or supported external authorization agent on mobile and a browser redirect flow on web."
+            },
+            {
+              "criterion": "Validates callback ownership, state, and OIDC nonce where applicable",
+              "met": true,
+              "evidence": "Requires fresh state per attempt, validation of the exact registered callback and pending attempt, rejection of duplicate or replayed callbacks, and OIDC token and nonce validation when applicable."
+            }
+          ],
+          "summary": "All four mandatory criteria are explicitly addressed as implementation decisions. The response does not claim implementation or verification has occurred."
+        },
+        "judgments": [
+          {
+            "score": 100,
+            "expectations": [
+              {
+                "criterion": "Rejects a reusable client secret in distributed Flutter artifacts",
+                "met": true,
+                "evidence": "Explicitly rejects --dart-define for protecting secrets because distributed Android, iOS, and web builds expose shipped values; requires any provider secret to remain on a trusted backend."
+              },
+              {
+                "criterion": "Uses the established public-client or backend flow with authorization code PKCE",
+                "met": true,
+                "evidence": "Explicitly selects public-client registration with authorization code and PKCE, with a trusted backend if the provider requires a secret."
+              },
+              {
+                "criterion": "Uses an external authorization agent rather than an embedded WebView",
+                "met": true,
+                "evidence": "Explicitly replaces the embedded WebView with the system browser or supported external authorization agent on mobile and a browser redirect flow on web."
+              },
+              {
+                "criterion": "Validates callback ownership, state, and OIDC nonce where applicable",
+                "met": true,
+                "evidence": "Requires fresh state per attempt, validation of the exact registered callback and pending attempt, rejection of duplicate or replayed callbacks, and OIDC token and nonce validation when applicable."
+              }
+            ],
+            "summary": "All four mandatory criteria are explicitly addressed as implementation decisions. The response does not claim implementation or verification has occurred."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 100.0,
+          "minimum_score": 100,
+          "maximum_score": 100,
+          "score_range": 0,
+          "expectation_count": 4,
+          "unanimous_expectations": 4,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    },
+    {
+      "skill": "flutter-in-app-purchases",
+      "case": "pending-purchase-does-not-grant-access",
+      "with_skill": {
+        "response": "The purchase callback must update transaction state only. Premium should unlock after the purchase is verified and the entitlement is recorded idempotently.\n\nAssuming the existing package is Flutter\u2019s `in_app_purchase`, change the listener logic to follow this shape:\n\n```dart\nFuture<void> handlePurchaseUpdates(\n  List<PurchaseDetails> purchases,\n) async {\n  for (final purchase in purchases) {\n    switch (purchase.status) {\n      case PurchaseStatus.pending:\n        premiumState.setPurchasePending(true);\n        break;\n\n      case PurchaseStatus.purchased:\n      case PurchaseStatus.restored:\n        premiumState.setPurchasePending(false);\n        await _processCompletedPurchase(purchase);\n        break;\n\n      case PurchaseStatus.canceled:\n        premiumState.setPurchasePending(false);\n        break;\n\n      case PurchaseStatus.error:\n        premiumState.setPurchasePending(false);\n        premiumState.reportPurchaseError(purchase.error);\n        break;\n    }\n  }\n}\n\nFuture<void> _processCompletedPurchase(\n  PurchaseDetails purchase,\n) async {\n  final result = await purchaseVerifier.verify(\n    productId: purchase.productID,\n    store: purchase.verificationData.source,\n    verificationData:\n        purchase.verificationData.serverVerificationData,\n  );\n\n  if (!result.isVerified) {\n    premiumState.reportVerificationFailure();\n    return;\n  }\n\n  // This operation must be idempotent using the verified transaction ID\n  // or purchase token. Replayed callbacks must not grant twice.\n  await entitlementRepository.applyVerifiedPurchase(\n    accountId: authenticatedAccount.id,\n    verifiedPurchase: result,\n  );\n\n  // Finish only after entitlement delivery has been recorded durably.\n  if (purchase.pendingCompletePurchase) {\n    await inAppPurchase.completePurchase(purchase);\n  }\n\n  await entitlementRepository.refreshEntitlements(\n    accountId: authenticatedAccount.id,\n  );\n}\n```\n\nThe concrete behavioral changes are:\n\n- `PurchaseStatus.pending` shows a pending state and grants no premium access.\n- `purchased` and `restored` transactions pass through the existing trusted verification boundary.\n- Premium comes from the verified entitlement repository, rather than the purchase callback or UI state.\n- Entitlement delivery is idempotent by transaction ID or Play purchase token.\n- `completePurchase` runs only after durable entitlement delivery, allowing recovery if the app stops between verification and acknowledgement.\n- Cancelled, failed, malformed, unknown-product, and unverified transactions never unlock premium.\n- The purchase listener should have one owner created early in application startup so purchases completed after a restart are processed.\n- On account changes, clear cached premium state and reconcile entitlements for the newly authenticated account. Do not attribute an in-flight transaction until its owning account is known.\n\nDo not treat `localVerificationData`, a client-side product ID match, or the Play callback itself as trusted verification. For account-based premium access, send `serverVerificationData` to the existing backend, verify it with Google Play, bind it to the authenticated account, and return the effective entitlement.\n\nTests should cover pending-to-purchased, pending across restart, duplicate callbacks, verification failure, delivery succeeded but acknowledgement was interrupted, cancellation, restore/reconciliation, offline retry, and account switching. A passing test must confirm both the entitlement state and whether `completePurchase` was called at the correct point.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "preserves the existing billing package",
+              "met": true,
+              "evidence": "Explicitly assumes the existing package is in_app_purchase and changes its listener flow without proposing a package migration."
+            },
+            {
+              "criterion": "[MANDATORY] does not grant entitlement for a pending or unverified transaction",
+              "met": true,
+              "evidence": "Pending transactions only update pending state. Failed verification returns before entitlement delivery, and verification is explicitly delegated to a backend that verifies with Google Play."
+            },
+            {
+              "criterion": "[MANDATORY] defines verified idempotent delivery followed by the correct acknowledgement or finish step",
+              "met": true,
+              "evidence": "Verification precedes durable entitlement delivery, keyed idempotently by verified transaction ID or purchase token. completePurchase is then called when pendingCompletePurchase is true."
+            },
+            {
+              "criterion": "reconciles completion after backgrounding restart or a later store update",
+              "met": true,
+              "evidence": "The listener processes subsequent purchased/restored updates and is explicitly owned early in application startup to process purchases completed after restart. Idempotent delivery and completion ordering support recovery when acknowledgement is interrupted."
+            }
+          ],
+          "summary": "The response explicitly satisfies all four criteria, with package preservation conditional on its stated assumption that the existing package is in_app_purchase."
+        },
+        "judgments": [
+          {
+            "score": 100,
+            "expectations": [
+              {
+                "criterion": "preserves the existing billing package",
+                "met": true,
+                "evidence": "Explicitly assumes the existing package is in_app_purchase and changes its listener flow without proposing a package migration."
+              },
+              {
+                "criterion": "[MANDATORY] does not grant entitlement for a pending or unverified transaction",
+                "met": true,
+                "evidence": "Pending transactions only update pending state. Failed verification returns before entitlement delivery, and verification is explicitly delegated to a backend that verifies with Google Play."
+              },
+              {
+                "criterion": "[MANDATORY] defines verified idempotent delivery followed by the correct acknowledgement or finish step",
+                "met": true,
+                "evidence": "Verification precedes durable entitlement delivery, keyed idempotently by verified transaction ID or purchase token. completePurchase is then called when pendingCompletePurchase is true."
+              },
+              {
+                "criterion": "reconciles completion after backgrounding restart or a later store update",
+                "met": true,
+                "evidence": "The listener processes subsequent purchased/restored updates and is explicitly owned early in application startup to process purchases completed after restart. Idempotent delivery and completion ordering support recovery when acknowledgement is interrupted."
+              }
+            ],
+            "summary": "The response explicitly satisfies all four criteria, with package preservation conditional on its stated assumption that the existing package is in_app_purchase."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 100.0,
+          "minimum_score": 100,
+          "maximum_score": 100,
+          "score_range": 0,
+          "expectation_count": 4,
+          "unanimous_expectations": 4,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    },
+    {
+      "skill": "flutter-text-rendering",
+      "case": "soft-wrap-does-not-remove-hard-breaks",
+      "with_skill": {
+        "response": "`softWrap: false` disables wrapping at soft break opportunities; it does **not** suppress explicit `\\n` characters or override `maxLines`. Removing `maxLines: 1` allows server copy with newlines to render on multiple lines.\n\nRestore the one-line limit and choose truncation explicitly:\n\n```dart\nText(\n  title,\n  softWrap: false,\n  maxLines: 1,\n  overflow: TextOverflow.ellipsis,\n)\n```\n\nGive the title finite horizontal space\u2014for example, `Expanded` if it shares a bounded `Row` with siblings.\n\nA regression test should render `'First line\\nSecond line'` in a narrow container and verify the actual paragraph is limited and truncated:\n\n```dart\ntestWidgets('title stays one line with server newlines', (tester) async {\n  await tester.pumpWidget(\n    const MaterialApp(\n      home: Scaffold(\n        body: SizedBox(\n          width: 160,\n          child: Text(\n            'First line\\nSecond line',\n            key: ValueKey('title'),\n            softWrap: false,\n            maxLines: 1,\n            overflow: TextOverflow.ellipsis,\n          ),\n        ),\n      ),\n    ),\n  );\n\n  final richText = find.descendant(\n    of: find.byKey(const ValueKey('title')),\n    matching: find.byType(RichText),\n  );\n  final paragraph = tester.renderObject<RenderParagraph>(richText);\n\n  expect(paragraph.maxLines, 1);\n  expect(paragraph.overflow, TextOverflow.ellipsis);\n  expect(paragraph.didExceedMaxLines, isTrue);\n  expect(tester.takeException(), isNull);\n});\n```\n\nImport `package:flutter/rendering.dart` for `RenderParagraph`. In the project, exercise the real title component so removing its limit fails the test. Repeat at 1.5\u00d7 and 2\u00d7 text scale with short, long, localized, and unbroken copy.",
+        "judgment": {
+          "score": 100,
+          "expectations": [
+            {
+              "criterion": "Distinguishes disabled soft wrapping from explicit newline breaks and does not claim maxLines is overridden.",
+              "met": true,
+              "evidence": "Explicitly states that softWrap: false neither suppresses explicit newline characters nor overrides maxLines."
+            },
+            {
+              "criterion": "Keeps an explicit single-line limit and intentional overflow behavior for the stated title contract.",
+              "met": true,
+              "evidence": "Restores maxLines: 1 with TextOverflow.ellipsis and verifies both settings in the regression test."
+            },
+            {
+              "criterion": "Tests both newline-containing copy and long unbroken copy under finite width.",
+              "met": true,
+              "evidence": "Provides a newline-containing regression test constrained to width 160 and explicitly directs repeating that check with long and unbroken copy."
+            }
+          ],
+          "summary": "The response explicitly satisfies all three criteria with the correct configuration and a bounded-width regression check covering both input categories."
+        },
+        "judgments": [
+          {
+            "score": 100,
+            "expectations": [
+              {
+                "criterion": "Distinguishes disabled soft wrapping from explicit newline breaks and does not claim maxLines is overridden.",
+                "met": true,
+                "evidence": "Explicitly states that softWrap: false neither suppresses explicit newline characters nor overrides maxLines."
+              },
+              {
+                "criterion": "Keeps an explicit single-line limit and intentional overflow behavior for the stated title contract.",
+                "met": true,
+                "evidence": "Restores maxLines: 1 with TextOverflow.ellipsis and verifies both settings in the regression test."
+              },
+              {
+                "criterion": "Tests both newline-containing copy and long unbroken copy under finite width.",
+                "met": true,
+                "evidence": "Provides a newline-containing regression test constrained to width 160 and explicitly directs repeating that check with long and unbroken copy."
+              }
+            ],
+            "summary": "The response explicitly satisfies all three criteria with the correct configuration and a bounded-width regression check covering both input categories."
+          }
+        ],
+        "agreement": {
+          "judge_count": 1,
+          "average_score": 100.0,
+          "minimum_score": 100,
+          "maximum_score": 100,
+          "score_range": 0,
+          "expectation_count": 3,
+          "unanimous_expectations": 3,
+          "expectation_agreement_rate": 100.0,
+          "mandatory_disagreements": []
+        }
+      },
+      "delta": null,
+      "mandatory_failure": false,
+      "passed": true
+    }
+  ],
+  "routing": [],
+  "summary": {
+    "behavior_cases": 6,
+    "behavior_passed": 4,
+    "mandatory_failures": 0,
+    "baseline_average": null,
+    "with_skill_average": 91.67,
+    "average_delta": null,
+    "judge_agreement_rate": null,
+    "judge_score_range_average": null,
+    "mandatory_judge_disagreements": 0,
+    "by_skill": {
+      "dart-concurrency": {
+        "cases": 1,
+        "passed": 0,
+        "baseline_average": null,
+        "with_skill_average": 75.0,
+        "average_delta": null
+      },
+      "flutter-accessibility": {
+        "cases": 1,
+        "passed": 0,
+        "baseline_average": null,
+        "with_skill_average": 75.0,
+        "average_delta": null
+      },
+      "flutter-animation": {
+        "cases": 1,
+        "passed": 1,
+        "baseline_average": null,
+        "with_skill_average": 100.0,
+        "average_delta": null
+      },
+      "flutter-authentication": {
+        "cases": 1,
+        "passed": 1,
+        "baseline_average": null,
+        "with_skill_average": 100.0,
+        "average_delta": null
+      },
+      "flutter-in-app-purchases": {
+        "cases": 1,
+        "passed": 1,
+        "baseline_average": null,
+        "with_skill_average": 100.0,
+        "average_delta": null
+      },
+      "flutter-text-rendering": {
+        "cases": 1,
+        "passed": 1,
+        "baseline_average": null,
+        "with_skill_average": 100.0,
+        "average_delta": null
+      }
+    },
+    "routing_cases": 0,
+    "routing_passed": 0
+  }
+}

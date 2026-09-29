@@ -1,5 +1,15 @@
 [
   {
+    "name": "soft-wrap-does-not-remove-hard-breaks",
+    "prompt": "A compact Flutter title must occupy exactly one displayed line. Server copy can contain newline characters. A teammate set softWrap: false and removed maxLines because they think softWrap overrides it. Review the behavior and propose a regression check.",
+    "resources": ["references/text-overflow-and-wrapping.md"],
+    "expectations": [
+      {"text": "distinguishes disabled soft wrapping from explicit newline breaks and does not claim maxLines is overridden", "mandatory": true},
+      {"text": "keeps an explicit single-line limit and intentional overflow behavior for the stated title contract", "mandatory": true},
+      "tests both newline-containing copy and long unbroken copy under finite width"
+    ]
+  },
+  {
     "name": "prevents-orphaned-words-in-headings",
     "prompt": "Headings on our product landing page have an awkward single word wrapping onto a new line (orphaned words / widows). How should we handle this in Flutter so that the final word never wraps alone, without hardcoding newlines that break on different screen widths?",
     "resources": [

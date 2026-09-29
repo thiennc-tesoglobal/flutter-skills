@@ -22,7 +22,7 @@ Identify the failure mechanism before adjusting layout:
 - **Constrain the competing branch, not every `Text`:** In a `Row`, use `Flexible`, `Expanded`, `SizedBox`, or `ConstrainedBox` when text must share finite horizontal space with siblings. In a `Column`, flex changes vertical allocation and is not a default fix for horizontal text overflow. Never add a flex child when the parent's main-axis constraint is unbounded.
 - **Prevent orphaned words only where segmentation fits:** A non-breaking space (`\u00A0`) can bind the final two words of space-delimited headings, titles, and callouts. Do not apply that heuristic universally across locales.
 - **Choose wrapping or truncation deliberately:** Allow natural wrapping when the full copy matters. When the product contract calls for truncation, pair an explicit `maxLines` with `TextOverflow.ellipsis`, `TextOverflow.fade`, or `TextOverflow.clip`. Do not set `softWrap: false` without verifying whether single-line clipping is acceptable.
-- **Use `Text.rich` for inline styling:** Prefer `Text.rich` (which inherits ambient `DefaultTextStyle`) over `RichText` (which requires explicit style and text direction) when mixing weights, colors, inline badges (`WidgetSpan`), or link recognizers.
+- **Use `Text.rich` for inline styling:** Prefer `Text.rich` for ambient style and text scaling when mixing weights, colors, inline badges (`WidgetSpan`), or link recognizers. Raw `RichText` needs deliberate span style and scaling, but can inherit ambient text direction.
 - **Measure text with `TextPainter` when layout depends on copy size:** When building dynamic chips, custom canvas callouts, or expandable "Read more" widgets, layout a `TextPainter` with explicit `maxWidth` plus the ambient direction, locale, and `TextScaler` to check rendered height and `didExceedMaxLines`.
 - **Adapt to text scaling:** Support enlarged system fonts (`MediaQuery.textScalerOf(context)`). Avoid hardcoded container heights around text; prefer flexible or scrollable containers.
 - **Account for internationalization:** Design copy containers to tolerate 20–35% text length expansion for localized strings and support bidirectional text (`TextDirection`).
@@ -47,5 +47,5 @@ Write a widget test asserting no `RenderFlex` overflow, confirming intended line
 - [Flutter Text class](https://api.flutter.dev/flutter/widgets/Text-class.html)
 - [Flutter RichText class](https://api.flutter.dev/flutter/widgets/RichText-class.html)
 - [Flutter TextPainter class](https://api.flutter.dev/flutter/painting/TextPainter-class.html)
-- [Flutter TextOverflow enum](https://api.flutter.dev/flutter/rendering/TextOverflow.html)
+- [Flutter TextOverflow enum](https://api.flutter.dev/flutter/painting/TextOverflow.html)
 - [Flutter TextScaler class](https://api.flutter.dev/flutter/painting/TextScaler-class.html)

@@ -1,5 +1,7 @@
 # Public benchmark
 
+The priority audit fixes were checked with six focused same-agent behavior cases, with baselines skipped. The [initial run](unreleased/priority-audit-fixes-initial.json) passed Hero matching, authentication, purchases, and hard line breaks at 100, but scored web execution and window announcements at 75. The web prompt lacked profiling evidence needed to select a concrete strategy; it now supplies a measured bottleneck and an existing compatible worker adapter. The announcement reference now explicitly derives localization from the originating window. Both cases scored 100 in the [follow-up](unreleased/priority-audit-fixes-followup.json). These are response-level regression results, not device or independent-judge evidence. An earlier interrupted attempt reported 67 and 75 for those two cases but ended before the runner persisted raw results; those incomplete observations are not included as a completed benchmark.
+
 The fixed profile in [public-benchmark.json](../.github/evals/public-benchmark.json) compares normal agent behavior with the same agent receiving the selected skill and separately checks catalog routing.
 
 Run it with:
