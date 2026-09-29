@@ -94,3 +94,5 @@ python3 .github/scripts/run_executable_evals.py \
 ```
 
 The runner copies a fixture to a temporary workspace, disables shell commands, allows only declared source owners to change, rejects verifier or package-metadata edits, and then executes allowlisted `dart` or `flutter` checks with timeouts. Keep fixtures deterministic, dependency-light, free of credentials, and independent of live services. Add `flutter build` only when compilation at that platform boundary is material; prefer format, analysis, focused tests, and runtime assertions for ordinary cases.
+
+The `responsive-checkout-geometry` case uses Flutter 3.44.8 and immutable widget tests. Its CI proof runs the broken starter, a passing oracle, and isolated clipping, sticky-action, and offscreen-action mutations via `.github/scripts/verify_responsive_fixture.py`. The starter also proves that a missing wide composition fails at the 600-pixel boundary. This verifies the test oracle before an agent run. An executed agent result additionally shows whether the skill led the agent to a passing code change; widget tests do not establish real OS keyboard or screen-reader behavior.

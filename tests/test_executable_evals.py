@@ -50,6 +50,22 @@ class ExecutableEvalTests(unittest.TestCase):
         self.assertFalse(EXECUTABLE.path_is_allowed("bin/verify.dart", ["lib"]))
         self.assertFalse(EXECUTABLE.path_is_allowed("lib-other/file.dart", ["lib"]))
 
+    def test_snapshot_ignores_generated_flutter_cache_but_tracks_metadata(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / ".dart_tool").mkdir()
+            (root / ".dart_tool" / "package_config.json").write_text("generated")
+            (root / "build").mkdir()
+            (root / "build" / "output.bin").write_bytes(b"generated")
+            (root / "lib" / "build").mkdir(parents=True)
+            (root / "lib" / "build" / "source.dart").write_text("tracked")
+            (root / "pubspec.yaml").write_text("name: fixture\n")
+            (root / "pubspec.lock").write_text("pinned\n")
+            self.assertEqual(
+                sorted(EXECUTABLE.snapshot(root)),
+                ["lib/build/source.dart", "pubspec.lock", "pubspec.yaml"],
+            )
+
     def test_execute_case_rejects_agent_changes_to_verifier(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

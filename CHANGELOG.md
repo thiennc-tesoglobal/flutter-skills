@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add a Flutter 3.44.8 responsive checkout fixture with six viewport, breakpoint, text-scale, RTL, keyboard, geometry, and interaction scenarios; verify seeded overlap, missing wide composition, clipping, sticky-action, and offscreen-action failures against a passing oracle in CI.
+- Add a compiler-backed responsive-layout case and ignore generated Flutter build caches while retaining package metadata integrity checks in executable evaluations.
 - Redact lifecycle output before truncation so report boundaries cannot expose tokens or device identifiers; add regression checks for normal and timeout output.
 - Correct Hero tag matching, Flutter web isolate limits, view-aware accessibility announcements, and text wrapping guidance; repair the TextOverflow source link.
 - Add three behavior regressions, strengthen Hero flight verification, and make authentication and purchase correctness constraints mandatory.
