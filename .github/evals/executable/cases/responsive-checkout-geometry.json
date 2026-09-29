@@ -1,0 +1,29 @@
+{
+  "name": "responsive-checkout-geometry",
+  "skill": "flutter-responsive-layout",
+  "prompt": "Repair the checkout fixture for compact and wide windows. At 320 logical pixels the delivery and pickup controls intersect, the final address field can remain beneath the sticky action after scrolling, and a long validation message is clipped at 200% text scaling with a simulated keyboard. Preserve the intentional badge overlay on the avatar and the observable Place order action. Use the existing Flutter SDK and packages; keep independent controls disjoint, the full error readable, the final field revealable above the sticky action, and the action visible and tappable. Use compact wrapped controls below a 600-logical-pixel viewport and a wide row from 600 up; the controls' local breakpoint is 568 after horizontal padding. The immutable widget test covers compact, 599/600/601 breakpoint boundaries, wide, RTL, long content, enlarged text, and keyboard insets.",
+  "resources": [
+    "references/geometry-viewport-and-fixture-testing.md"
+  ],
+  "fixture": "responsive-checkout",
+  "allowed_changes": [
+    "lib"
+  ],
+  "checks": [
+    {
+      "name": "format",
+      "command": ["dart", "format", "--output=none", "--set-exit-if-changed", "lib"],
+      "timeout": 60
+    },
+    {
+      "name": "analyze",
+      "command": ["flutter", "analyze"],
+      "timeout": 120
+    },
+    {
+      "name": "widget-geometry-and-interaction",
+      "command": ["flutter", "test", "--reporter=expanded"],
+      "timeout": 120
+    }
+  ]
+}

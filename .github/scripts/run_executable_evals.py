@@ -28,7 +28,7 @@ ROOT = Path(__file__).resolve().parents[2]
 EXECUTABLE_ROOT = ROOT / ".github" / "evals" / "executable"
 CASES_DIR = EXECUTABLE_ROOT / "cases"
 FIXTURES_DIR = EXECUTABLE_ROOT / "fixtures"
-RUNNER_VERSION = "1.0.0"
+RUNNER_VERSION = "1.1.0"
 ALLOWED_EXECUTABLES = {"dart", "flutter"}
 ALLOWED_SUBCOMMANDS = {
     "dart": {"format", "analyze", "test", "run"},
@@ -126,8 +126,11 @@ def snapshot(root: Path) -> dict[str, bytes]:
     for path in sorted(root.rglob("*")):
         if path.is_symlink():
             raise EvalError("workspace contains a symlink")
+        relative = path.relative_to(root)
+        if relative.parts[0] in {".dart_tool", "build"}:
+            continue
         if path.is_file() and path.name != ".eval-response.txt":
-            files[path.relative_to(root).as_posix()] = path.read_bytes()
+            files[relative.as_posix()] = path.read_bytes()
     return files
 
 

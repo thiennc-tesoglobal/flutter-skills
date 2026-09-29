@@ -49,3 +49,19 @@ jobs:
 
       - name: Smoke-test Agent Skills discovery
         run: npx --yes skills@1.5.23 add . --list
+
+  responsive-fixture:
+    name: Responsive Layout Fixture
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up pinned Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.8
+
+      - name: Verify broken and corrected widget layouts
+        run: python3 .github/scripts/verify_responsive_fixture.py
