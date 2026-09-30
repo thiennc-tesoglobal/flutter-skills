@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Keep the interactive installer focused on popular agent destinations: Codex, Antigravity, and Zed remain in the universal folder, with Claude Code and Kiro CLI available as additional choices.
+
 ## 0.9.1 - 2026-09-30
 
 - Add a Flutter 3.44.8 responsive checkout fixture with six viewport, breakpoint, text-scale, RTL, keyboard, geometry, and interaction scenarios; verify seeded overlap, missing wide composition, clipping, sticky-action, and offscreen-action failures against a passing oracle in CI.

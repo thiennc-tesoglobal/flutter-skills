@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
 import test from "node:test";
 
 import {
@@ -11,6 +13,13 @@ import {
   run,
   skillsSource,
 } from "../lib/cli.mjs";
+import {
+  featuredAgentIds,
+  patchAgentCatalog,
+  supportedSkillsVersion,
+} from "../lib/agent-catalog.mjs";
+
+const require = createRequire(import.meta.url);
 
 function outputCollector() {
   let value = "";
@@ -35,6 +44,36 @@ test("pins installs to the GitHub tag matching the npm version", () => {
 
 test("resolves the pinned upstream executable from package dependencies", () => {
   assert.equal(existsSync(resolveSkillsCli()), true);
+});
+
+test("limits additional agent choices while retaining universal agents", () => {
+  const packageJsonPath = require.resolve("skills/package.json");
+  const cliPath = join(dirname(packageJsonPath), "dist", "cli.mjs");
+  const source = readFileSync(cliPath, "utf8");
+  const patched = patchAgentCatalog(source);
+
+  assert.match(patched, /FLUTTER_SKILLS_FEATURED_AGENT_IDS/);
+  assert.deepEqual(featuredAgentIds, [
+    "codex",
+    "claude-code",
+    "antigravity",
+    "kiro-cli",
+    "zed",
+  ]);
+  assert.match(patched, /FLUTTER_SKILLS_FEATURED_AGENT_IDS\.has\(type\)/);
+  assert.match(patched, /config\.skillsDir !== "\.agents\/skills"/);
+  assert.match(patched, /choices = choices\.filter/);
+  assert.equal(patched.match(/hiddenCount: 0/g)?.length, 3);
+  assert.equal(patched.match(/5 featured agent destinations/g)?.length, 3);
+  assert.equal(patchAgentCatalog(patched), patched);
+  assert.equal(supportedSkillsVersion, "1.5.23");
+});
+
+test("fails clearly when the pinned installer changes its agent chooser", () => {
+  assert.throws(
+    () => patchAgentCatalog("function getNonUniversalAgents() { return []; }"),
+    /agent chooser changed/,
+  );
 });
 
 test("forwards installer options without invoking a shell", () => {
@@ -101,4 +140,18 @@ test("returns a failure when the upstream process cannot start", () => {
 
   assert.equal(status, 1);
   assert.match(errorOutput.value(), /Unable to start the skills installer: not found/);
+});
+
+test("applies the featured-agent filter before starting the pinned installer", () => {
+  let invocation;
+  const status = run([], {
+    spawn: (command, args, options) => {
+      invocation = { command, args, options };
+      return { status: 0 };
+    },
+  });
+
+  assert.equal(status, 0);
+  assert.equal(invocation.args[0], resolveSkillsCli());
+  assert.deepEqual(invocation.args.slice(1), ["add", skillsSource]);
 });

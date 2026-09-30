@@ -18,6 +18,8 @@ npx @thiennc/flutter-skills
 
 Installs into the current project. Add `--global` to use across projects.
 
+The agent picker keeps common destinations easy to find. Codex, Antigravity, and Zed are included through the universal `.agents/skills` folder; Claude Code and Kiro CLI are the additional choices.
+
 <details>
 <summary>Install as a Codex or Claude Code plugin</summary>
 
