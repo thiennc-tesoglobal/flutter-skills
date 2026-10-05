@@ -7,14 +7,20 @@
     ],
     "expectations": [
       "extends existing router",
-      {"text": "handles auth redirect and invalid order IDs", "mandatory": true},
+      {
+        "text": "handles auth redirect and invalid order IDs",
+        "mandatory": true
+      },
       "tests cold link and back behavior"
     ]
   },
   {
     "name": "simple-modal-needs-no-router-package",
     "prompt": "Add one confirmation dialog to a small app using Navigator.",
-    "expectations": ["keeps the simple existing navigation mechanism", "does not add a routing dependency"]
+    "expectations": [
+      "keeps the simple existing navigation mechanism",
+      "does not add a routing dependency"
+    ]
   },
   {
     "name": "tab-shell-preserves-independent-history",
@@ -23,7 +29,10 @@
       "references/nested-shell-navigation.md"
     ],
     "expectations": [
-      {"text": "uses nested navigators or equivalent shell routing to isolate tab histories", "mandatory": true},
+      {
+        "text": "uses nested navigators or equivalent shell routing to isolate tab histories",
+        "mandatory": true
+      },
       "preserves each tab's back stack when switching between tabs",
       "tests forward and back navigation within and across tabs"
     ]
@@ -52,6 +61,36 @@
       "asserts the final destination and one navigation or domain effect per link identity rather than treating OS launch success as route proof",
       "checks account or authorization changes and prevents stale protected content after the login handoff",
       "preserves the project's existing router and uses device testing only for lifecycle behavior that requires a concrete target"
+    ]
+  },
+  {
+    "name": "redirect-reacts-to-auth-state-change",
+    "prompt": "Our go_router redirect checks an AuthService.isSignedIn getter to send unauthenticated users to login. A background token refresh sometimes fails and signs the user out, but the user stays on the protected screen until they happen to navigate somewhere. Fix it.",
+    "resources": [
+      "references/deep-link-and-restoration.md"
+    ],
+    "expectations": [
+      {
+        "text": "attaches the auth state to the router's refreshListenable or calls an equivalent refresh API rather than relying only on navigation events",
+        "mandatory": true
+      },
+      "re-evaluates the redirect when auth state changes outside of navigation and moves the user off the now-unauthorized route",
+      "tests a background sign-out while the user is on a protected route"
+    ]
+  },
+  {
+    "name": "shell-branch-push-escapes-with-parent-navigator-key",
+    "prompt": "Inside one tab of a StatefulShellRoute, pushing a full-screen image viewer from that tab's own navigator gets dismissed whenever the user switches tabs and back. It should stay full-screen above the tab bar regardless of tab switches.",
+    "resources": [
+      "references/nested-shell-navigation.md"
+    ],
+    "expectations": [
+      {
+        "text": "uses parentNavigatorKey or the root navigatorKey so the route pushes onto the root navigator instead of the branch's nested navigator",
+        "mandatory": true
+      },
+      "explains why pushing through the branch's own navigator nests the route inside that branch's lifecycle",
+      "tests that switching tabs and back does not dismiss or duplicate the pushed route"
     ]
   }
 ]

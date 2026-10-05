@@ -4,6 +4,7 @@ When working with localizations in Flutter, use standardized formats rather than
 
 ## ICU Syntax in ARB Files
 - Use ICU plural syntax for counts (e.g., `=0{No items} =1{1 item} other{{count} items}`).
+- Exact-match plural forms (`=0`, `=1`) only cover English-shaped counting. Many locales need the fuller CLDR plural category set — `zero`, `one`, `two`, `few`, `many`, `other` — because languages such as Arabic or Russian route different counts through categories English never uses. Provide every category a target locale's plural rules require, not just the ones that happen to read naturally in English.
 - Use ICU select syntax for gender or category-specific translations.
 - Declare variables in the `@message_key` metadata block to document their types and meanings.
 
@@ -23,4 +24,5 @@ When working with localizations in Flutter, use standardized formats rather than
 ## Testing Representative Locales
 - Test layouts with long strings (e.g., German) to verify wrapping and overflow behavior.
 - Test Right-to-Left (RTL) locales (e.g., Arabic) to ensure directional widgets (`Row`, `padding`) mirror correctly.
+- Use `EdgeInsetsDirectional` and `AlignmentDirectional` (not `EdgeInsets.only(left: ...)` or `Alignment.centerLeft`) for padding and alignment that must mirror with text direction, since physical-side APIs stay pinned to the same visual side regardless of locale.
 - Do not manually reverse strings or lists for RTL; rely on Flutter's `Directionality`.

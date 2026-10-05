@@ -2,23 +2,74 @@
   {
     "name": "preserve-existing-bloc-architecture",
     "prompt": "Add a profile feature to an established Bloc feature-first app using architecture best practices.",
-    "expectations": ["inspects and preserves Bloc conventions", "keeps UI data access behind state and repository boundaries", "does not introduce ChangeNotifier unnecessarily"]
+    "expectations": [
+      "inspects and preserves Bloc conventions",
+      "keeps UI data access behind state and repository boundaries",
+      "does not introduce ChangeNotifier unnecessarily"
+    ]
   },
   {
     "name": "simple-app-avoids-enterprise-layers",
     "prompt": "Structure a small local counter and notes app for one developer.",
-    "expectations": ["chooses proportionate boundaries", "does not create use cases or interfaces without a concrete need"]
+    "expectations": [
+      "chooses proportionate boundaries",
+      "does not create use cases or interfaces without a concrete need"
+    ]
   },
   {
     "name": "migrates-one-feature-without-big-bang",
     "prompt": "Our established Flutter app has widgets calling the database directly. Move the whole repository into Clean Architecture folders before adding the next feature.",
-    "resources": ["references/greenfield-and-evolution.md"],
-    "expectations": ["names the concrete dependency or testability problem", "introduces an incremental seam around one affected feature", "preserves behavior with characterization or boundary tests", "rejects a big-bang folder rewrite as the architecture outcome"]
+    "resources": [
+      "references/greenfield-and-evolution.md"
+    ],
+    "expectations": [
+      "names the concrete dependency or testability problem",
+      "introduces an incremental seam around one affected feature",
+      "preserves behavior with characterization or boundary tests",
+      "rejects a big-bang folder rewrite as the architecture outcome"
+    ]
   },
   {
     "name": "enforces-feature-public-boundary",
     "prompt": "The checkout feature imports private repository and widget files from catalog and profile. Fix the boundaries without replacing our existing Bloc setup.",
-    "resources": ["references/feature-boundaries-and-dependency-rules.md"],
-    "expectations": ["preserves the existing state-management convention", "defines small stable public capability boundaries between features", "keeps concrete data services out of UI imports", "avoids moving unrelated code into a generic core folder"]
+    "resources": [
+      "references/feature-boundaries-and-dependency-rules.md"
+    ],
+    "expectations": [
+      "preserves the existing state-management convention",
+      "defines small stable public capability boundaries between features",
+      "keeps concrete data services out of UI imports",
+      "avoids moving unrelated code into a generic core folder"
+    ]
+  },
+  {
+    "name": "reuses-existing-di-mechanism",
+    "prompt": "Add a payments feature to an app that already resolves all its dependencies through Riverpod providers. Register the new PaymentService with get_it since that's a popular DI package.",
+    "resources": [
+      "references/feature-boundaries-and-dependency-rules.md"
+    ],
+    "expectations": [
+      {
+        "text": "rejects introducing a second DI container alongside the existing Riverpod provider graph",
+        "mandatory": true
+      },
+      "resolves PaymentService through the project's existing Riverpod provider mechanism",
+      "names the dual-container lifecycle or test-override problem a second container would create"
+    ]
+  },
+  {
+    "name": "repository-maps-data-source-model-to-domain",
+    "prompt": "OrderRepository currently returns the raw Drift OrderRow straight from the database query to the presentation layer. Add a new getOrderHistory method following the same existing pattern.",
+    "resources": [
+      "references/feature-boundaries-and-dependency-rules.md"
+    ],
+    "expectations": [
+      {
+        "text": "maps the Drift row to a domain model inside the repository before returning it",
+        "mandatory": true
+      },
+      "does not propagate the data-source type to presentation code",
+      "does not just extend the existing leak because an existing method already does it"
+    ]
   }
 ]
