@@ -32,4 +32,4 @@ When motion patterns or reduced motion is in scope, follow the [motion patterns 
 ## Sources
 
 - [Flutter animations](https://docs.flutter.dev/ui/animations)
-- [Animation accessibility](https://docs.flutter.dev/ui/accessibility-and-internationalization/accessibility)
+- [Animation accessibility](https://docs.flutter.dev/ui/accessibility)

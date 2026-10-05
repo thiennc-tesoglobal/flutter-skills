@@ -7,7 +7,7 @@ description: Design, implement, repair, or review product analytics in Flutter u
 
 Instrument decisions, not widgets. Begin with a product question and a stable event contract, then preserve the project's analytics provider, consent platform, state management, navigation, and data architecture unless migration is requested.
 
-Installing this skill requires no analytics account, key, project, or SDK. Do not add a vendor, create dashboards, enable collection, or change live retention and consent configuration merely because the skill is selected.
+Do not add a vendor, create dashboards, enable collection, or change live retention and consent configuration merely because the skill is selected.
 
 ## Preflight
 

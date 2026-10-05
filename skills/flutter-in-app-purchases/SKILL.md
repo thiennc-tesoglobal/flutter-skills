@@ -7,7 +7,7 @@ description: Implement, repair, or review Flutter purchases of digital goods and
 
 Model store billing as an asynchronous reconciliation system, not a button callback. Preserve the project's current store package, subscription service, backend, account model, and state management unless migration is explicitly requested.
 
-Installing this skill requires no store account, API credential, signing material, or product configuration. Do not create products, change pricing, upload builds, or mutate live store configuration without explicit authorization.
+Do not create products, change pricing, upload builds, or mutate live store configuration without explicit authorization.
 
 ## Preflight
 

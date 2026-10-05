@@ -7,7 +7,7 @@ description: Implement, repair, or review embedded web content in Flutter, inclu
 
 Treat a WebView as an untrusted web runtime embedded inside a privileged application process. Preserve the project's current WebView package, web contract, router, session owner, and supported platforms unless migration is requested.
 
-Installing this skill requires no OpenAI key, web-service credential, WebView package, domain registration, native manifest change, or provider account. Do not add configuration merely because the skill is selected.
+Do not add a WebView package, native manifest change, or domain/redirect registration merely because the skill is selected.
 
 ## Preflight
 
