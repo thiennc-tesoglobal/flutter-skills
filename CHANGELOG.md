@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.10.0 - 2026-10-05
+
+- Complete `flutter-app-workflow` specialist routing so every relevant skill is named explicitly, and restructure its preflight into a checklist.
+- Add concrete, attributed interventions to `flutter-performance` (repaint and rebuild scope, decode-size image caching, lazy builders, shader warm-up, isolate cost) and record the rendering backend when comparing traces.
+- Add Riverpod and Bloc disposal and async-state pitfalls to `flutter-state-management`.
+- Add `build_runner`, `freezed`, and `json_serializable` code-generation guidance to `dart-language`, covering regeneration instead of hand-editing generated files.
+- Deepen `flutter-architecture` (no second DI container over an existing provider graph; map data-source types to domain models inside repositories), `flutter-navigation` (auth-driven `refreshListenable` redirects; `parentNavigatorKey` for routes that cover shell chrome), `flutter-animation` (`AnimatedSwitcher` identity; reusing designer-delivered Lottie or Rive assets), and `flutter-localization` (full CLDR plural categories; directional insets and alignment for RTL).
+- Point `flutter-runtime-debugging`, `flutter-dependency-upgrades`, and `flutter-code-review` at the Dart and Flutter MCP server, fix two stale Flutter documentation URLs, and remove copy-pasted credential filler sentences.
+- Add 15 behavior eval cases (203 to 218) while keeping reference coverage at 100%.
+
 ## 0.9.1 - 2026-09-30
 
 - Add a Flutter 3.44.8 responsive checkout fixture with six viewport, breakpoint, text-scale, RTL, keyboard, geometry, and interaction scenarios; verify seeded overlap, missing wide composition, clipping, sticky-action, and offscreen-action failures against a passing oracle in CI.
