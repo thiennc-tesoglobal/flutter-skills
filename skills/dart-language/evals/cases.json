@@ -2,7 +2,11 @@
   {
     "name": "sdk-compatible-modeling",
     "prompt": "Refactor these status classes using modern Dart while keeping the package's Dart 3.3 constraint.",
-    "expectations": ["checks SDK constraint", "chooses compatible constructs", "preserves public behavior"]
+    "expectations": [
+      "checks SDK constraint",
+      "chooses compatible constructs",
+      "preserves public behavior"
+    ]
   },
   {
     "name": "records-not-for-domain-identity",
@@ -11,7 +15,10 @@
       "references/patterns-and-records-migration.md"
     ],
     "expectations": [
-      {"text": "does not apply records universally", "mandatory": true},
+      {
+        "text": "does not apply records universally",
+        "mandatory": true
+      },
       "keeps named domain types where evolution or validation matters"
     ]
   },
@@ -22,7 +29,10 @@
       "references/sealed-class-hierarchies.md"
     ],
     "expectations": [
-      {"text": "creates a sealed hierarchy that makes switch exhaustive", "mandatory": true},
+      {
+        "text": "creates a sealed hierarchy that makes switch exhaustive",
+        "mandatory": true
+      },
       "checks SDK constraint supports sealed classes before using them",
       "preserves the public API or documents the breaking change"
     ]
@@ -34,6 +44,35 @@
       "uses extension type for zero-cost compile-time wrapping",
       "acknowledges that extension types erase at runtime and do not prevent misuse across dynamic boundaries",
       "does not claim runtime enforcement identical to a class wrapper"
+    ]
+  },
+  {
+    "name": "never-hand-edits-generated-file",
+    "prompt": "The generated _$UserFromJson in user.g.dart is missing a field. Just add the field directly inside user.g.dart to unblock the build.",
+    "resources": [
+      "references/code-generation-with-build-runner.md"
+    ],
+    "expectations": [
+      {
+        "text": "edits the annotated source class (and its json_serializable/freezed annotations), not the generated .g.dart file",
+        "mandatory": true
+      },
+      "regenerates through the project's build_runner command rather than hand-patching output",
+      "does not treat the stale generated file as a bug in the generator itself"
+    ]
+  },
+  {
+    "name": "freezed-copywith-does-not-switch-case",
+    "prompt": "This freezed union is stuck showing the Loading case. Call copyWith on the current state to switch it to the Success case with the new data.",
+    "resources": [
+      "references/code-generation-with-build-runner.md"
+    ],
+    "expectations": [
+      {
+        "text": "recognizes that copyWith on one union member only updates that member's own fields and cannot switch the active case",
+        "mandatory": true
+      },
+      "constructs the target case's constructor directly instead of calling copyWith to change variants"
     ]
   }
 ]
