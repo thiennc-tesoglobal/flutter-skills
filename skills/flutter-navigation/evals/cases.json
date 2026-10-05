@@ -79,18 +79,18 @@
     ]
   },
   {
-    "name": "shell-branch-push-escapes-with-parent-navigator-key",
-    "prompt": "Inside one tab of a StatefulShellRoute, pushing a full-screen image viewer from that tab's own navigator gets dismissed whenever the user switches tabs and back. It should stay full-screen above the tab bar regardless of tab switches.",
+    "name": "shell-route-covers-tab-bar-with-parent-navigator-key",
+    "prompt": "Inside one tab of a StatefulShellRoute, a full-screen image viewer pushed from that tab still shows the bottom tab bar underneath it. It must cover the tab bar like a true full-screen route, and closing it should return the user to the same place in that tab.",
     "resources": [
       "references/nested-shell-navigation.md"
     ],
     "expectations": [
       {
-        "text": "uses parentNavigatorKey or the root navigatorKey so the route pushes onto the root navigator instead of the branch's nested navigator",
+        "text": "sets parentNavigatorKey to the root navigator key (or otherwise pushes onto the root navigator) so the viewer renders above the shell instead of inside the branch's nested navigator",
         "mandatory": true
       },
-      "explains why pushing through the branch's own navigator nests the route inside that branch's lifecycle",
-      "tests that switching tabs and back does not dismiss or duplicate the pushed route"
+      "explains that routes on a branch's navigator render inside the shell, which is why the tab bar stays visible",
+      "tests that the tab bar is not visible while the viewer is open and that popping it returns to the same branch location with the branch stack intact"
     ]
   }
 ]

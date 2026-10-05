@@ -66,18 +66,19 @@
     ]
   },
   {
-    "name": "prefers-existing-rive-lottie-over-handrolled",
-    "prompt": "The app already depends on the lottie package for other screens. Build a new multi-second celebratory animation for completing an order by hand-rolling it with CustomPainter and an AnimationController.",
+    "name": "reuses-designer-lottie-asset-over-handrolled",
+    "prompt": "The app already depends on the lottie package for other screens, and the designer delivered assets/animations/order_complete.json for the order-completed celebration. A teammate suggests re-creating it by hand with CustomPainter and an AnimationController instead. Implement the celebration.",
     "resources": [
       "references/motion-patterns-and-reduced-motion.md"
     ],
     "expectations": [
       {
-        "text": "prefers reusing the existing lottie package over hand-rolling an equivalent CustomPainter animation",
+        "text": "plays the delivered Lottie asset through the existing lottie package instead of re-implementing it with CustomPainter",
         "mandatory": true
       },
-      "still disposes the controller or composition in the owning State and respects reduced-motion preferences",
-      "does not introduce a second unrelated animation package when one is already present"
+      "if it drives playback with an AnimationController, disposes that controller in the owning State's dispose() and does not call a nonexistent dispose on LottieComposition",
+      "respects reduced-motion preferences (e.g. MediaQuery.disableAnimationsOf) by showing a static frame or skipping playback",
+      "does not introduce a second animation package when lottie is already present"
     ]
   }
 ]
