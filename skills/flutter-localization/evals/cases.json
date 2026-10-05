@@ -6,15 +6,24 @@
       "references/icu-messages-and-formatting.md"
     ],
     "expectations": [
-      {"text": "uses plural messages and locale-aware currency", "mandatory": true},
-      {"text": "supports RTL without manual string concatenation", "mandatory": true},
+      {
+        "text": "uses plural messages and locale-aware currency",
+        "mandatory": true
+      },
+      {
+        "text": "supports RTL without manual string concatenation",
+        "mandatory": true
+      },
       "tests representative counts and locales"
     ]
   },
   {
     "name": "preserves-existing-localization-tool",
     "prompt": "Add one translated onboarding screen to an app with an established gen_l10n setup.",
-    "expectations": ["extends existing ARB and generation configuration", "does not introduce a second localization package"]
+    "expectations": [
+      "extends existing ARB and generation configuration",
+      "does not introduce a second localization package"
+    ]
   },
   {
     "name": "unsupported-locale-falls-back-safely",
@@ -32,6 +41,36 @@
       "rejects a single hardcoded date format across locales",
       "uses locale-aware DateFormat for user-facing timestamps",
       "tests that dates render correctly in representative locales including RTL"
+    ]
+  },
+  {
+    "name": "plural-full-cldr-categories-for-arabic",
+    "prompt": "Add an ARB plural message for a notification count, with just `=0{No notifications} =1{1 notification} other{{count} notifications}`, and translate it to Arabic.",
+    "resources": [
+      "references/icu-messages-and-formatting.md"
+    ],
+    "expectations": [
+      {
+        "text": "identifies that Arabic's plural rules need the fuller CLDR category set (zero/one/two/few/many/other), not just =0/=1/other",
+        "mandatory": true
+      },
+      "provides the additional plural categories the target locale's rules require",
+      "tests representative counts that exercise the additional categories, not only 0 and 1"
+    ]
+  },
+  {
+    "name": "rtl-uses-directional-insets-not-physical-sides",
+    "prompt": "Add left padding and left alignment to a card using EdgeInsets.only(left: 16) and Alignment.centerLeft, in a screen that must also support Arabic.",
+    "resources": [
+      "references/icu-messages-and-formatting.md"
+    ],
+    "expectations": [
+      {
+        "text": "rejects EdgeInsets.only(left:) and Alignment.centerLeft for content that must mirror in RTL",
+        "mandatory": true
+      },
+      "uses EdgeInsetsDirectional and AlignmentDirectional or equivalent start/end APIs instead",
+      "tests the layout in an RTL locale to confirm mirroring"
     ]
   }
 ]

@@ -7,14 +7,24 @@
     ],
     "expectations": [
       "uses a proportionate implicit mechanism",
-      {"text": "keeps state as source of truth", "mandatory": true},
-      {"text": "supports reduced motion", "mandatory": true}
+      {
+        "text": "keeps state as source of truth",
+        "mandatory": true
+      },
+      {
+        "text": "supports reduced motion",
+        "mandatory": true
+      }
     ]
   },
   {
     "name": "interruptible-controller-lifecycle",
     "prompt": "Build a draggable panel animation that can reverse midway.",
-    "expectations": ["uses explicit lifecycle-owned animation control", "handles interruption and reversal", "disposes controller and verifies ticker behavior"]
+    "expectations": [
+      "uses explicit lifecycle-owned animation control",
+      "handles interruption and reversal",
+      "disposes controller and verifies ticker behavior"
+    ]
   },
   {
     "name": "staggered-sequence-with-shared-controller",
@@ -28,11 +38,47 @@
   {
     "name": "hero-tag-uniqueness-across-list",
     "prompt": "Add Hero transitions from a product grid to a detail screen. Products can appear in multiple tabs.",
-    "resources": ["references/motion-patterns-and-reduced-motion.md"],
+    "resources": [
+      "references/motion-patterns-and-reduced-motion.md"
+    ],
     "expectations": [
-      {"text": "keeps tags unique within each participating route subtree while using the same selected tag on the source and destination Heroes", "mandatory": true},
+      {
+        "text": "keeps tags unique within each participating route subtree while using the same selected tag on the source and destination Heroes",
+        "mandatory": true
+      },
       "handles the case where the same product appears in multiple tab contexts",
       "verifies that forward and reverse Hero flights occur as well as checking for tag collision assertion errors"
+    ]
+  },
+  {
+    "name": "animated-switcher-needs-distinct-keys",
+    "prompt": "Use AnimatedSwitcher to fade between a loading Text widget and a loaded Text widget showing the result. Both are plain Text widgets with no key set.",
+    "resources": [
+      "references/motion-patterns-and-reduced-motion.md"
+    ],
+    "expectations": [
+      {
+        "text": "identifies that both children need distinct Keys or the transition will be silently skipped",
+        "mandatory": true
+      },
+      "gives each state a stable distinguishing key such as a ValueKey tied to the state or content",
+      "tests that the transition actually plays when switching between the loading and loaded states"
+    ]
+  },
+  {
+    "name": "reuses-designer-lottie-asset-over-handrolled",
+    "prompt": "The app already depends on the lottie package for other screens, and the designer delivered assets/animations/order_complete.json for the order-completed celebration. A teammate suggests re-creating it by hand with CustomPainter and an AnimationController instead. Implement the celebration.",
+    "resources": [
+      "references/motion-patterns-and-reduced-motion.md"
+    ],
+    "expectations": [
+      {
+        "text": "plays the delivered Lottie asset through the existing lottie package instead of re-implementing it with CustomPainter",
+        "mandatory": true
+      },
+      "if it drives playback with an AnimationController, disposes that controller in the owning State's dispose() and does not call a nonexistent dispose on LottieComposition",
+      "respects reduced-motion preferences (e.g. MediaQuery.disableAnimationsOf) by showing a static frame or skipping playback",
+      "does not introduce a second animation package when lottie is already present"
     ]
   }
 ]

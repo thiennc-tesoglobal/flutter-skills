@@ -6,6 +6,7 @@ When handling deep links or state restoration, ensure predictable redirects and 
 - **Cold vs Warm Links**: A cold link opens the app from closed; a warm link routes within an already running app. Both must reach the correct state.
 - **Auth Flow**: Route unauthenticated requests for protected content to a login screen, passing a redirect target. On success, seamlessly navigate to that target.
 - **Redirect Loops**: Prevent infinite cycles by maintaining clear auth-state boundaries and avoiding circular redirect dependencies.
+- **Reacting to auth-state changes outside navigation**: A redirect callback that only re-runs on navigation events will not notice a token expiring in the background or a sign-out triggered from a settings screen. Attach the auth state to the router's `refreshListenable` (or call the equivalent refresh/notify API) so a state change alone re-evaluates redirect and moves the user off a now-unauthorized route without waiting for the next navigation attempt.
 
 ## State Restoration
 - **RestorationMixin**: Use to persist UI state across app restarts. Combine with the router to maintain navigation history.

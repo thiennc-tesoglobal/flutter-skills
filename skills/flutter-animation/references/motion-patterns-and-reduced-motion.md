@@ -24,6 +24,14 @@ See the [Hero contract](https://api.flutter.dev/flutter/widgets/Hero-class.html)
 - Replace nonessential motion with immediate state changes or minimal fade transitions.
 - Ensure the user can still complete tasks regardless of the motion setting.
 
+## AnimatedSwitcher Identity
+- `AnimatedSwitcher` treats the new child as the same child — and skips the transition — when `Widget.canUpdate` holds: same `runtimeType` and same `key`. Swapping between two widgets of the same type with no explicit key (two `Text` widgets, two instances of one custom widget) updates in place and no transition plays. Children of different types already animate without keys.
+- When the widget type does not change, give each distinct state a stable distinguishing `Key` (such as `ValueKey(data.id)` or `ValueKey(stateName)`).
+
+## Reusing Designed Animation Packages
+- When a designer-produced animation asset exists (or the design team will deliver one) for a complex sequence — an illustrated loading state, an onboarding sequence, a mascot — check whether the project already depends on `rive` or `lottie` (or an equivalent asset-driven animation package) before hand-rolling the same result with `CustomPainter` or a long `AnimationController` sequence. Reusing the existing package keeps the asset editable by design tooling and avoids re-deriving timing curves by hand. If no asset exists and the motion is simple enough to express in code, hand-rolling with `AnimationController` is reasonable.
+- A Rive or Lottie animation still needs the same lifecycle discipline as any other controller-driven motion: dispose any controller the package API has you create in the owning `State`'s `dispose()` — for `lottie`, the `AnimationController` passed as `controller:` (a loaded `LottieComposition` is plain data with no `dispose()`); for `rive`, the controller or file objects its current API documents as disposable — and respect reduced-motion preferences by showing a static frame or skipping playback.
+
 ## Ticker Leak Prevention
 - Always call `dispose()` on `AnimationController` instances within the owning `State`'s `dispose()` method.
 - Use `SingleTickerProviderStateMixin` for one controller, or `TickerProviderStateMixin` for multiple. Never leak tickers across route changes.
