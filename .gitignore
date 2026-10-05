@@ -9,3 +9,5 @@ node_modules/
 *.iml
 .idea/
 .vscode/
+__pycache__/
+*.pyc
