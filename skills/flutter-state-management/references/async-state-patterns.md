@@ -6,6 +6,7 @@ Modeling async state correctly ensures the UI stays predictable during data fetc
 
 - Use sealed classes, `AsyncValue` (Riverpod), or algebraic data types instead of loose boolean flags (`isLoading`, `hasError`).
 - Loose booleans can lead to impossible combinations (e.g., `isLoading = true` AND `hasError = true` AND `data != null`), confusing the UI layer. Sealed hierarchies enforce mutually exclusive, well-defined states.
+- When using Riverpod's `AsyncValue`, wrap the async body in `AsyncValue.guard` rather than hand-written try/catch into `AsyncLoading`/`AsyncError`/`AsyncData`. It preserves the previous value for optimistic UI and captures stack traces consistently.
 
 ## State Modeling
 

@@ -21,6 +21,7 @@ Identify which state is ephemeral UI state, feature state, shared application st
 - Expose immutable state or read-only views of mutable collections.
 - Model loading, empty, success, and failure states deliberately where the UI distinguishes them.
 - Avoid broad subscriptions that rebuild unrelated subtrees.
+- Use the package's watch-style accessor (`ref.watch`, `context.watch<T>()`, `BlocBuilder`) only inside `build` or another watch-safe method, and its one-off accessor (`ref.read`, `context.read<T>()`, a Bloc's `add`) inside callbacks and event handlers. Calling the watch-style accessor from a callback throws or misbehaves in most packages.
 
 Do not introduce global service locators or package-level singletons as a shortcut for unclear ownership.
 

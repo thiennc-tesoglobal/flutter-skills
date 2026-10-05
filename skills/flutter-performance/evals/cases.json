@@ -2,23 +2,76 @@
   {
     "name": "profiles-before-optimizing-list",
     "prompt": "This scrolling feed feels janky; optimize it.",
-    "expectations": ["defines and captures a profile-mode flow", "attributes work before editing", "reports comparable before and after evidence"]
+    "expectations": [
+      "defines and captures a profile-mode flow",
+      "attributes work before editing",
+      "reports comparable before and after evidence"
+    ]
   },
   {
     "name": "debug-timing-not-evidence",
     "prompt": "Prove startup improved using stopwatch logs from flutter run debug.",
-    "expectations": ["rejects debug timing as final evidence", "uses a comparable profile or release measurement"]
+    "expectations": [
+      "rejects debug timing as final evidence",
+      "uses a comparable profile or release measurement"
+    ]
   },
   {
     "name": "attributes-ui-versus-raster-jank",
     "prompt": "A product grid misses frames during fast scrolling. Add const widgets, repaint boundaries, and an isolate so it becomes smooth.",
-    "resources": ["references/profile-and-frame-analysis.md"],
-    "expectations": ["requires a reproducible profile-mode trace before prescribing fixes", "distinguishes UI-thread work from raster-thread work", "chooses an intervention only after attributing the measured cost", "defines a repeat of the same flow and comparable before-and-after metrics"]
+    "resources": [
+      "references/profile-and-frame-analysis.md"
+    ],
+    "expectations": [
+      "requires a reproducible profile-mode trace before prescribing fixes",
+      "distinguishes UI-thread work from raster-thread work",
+      "chooses an intervention only after attributing the measured cost",
+      "defines a repeat of the same flow and comparable before-and-after metrics"
+    ]
   },
   {
     "name": "finds-retained-lifecycle-owner",
     "prompt": "Memory rises every time users open and close a live chart screen. Clear all Flutter caches whenever the screen closes.",
-    "resources": ["references/memory-startup-and-size.md"],
-    "expectations": ["measures a repeated enter-exit flow and retained ownership", "checks subscriptions controllers listeners or platform handles", "does not use global cache clearing to hide an ownership leak", "verifies bounded memory after the lifecycle fix"]
+    "resources": [
+      "references/memory-startup-and-size.md"
+    ],
+    "expectations": [
+      "measures a repeated enter-exit flow and retained ownership",
+      "checks subscriptions controllers listeners or platform handles",
+      "does not use global cache clearing to hide an ownership leak",
+      "verifies bounded memory after the lifecycle fix"
+    ]
+  },
+  {
+    "name": "resizes-images-before-clearing-cache",
+    "prompt": "A grid of thumbnails loads full-resolution network images and memory keeps climbing while scrolling. Clear the image cache whenever memory gets high.",
+    "resources": [
+      "references/memory-startup-and-size.md"
+    ],
+    "expectations": [
+      {
+        "text": "attributes the growth to decoded image size via the image cache or memory profiler before changing code",
+        "mandatory": true
+      },
+      "sets cacheWidth/cacheHeight (or an equivalent resize) to the display size instead of the source resolution",
+      "rejects periodically clearing the whole image cache as the fix",
+      "verifies bounded memory after the resize with the same repeated scroll flow"
+    ]
+  },
+  {
+    "name": "lazy-builder-not-const-alone",
+    "prompt": "A screen builds a ListView with 5,000 widgets up front and scrolling stutters. Wrap every item in const to fix it.",
+    "resources": [
+      "references/profile-and-frame-analysis.md"
+    ],
+    "expectations": [
+      {
+        "text": "replaces the eager child list with a lazy builder (ListView.builder or SliverList.builder)",
+        "mandatory": true
+      },
+      "uses itemExtent or a prototypeItem when items share a size",
+      "still requires a profile-mode trace rather than treating const alone as proof of the fix",
+      "repeats the same scrolling flow to compare before and after"
+    ]
   }
 ]
