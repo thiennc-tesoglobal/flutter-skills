@@ -7,7 +7,7 @@ description: Build or review provider-neutral AI features in Flutter, including 
 
 Integrate model behavior as an unreliable, asynchronous external capability with an explicit product contract. Preserve the project's provider, backend, networking client, state management, persistence, and UI architecture unless the user requests a migration.
 
-Installing or loading this skill never requires an OpenAI or other provider API key. Do not add a provider SDK, account setup, credential, or backend merely because this skill was selected.
+Do not add a provider SDK, account setup, credential, or backend merely because this skill was selected.
 
 ## Preflight
 

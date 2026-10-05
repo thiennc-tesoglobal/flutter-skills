@@ -13,6 +13,8 @@ Read SDK constraints, flavors, entrypoints, defines, target platforms, recent ch
 
 Do not infer a root cause from the last stack frame, a screenshot, or a downstream assertion alone. Record the exact trigger, expected result, actual result, build mode, platform, and whether the failure survives restart.
 
+Use Dart and Flutter MCP capabilities for widget-tree inspection, structured logs, and runtime diagnostics when the environment exposes them; otherwise rely on DevTools and CLI output for the same evidence.
+
 ## Load references conditionally
 
 - Read [reproduction and attachment](references/reproduction-and-attachment.md) when selecting a target, attaching to an existing process, handling startup or lifecycle failures, or reducing a flaky symptom.
@@ -46,3 +48,4 @@ Repeat the original failing flow under equivalent conditions, then exercise the 
 - [Debug Flutter apps](https://docs.flutter.dev/testing/debugging)
 - [Handling errors in Flutter](https://docs.flutter.dev/testing/errors)
 - [Debugging add-to-app](https://docs.flutter.dev/add-to-app/debugging)
+- [Dart and Flutter MCP server](https://docs.flutter.dev/ai/mcp-server)

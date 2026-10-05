@@ -29,4 +29,4 @@ When formatting messages or localization is in scope, follow the [ICU messages a
 
 ## Sources
 
-- [Internationalizing Flutter apps](https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization)
+- [Internationalizing Flutter apps](https://docs.flutter.dev/ui/internationalization)

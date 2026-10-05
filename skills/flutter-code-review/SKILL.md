@@ -18,7 +18,7 @@ Find defects and implementation residue that materially affect behavior, users, 
 
 Prioritize data loss, security exposure, crashes, incorrect results, broken lifecycle, concurrency races, inaccessible flows, release failures, missing regression coverage, weakened quality gates, and residue introduced by the change. Then consider architecture or maintainability issues that have a concrete cost.
 
-Do not report preferences, hypothetical rewrites, unchanged legacy issues, or framework behavior that current code already handles. Validate API and package claims against the project's SDK and resolved dependencies.
+Do not report preferences, hypothetical rewrites, unchanged legacy issues, or framework behavior that current code already handles. Validate API and package claims against the project's SDK and resolved dependencies, using Dart and Flutter MCP semantic lookup and analysis when available; otherwise inspect source and resolved package versions directly.
 
 Treat compatibility and safety claims as proof obligations. Compare changed inputs, outputs, defaults, schemas, exit behavior, and supported callers with the base revision; accepting an old input alone does not prove backward compatibility. For redaction, escaping, validation, or other security-sensitive transforms, test ordering and boundary conditions instead of trusting the happy-path example.
 
@@ -45,3 +45,4 @@ When reviewing a completed implementation, finish with a bounded outcome: materi
 - [Flutter performance](https://docs.flutter.dev/perf)
 - [Flutter architecture](https://docs.flutter.dev/app-architecture)
 - [Effective Dart](https://dart.dev/effective-dart)
+- [Dart and Flutter MCP server](https://docs.flutter.dev/ai/mcp-server)

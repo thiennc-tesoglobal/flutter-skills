@@ -7,7 +7,7 @@ description: Implement, repair, or review Flutter user authentication and sessio
 
 Treat authentication as a protocol and account-state lifecycle spanning the identity provider, trusted backend, platform redirect surface, local session owner, and application UI. Preserve the project's provider, backend, SDK, router, storage, and state management unless migration is requested.
 
-Installing this skill requires no Firebase, OAuth, OpenID, passkey, or other provider credential. Do not add an SDK, client registration, redirect association, secret placeholder, account, or backend merely because the skill is selected.
+Do not add an SDK, client registration, redirect association, secret placeholder, account, or backend merely because the skill is selected.
 
 ## Preflight
 
