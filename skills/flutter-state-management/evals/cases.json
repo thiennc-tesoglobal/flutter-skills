@@ -2,12 +2,19 @@
   {
     "name": "package-neutral-new-project-choice",
     "prompt": "Choose state management for a new medium-sized Flutter app with four developers.",
-    "expectations": ["elicits or infers concrete constraints", "compares suitable options without universal claims", "documents ownership and lifecycle"]
+    "expectations": [
+      "elicits or infers concrete constraints",
+      "compares suitable options without universal claims",
+      "documents ownership and lifecycle"
+    ]
   },
   {
     "name": "local-state-stays-local",
     "prompt": "Move a password visibility toggle into the app-wide Riverpod container.",
-    "expectations": ["recognizes ephemeral local UI state", "keeps it local unless cross-screen behavior requires otherwise"]
+    "expectations": [
+      "recognizes ephemeral local UI state",
+      "keeps it local unless cross-screen behavior requires otherwise"
+    ]
   },
   {
     "name": "state-disposed-with-lifecycle-owner",
@@ -16,7 +23,10 @@
       "references/lifecycle-and-disposal.md"
     ],
     "expectations": [
-      {"text": "implements dispose to close controllers and cancel subscriptions owned by the notifier", "mandatory": true},
+      {
+        "text": "implements dispose to close controllers and cancel subscriptions owned by the notifier",
+        "mandatory": true
+      },
       "tests that disposal is called and resources are released when the owner is removed",
       "does not introduce global or static lifetime to avoid disposal"
     ]
@@ -28,9 +38,55 @@
       "references/async-state-patterns.md"
     ],
     "expectations": [
-      {"text": "models loading, success, error, and empty states distinctly rather than overlapping booleans", "mandatory": true},
+      {
+        "text": "models loading, success, error, and empty states distinctly rather than overlapping booleans",
+        "mandatory": true
+      },
       "prevents impossible combinations like both loading and error being true",
       "tests transitions through each state including retry after error"
+    ]
+  },
+  {
+    "name": "riverpod-checks-mounted-after-await",
+    "prompt": "An AsyncNotifier fetches data and sets state after an await. It sometimes throws because the provider was disposed while the request was in flight. Fix it.",
+    "resources": [
+      "references/lifecycle-and-disposal.md"
+    ],
+    "expectations": [
+      {
+        "text": "checks ref.mounted (or an equivalent liveness check) after the await before mutating state",
+        "mandatory": true
+      },
+      "does not remove autoDispose merely to silence the error",
+      "uses ref.keepAlive only when the provider must intentionally survive the gap, with explicit later disposal",
+      "tests both the normal completion and the disposed-during-await case"
+    ]
+  },
+  {
+    "name": "bloc-rapid-taps-need-transformer",
+    "prompt": "Tapping 'load more' repeatedly in a Bloc handler sometimes shows stale results because each tap starts its own async fetch and they can finish out of order. Add an isLoading flag to block extra taps.",
+    "resources": [
+      "references/lifecycle-and-disposal.md"
+    ],
+    "expectations": [
+      {
+        "text": "names default concurrent event handling as the cause of out-of-order results",
+        "mandatory": true
+      },
+      "chooses an explicit event transformer (droppable, sequential, or restartable) matching the desired behavior",
+      "does not rely on an ad hoc loading boolean as the only safeguard",
+      "tests rapid repeated taps resolve to the correct final state"
+    ]
+  },
+  {
+    "name": "read-not-watch-in-callback",
+    "prompt": "Inside a button's onPressed callback, call ref.watch to read the current cart total before submitting the order.",
+    "expectations": [
+      {
+        "text": "uses the one-off accessor (ref.read) in the callback instead of ref.watch",
+        "mandatory": true
+      },
+      "explains that the watch-style accessor belongs in build, not in a callback"
     ]
   }
 ]

@@ -9,17 +9,30 @@ Deliver a runnable, maintainable result with evidence. Preserve the user's produ
 
 ## Preflight
 
-Read [project preflight](references/project-preflight.md) before planning. When the task includes a ticket, read it through the available GitHub integration or CLI, reconcile it with the current code, and state the agreed implementation scope before editing. Do not edit behavior whose requirement or ownership remains materially ambiguous. After exhausting available evidence, give a compact understanding checkpoint—current and intended behavior, evidence versus hypotheses, in-scope work, affected shared consumers, data contracts, time or localization semantics, tests and platforms outside scope, and inspection that can continue—then ask one focused question. Pair each affected boundary with why the behavior reaches it and the exact code, contract, or test evidence still needed; a list of module names is not an impact map. Treat supplied project facts as preflight evidence; inspect repository constraints (SDK, platforms, packages, architecture, tests, flavors, devices) instead of re-asking. Reuse adequate existing solutions; do not add packages merely for familiarity.
+Read [project preflight](references/project-preflight.md) before planning.
+
+- When the task includes a ticket, read it through the available GitHub integration or CLI, reconcile it with the current code, and state the agreed implementation scope before editing.
+- Do not edit behavior whose requirement or ownership remains materially ambiguous.
+- Treat supplied project facts as preflight evidence; inspect repository constraints (SDK, platforms, packages, architecture, tests, flavors, devices) instead of re-asking.
+- Reuse adequate existing solutions; do not add packages merely for familiarity.
+- After exhausting available evidence, give a compact understanding checkpoint covering:
+  - current and intended behavior, evidence versus hypotheses
+  - in-scope work and affected shared consumers
+  - data contracts, time, or localization semantics
+  - tests and platforms outside scope
+  - inspection that can continue
+
+  Then ask one focused question. Pair each affected boundary with why the behavior reaches it and the exact code, contract, or test evidence still needed; a list of module names is not an impact map.
 
 ## Route specialists
 
 Load only the available specialists needed for the vertical slice:
 - Architecture & state: `flutter-architecture`, `flutter-state-management`
-- UI & visual: `flutter-ui-design`, `flutter-visual-effects`, or matching UI specialist
-- Data, AI & product: `flutter-networking`, `flutter-persistence`, `flutter-authentication`, `flutter-in-app-purchases`, `flutter-product-analytics`, `flutter-ai-integration`
-- Platform & ops: `flutter-package-development`, `flutter-notifications`, `flutter-background-execution`, `flutter-dependency-upgrades`, `flutter-observability`, `flutter-runtime-debugging`
+- UI & visual: `flutter-ui-design`, `flutter-ui-patterns`, `flutter-visual-effects`, `flutter-responsive-layout`, `flutter-animation`, `flutter-navigation`, `flutter-text-rendering`, `flutter-figma-workflow`
+- Data, AI & product: `flutter-networking`, `flutter-openapi-client`, `flutter-persistence`, `flutter-authentication`, `flutter-in-app-purchases`, `flutter-product-analytics`, `flutter-ai-integration`
+- Platform & ops: `flutter-platform-integration`, `flutter-webview`, `flutter-notifications`, `flutter-background-execution`, `flutter-localization`, `flutter-dependency-upgrades`, `flutter-observability`, `flutter-runtime-debugging`
 - Language & security: `dart-language`, `dart-concurrency`, `flutter-security`, `flutter-code-review`
-- Quality & delivery: testing, accessibility, performance, CI/CD, release, device specialists
+- Quality & delivery: `flutter-testing`, `flutter-accessibility`, `flutter-performance`, `flutter-ci-cd`, `flutter-build-release`, `flutter-device-testing`
 
 If a specialist is unavailable, continue with this workflow's preflight and vertical-slice rules; do not claim it was loaded or silently install skills. Hand focused work (e.g. form validation, API cache) to dedicated specialists rather than running this workflow.
 
